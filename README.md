@@ -5,15 +5,15 @@ first commit
 For fpiazza:
 install git
 
---------------------    
+######################   
 working directory       | git add files
---------------------    v
+######################  v
 stagging                    | git commit
---------------------        v
+######################      v
 local repository                | git push remoterepo      
---------------------            v               ^
+######################          v               ^
 remote repo                                     | git pull remoterepo
---------------------
+######################
 
 opt1: create git init and PULL repo(with all files in remote repo) into it
 inside proyect folder exec 'git init'
