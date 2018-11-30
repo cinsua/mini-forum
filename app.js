@@ -1,25 +1,11 @@
 var express = require('express')
 //var mongoose = require('mongoose')
+var db = require('./DB')
+var server = require('./tools/serverTools')
+//import db from './DB'
 var app = express();
+db.connectDB()
 
-//All needed for connection with mLab
-//Rewrite with async ?
-
-const mongoose = require('mongoose');
-var mongodbUri ='mongodb://ds119164.mlab.com:19164/mdbcinsua';
-mongoose.connect(mongodbUri, {
-  useNewUrlParser: true,
-  auth: {
-    user: 'cinsua',
-    password: 'Asus1201n'
-  }
-})
-var conn = mongoose.connection;    
-conn.on('error', console.error.bind(console, 'connection error:'));  
- 
-conn.once('open', () =>{
- console.log('connected to adatabase')                       
-});
 
 //Routes
 
@@ -34,5 +20,5 @@ app.post('/', function (req, res) {
 })
 
 app.listen(3000, function () {
-  console.log('Example app listening on port 3000!')
+  console.log(`${server.tagGreen} Started at ${Date()}\n${server.tagCyan} Listening on Port 3000`)
 })
