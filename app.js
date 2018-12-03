@@ -4,6 +4,13 @@ var db = require('./DB')
 var server = require('./tools/serverTools')
 //import db from './DB'
 var app = express();
+var globalTunnel = require('global-tunnel');
+ 
+globalTunnel.initialize({
+  host: '10.210.198.12',
+  port: 8080,
+  sockets: 50 // optional pool size for each http and https
+});
 db.connectDB()
 
 
