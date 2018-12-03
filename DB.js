@@ -8,11 +8,11 @@ var chalk = require('chalk');
 //require database URL from properties file
 //var dbURL = require('./property').db;
 
-const options = { user: 'cinsua', pass: encodeURIComponent('Asus1201n'), keepAlive: true, keepAliveInitialDelay: 300000,
-                useNewUrlParser: true }
+//const options = { user: 'cinsua', pass: encodeURIComponent('Asus1201n'), keepAlive: true, keepAliveInitialDelay: 300000, useNewUrlParser: true }
 //const uriDB = 'mongodb://ds119164.mlab.com:19164/mdbcinsua'
-const uriDB = 'mongodb+srv://cinsua:Asus1201n@cinsua-9r45r.mongodb.net/test?retryWrites=true'
+//const uriDB = 'mongodb+srv://cinsua:Asus1201n@cinsua-9r45r.mongodb.net/test?retryWrites=true'
 //mongodb://cinsua:<PASSWORD>@cinsua-shard-00-00-9r45r.mongodb.net:27017,cinsua-shard-00-01-9r45r.mongodb.net:27017,cinsua-shard-00-02-9r45r.mongodb.net:27017/test?ssl=true&replicaSet=cinsua-shard-0&authSource=admin&retryWrites=true
+const uriDB = 'mongodb://localhost:27017/myapp'
 
 var connected = chalk.bold.cyan;
 var error = chalk.bold.yellow;
@@ -25,8 +25,8 @@ module.exports = {
     mongoose.connect(uriDB) //, options);
 
     mongoose.connection.on('connected', function(){
-      console.log(`${server.tagCyan} Succefully connected to ${uriDB} as ${options.user}`);
-      console.log(`${server.tagCyan} MongoDB hosted by MLAB`);
+      console.log(`${server.tagCyan} Succefully connected to ${uriDB}`); // as ${options.user}
+      //console.log(`${server.tagCyan} MongoDB hosted by MLAB`);
     });
 
     mongoose.connection.on('error', function(err){

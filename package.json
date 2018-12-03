@@ -4,14 +4,22 @@
   "description": "NetPrinter for private use",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "cross-env NODE_ENV=development nodemon app.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^3.0.2",
+    "body-parser": "^1.18.3",
+    "dotenv": "^6.1.0",
     "express": "^4.16.4",
     "global-tunnel": "^1.2.0",
-    "mongoose": "^5.3.14",
+    "mongoose": "^5.3.14"
+  },
+  "devDependencies": {
+    "cross-env": "^5.2.0",
+    "morgan": "^1.9.1",
     "nodemon": "^1.18.7"
   }
 }
