@@ -1,4 +1,6 @@
 
+//DEPRECATED
+
 //require mongoose module
 var mongoose = require('mongoose');
 var server = require('./tools/serverTools')

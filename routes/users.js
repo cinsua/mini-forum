@@ -2,5 +2,6 @@ const controller = require('../controllers/users');
 
 module.exports = (router) => {
   router.route('/users')
-    .post(controller.add);
+    .post(controller.add)
+    .get(controller.getAll)
 };
