@@ -25,6 +25,15 @@ const routes = require('./routes/index.js');
 
 app.use('/api/', routes(router));
 
+app.use((req, res)=>{
+  console.log('status ', req.status)
+  let result = {
+    data: req.data,
+    error: req.error
+  }
+  res.status(req.status).send(result);
+});
+
 app.listen(`${stage.port}`, () => {
   console.log(`${server.tagGreen} Started at ${Date()}\n${server.tagCyan} Listening on Port${stage.port}`);
 });

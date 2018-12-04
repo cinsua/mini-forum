@@ -26,11 +26,12 @@ module.exports = {
                 result.error = e;
                 result.status = 500;
                 res.status(500).send(result);
+                return
             })
+        console.log('\nACAAAA\n')
         result.status = status;
-        result.result = saved;
-        res.status(status).send(result);
-
+        //result.result = saved;
+        //res.status(status).send(result);
 
         /*
         mongoose.connect(connUri, { useNewUrlParser : true }, async (err) => {
@@ -72,7 +73,9 @@ module.exports = {
             });
             */
       },
-    getAll: (req, res) => {
-        res.status(201).send({status: 201, result:'hello'});
+    getAll: (req, res, next) => {
+        req.status =200 
+        req.data={data: 'infoimportante', error: false}
+        next()
     },
   }
