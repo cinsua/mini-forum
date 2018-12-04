@@ -8,7 +8,7 @@ async function bdConnect(connUri){
     mongoose.connect('mydomino', {useNewUrlParser: true}) //connUri
     
 }
-
+// See https://blog.grossman.io/how-to-write-async-await-without-try-catch-blocks-in-javascript/
 module.exports = {
     add: async (req, res) => {
         let result = {};
