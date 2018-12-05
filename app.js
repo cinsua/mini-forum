@@ -1,5 +1,6 @@
 require('dotenv').config(); // Sets up dotenv as soon as our application starts
 var express = require('express')
+require('express-async-errors');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 
@@ -23,16 +24,8 @@ if (environment !== 'production') {
 //Routes
 const routes = require('./routes/index.js');
 
-app.use('/api/', routes(router));
+app.use('/api/v1/', routes(router));
 
-app.use((req, res)=>{
-  console.log('status ', req.status)
-  let result = {
-    data: req.data,
-    error: req.error
-  }
-  res.status(req.status).send(result);
-});
 
 app.listen(`${stage.port}`, () => {
   console.log(`${server.tagGreen} Started at ${Date()}\n${server.tagCyan} Listening on Port${stage.port}`);

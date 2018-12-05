@@ -10,72 +10,25 @@ async function bdConnect(connUri){
 }
 // See https://blog.grossman.io/how-to-write-async-await-without-try-catch-blocks-in-javascript/
 module.exports = {
-    add: async (req, res) => {
-        let result = {};
-        let status = 201;
+    add: async (req, res, next) => {
+
         await mongoose.connect(connUri, {useNewUrlParser: true})
-            .catch((e)=>{console.log(e);
-                result.error = e;
-                result.status = 500;
-                res.status(500).send(result);
-            })
+
         const { name, password } = req.body;
         const user = new User({name, password })
-        let saved = await user.save()
-            .catch((e)=>{console.log(e);
-                result.error = e;
-                result.status = 500;
-                res.status(500).send(result);
-                return
-            })
-        console.log('\nACAAAA\n')
-        result.status = status;
-        //result.result = saved;
-        //res.status(status).send(result);
-
-        /*
-        mongoose.connect(connUri, { useNewUrlParser : true }, async (err) => {
-            let result = {};
-            let status = 201;
-            if (err) {
-                status = 500;
-                console.log('here');
-                
-                result.status = status;
-                result.error = err;
-                res.status(status).send(result);
-            }
-            const { name, password } = req.body;
-            const user = new User({ name, password }); // document = instance of a model
-            // TODO: We can hash the password here before we insert instead of in the model
-            
-            user.save((err, user) => {
-                if (err) {
-                    status = 500;
-                    result.status = status;
-                    result.error = err;
-                    console.log(err);
-                }
-                result.status = status;
-                result.result = user;
-                res.status(status).send(result);
-                });
-                
-            
-            //result = await user.save()
-            //    .catch((err)=>{console.log(err);
-            //        result.error = err;
-            //        result.status = 500;
-            //        res.status(500).send(result);
-            //    })
-            //res.status(status).send(result);
-            
-            });
-            */
-      },
-    getAll: (req, res, next) => {
-        req.status =200 
-        req.data={data: 'infoimportante', error: false}
+        
+        await user.save()
+        req.status =203 
+        req.data={data: user, error: false}
         next()
     },
-  }
+    getAll: async (req, res, next) => {
+        await mongoose.connect(connUri, {useNewUrlParser: true})
+        let result = await User.find();
+        req.status =201
+        req.data={data: result, error: false}
+        //throw Error("access denied");
+        next()
+    },
+    
+}
