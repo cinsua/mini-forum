@@ -1,11 +1,13 @@
 const controller = require('../controllers/users');
+const passport      	= require('passport');
+require('../middlewares/passport')(passport)
 
 
 
 module.exports = (router) => {
   router.route('/users')
     .post(controller.add)
-    .get(controller.getAll),
+    .get(passport.authenticate('jwt', {session:false}),controller.getMe),
   //middleware to send
   router.use( async (req, res, next)=>{
     console.log('status ', req.status)

@@ -3,6 +3,10 @@ var express = require('express')
 require('express-async-errors');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
+const passport      = require('passport');
+const pe            = require('parse-error');
+const cors          = require('cors');
+const db = require('./DB')
 
 var app = express();
 const router = express.Router();
@@ -20,6 +24,15 @@ app.use(bodyParser.urlencoded({
 if (environment !== 'production') {
   app.use(logger('dev'));
 }
+
+//Passport
+app.use(passport.initialize());
+
+// CORS
+app.use(cors());
+
+//inicialize DB:
+db.connectDB();
 
 //Routes
 const routes = require('./routes/index.js');

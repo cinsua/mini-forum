@@ -1,6 +1,3 @@
-
-//DEPRECATED
-
 //require mongoose module
 var mongoose = require('mongoose');
 var server = require('./tools/serverTools')
@@ -14,7 +11,7 @@ var chalk = require('chalk');
 //const uriDB = 'mongodb://ds119164.mlab.com:19164/mdbcinsua'
 //const uriDB = 'mongodb+srv://cinsua:Asus1201n@cinsua-9r45r.mongodb.net/test?retryWrites=true'
 //mongodb://cinsua:<PASSWORD>@cinsua-shard-00-00-9r45r.mongodb.net:27017,cinsua-shard-00-01-9r45r.mongodb.net:27017,cinsua-shard-00-02-9r45r.mongodb.net:27017/test?ssl=true&replicaSet=cinsua-shard-0&authSource=admin&retryWrites=true
-const uriDB = 'mongodb://localhost:27017/myapp'
+const uriDB = 'mongodb://localhost:27017/myapp2'
 
 var connected = chalk.bold.cyan;
 var error = chalk.bold.yellow;
@@ -24,8 +21,8 @@ var termination = chalk.bold.magenta;
 //export this function and imported by app.js
 module.exports = {
   connectDB: function() {
+    mongoose.Promise = global.Promise
     mongoose.connect(uriDB) //, options);
-
     mongoose.connection.on('connected', function(){
       console.log(`${server.tagCyan} Succefully connected to ${uriDB}`); // as ${options.user}
       //console.log(`${server.tagCyan} MongoDB hosted by MLAB`);
