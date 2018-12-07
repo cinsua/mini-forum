@@ -41,4 +41,4 @@ HA! not yet, again
 ```
 
 ### Colaborations
-If you want to colaborate, critizise, cheer me up or just say how bad is my code, please go ahead! Im open to comments, every chunk of words can be used to learn.
+If you want to colaborate, criticize, cheer me up or just say how bad is my code, please go ahead! Im open to comments, every chunk of words can be used to learn.
