@@ -35,9 +35,9 @@ app.use(cors());
 db.connectDB();
 
 //Routes
-const routes = require('./routes/index.js');
+const apiV1 = require('./routes/index.js');
 
-app.use('/api/v1/', routes(router));
+app.use('/api/v1/', apiV1);
 
 
 app.listen(`${stage.port}`, () => {

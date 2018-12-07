@@ -30,6 +30,7 @@ userSchema.pre('save', async function(next) {
   }
   let pwHashed = await bcrypt.hash(user.password, saltRounds)   
   user.password = pwHashed
+  //validations with trow custom errors
   next()
 });
 
