@@ -9,7 +9,8 @@ const apiV1 = express.Router();
 apiV1.route('/')
   .get((req, res, next) => {
     //get commit version from file
-    res.status(200).send('Server alive running v1 commit x');
+    req.data={message: 'Server alive',version:'0.0.1',commit:'insert commit running'}
+    next()
   })
   /*
   .post((req, res, next) => {
