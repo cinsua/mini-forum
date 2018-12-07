@@ -1,4 +1,5 @@
 //default response to all success scenarios
+var server = require('../tools/serverTools')
 
 module.exports = {
     sendResponse: async function (req, res, next){
@@ -13,7 +14,10 @@ module.exports = {
         }
         
         let status = req.status || 200
+        if (process.env.NODE_ENV === 'development'){
+            console.log(`${server.tagGreen} [${req.originalUrl}] [${req.method}] [STATUS: ${status}]`)
+        }
         res.status(status).send(result);
-        next();
+        return next();
     }
 }

@@ -40,33 +40,9 @@ app.use('/api/v1/', apiV1);
 
 app.listen(`${CONFIG.PORT}`, () => {
   console.log(`${server.tagGreen} ${CONFIG.APP_NAME} started at ${Date().toString().slice(0, 24)}\n${server.tagCyan} Listening on Port${CONFIG.PORT}`);
-  console.log(`${server.tagGreen} Version: ${CONFIG.VERSION} Commit:${CONFIG.COMMIT} Environment: ${process.env.NODE_ENV} `)
+  console.log(`${server.tagCyan} Version: ${CONFIG.VERSION} Commit:${CONFIG.COMMIT} Environment: ${process.env.NODE_ENV} `)
   
   
 });
 
 //npm run dev
-
-/*
-//'Win 7 workarount to properly get SIGINT
-  // NOT WORKING
-  // with git bash work out-of-box .. lol
-var os = require('os');
-if (os.type() === "Windows_NT"){
-    //kernel < 8 is win7 or worse
-    let kernel_release = os.release()
-    kernel_release = kernel_release.substring(0, kernel_release.indexOf('.'));
-    if ( kernel_release < 8 ){
-      //we capture stdio and emit sigint
-      require("readline")
-        .createInterface({
-          input: process.stdin,
-          output: process.stdout
-        })
-        .on("SIGINT", function () {
-          process.emit("SIGINT");
-        });
-    }
-
-  }
-  */
