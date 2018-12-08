@@ -4,8 +4,8 @@ var server = require('../tools/serverTools')
 
 const CONFIG = require('./config')
 
-const options = CONFIG.MONGO_OPTIONS
-const uriDB = `${CONFIG.MONGO_CONN_URL}/${CONFIG.MONGO_DB_NAME}`
+const options = CONFIG.MONGO.OPTIONS
+const uriDB = `${CONFIG.MONGO.CONN_URL}/${CONFIG.MONGO.DB_NAME}`
 
 //export this function and imported by app.js
 module.exports = {
@@ -25,7 +25,7 @@ module.exports = {
     });
 
     process.on('SIGINT', () => {
-      if(CONFIG.DROP_DATABASE_AT_EXIT){
+      if(CONFIG.MONGO.DROP_DATABASE_AT_EXIT){
         console.log(`${server.tagMagenta} Deleting DB`);
         mongoose.connection.dropDatabase();
       }

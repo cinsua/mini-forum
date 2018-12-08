@@ -2,6 +2,7 @@ const userRouter = require('./users');
 const express = require('express')
 var server = require('../tools/serverTools')
 const success = require('../middlewares/response')
+const CONFIG = require('../config/config')
 
 const apiV1 = express.Router();
 
@@ -9,7 +10,7 @@ const apiV1 = express.Router();
 apiV1.route('/')
   .get((req, res, next) => {
     //get commit version from file
-    req.data={message: 'Server alive',version:'0.0.1',commit:'insert commit running'}
+    req.data={message: 'Server alive',version:CONFIG.VERSION,commit:CONFIG.COMMIT}
     next()
   })
 
@@ -33,7 +34,16 @@ module.exports = apiV1;
 //for now, here
 
 async function errorHandler(err, req ,res, next){
-  
+  if (err.message.includes('CUT_TAG')){
+    //console.log(err.stack)
+    //console.log('------')
+    let test = err.message.split('"CUT_TAG"')[1]
+    test = test.slice(1, test.length - 1)
+    recompose = JSON.parse(test)
+    console.log(recompose)
+
+
+  }
   let erro = {}
   erro["name"] = err.name; 
   erro["message"] = err.message; 
@@ -53,6 +63,6 @@ async function errorHandler(err, req ,res, next){
     //console.log('middle ',erro)
     server.showReq(req, err)
   }
-
+  res.status(req.status)
   res.send(result);
 }
