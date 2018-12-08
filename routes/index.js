@@ -45,11 +45,14 @@ async function errorHandler(err, req ,res, next){
     error: erro
   }
 
-  let status = req.status || 500
+  if (!req.status) req.status = 500
+  //let status = req.status || 500
 
   if (process.env.NODE_ENV === 'development'){
-    console.log(`${server.tagRed} [${req.originalUrl}] [${req.method}] [STATUS: ${status}] [${err.name}] [${err.code}]`)
+    //console.log(`${server.tagRed} [${req.originalUrl}] [${req.method}] [STATUS: ${status}] [${err.name}] [${err.code}]`)
+    //console.log('middle ',erro)
+    server.showReq(req, err)
   }
 
-  res.status(status).send(result);
+  res.send(result);
 }

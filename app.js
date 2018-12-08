@@ -1,10 +1,9 @@
-//require('dotenv').config(); // Sets up dotenv as soon as our application starts
 var express         = require('express')
-                    // this module allow capture all errors, sync n async, by middlewares
-                    // its a node patch, sounds bad, but is tradeoff for cleaner code
-                    // eliminate the boilerplate from try/catch and wrappers
-                    // express 5.0 should bring this in vanilla
-                      require('express-async-errors');
+// this module allow capture all errors, sync n async, by middlewares
+// its a node patch, sounds bad, but is tradeoff for cleaner code
+// eliminate the boilerplate from try/catch and wrappers
+// express 5.0 should bring this in vanilla
+require('express-async-errors');
 const logger        = require('morgan'); //probably better with logger middleware
 const bodyParser    = require('body-parser');
 const passport      = require('passport');
@@ -40,7 +39,7 @@ app.use('/api/v1/', apiV1);
 
 app.listen(`${CONFIG.PORT}`, () => {
   console.log(`${server.tagGreen} ${CONFIG.APP_NAME} started at ${Date().toString().slice(0, 24)}\n${server.tagCyan} Listening on Port${CONFIG.PORT}`);
-  console.log(`${server.tagCyan} Version: ${CONFIG.VERSION} Commit:${CONFIG.COMMIT} Environment: ${process.env.NODE_ENV} `)
+  console.log(`${server.tagWhite} Version: ${CONFIG.VERSION} Commit:${CONFIG.COMMIT} Environment: ${process.env.NODE_ENV} `)
   
   
 });

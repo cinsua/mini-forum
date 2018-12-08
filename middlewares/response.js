@@ -13,11 +13,13 @@ module.exports = {
             success: true
         }
         
-        let status = req.status || 200
+        if (!req.status) req.status = 200
+        //let status = req.status || 200
         if (process.env.NODE_ENV === 'development'){
-            console.log(`${server.tagGreen} [${req.originalUrl}] [${req.method}] [STATUS: ${status}]`)
+            //console.log(`${server.tagGreen} [${req.originalUrl}] [${req.method}] [STATUS: ${req.status}]`)
+            server.showReq(req)
         }
-        res.status(status).send(result);
+        res.send(result);
         return next();
     }
 }
