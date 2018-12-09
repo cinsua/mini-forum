@@ -1,3 +1,12 @@
+/*
+Mongoose intercepts every error in validation, drop him, and keep the message.
+Therefore generate another ValidationError and boilerplate the message inside other
+comments.
+
+Then what we do to keep our code/msg/name is put them in a json inside the message.
+when error is caught in middleware for handler errors, the message is depured y restored
+from CUT_TAG
+*/
 class CustomError extends Error {
     constructor(message, code,nameError) {
       super(message);
