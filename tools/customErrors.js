@@ -1,18 +1,13 @@
 class CustomError extends Error {
-    constructor(message, code, name) {
+    constructor(message, code,nameError) {
       super(message);
-     // Ensure the name of this error is the same as the class name
+    // Ensure the name of this error is the same as the class name
       let TAG={}
-      TAG.message = message
-      TAG.name = name;
+      TAG.name = nameError;
       TAG.code = code;
-      //console.log(this.name, this.code)
+      TAG.message = message
       this.CUT_TAG=TAG
-     // This clips the constructor invocation from the stack trace.
-     // It's not absolutely essential, but it does make the stack trace a little nicer.
-     //  @see Node.js reference (bottom)
-     Error.captureStackTrace(this, this.constructor);
-     //console.log(captureStackTrace(this, this.constructor))
+      Error.captureStackTrace(this, this.constructor);
     }
     setName(name) {
         this.name = name
@@ -21,19 +16,8 @@ class CustomError extends Error {
 class UserError extends CustomError {
     constructor(message, code) {
       super(message, code, 'UserError');
-      //this.setName(this.constructor.name)
-     // Ensure the name of this error is the same as the class name
-      //let TAG={}
-      //TAG.message = message
-      //TAG.name = 'UserError';
-      //TAG.code = code;
-      //console.log(this.name, this.code)
-      //this.CUT_TAG=TAG
-     // This clips the constructor invocation from the stack trace.
-     // It's not absolutely essential, but it does make the stack trace a little nicer.
-     //  @see Node.js reference (bottom)
-     Error.captureStackTrace(this, this.constructor);
-     //console.log(captureStackTrace(this, this.constructor))
+      //this.CUT_TAG.name = this.constructor.name
+      Error.captureStackTrace(this, this.constructor);
     }
   }
 

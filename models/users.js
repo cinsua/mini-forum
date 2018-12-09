@@ -76,7 +76,15 @@ function Custom_error(code, name, msg){
 
 userSchema.path('password').validate(function(v) {
   if (v.length < 4 ) {
-    let trueError = new UserError('msjelargodescriptivo','pw1')    
+    let trueError = new UserError('Password require at least 4 characters','PW_SHORT')    
+    throw new Error(JSON.stringify(trueError))  
+  }
+  return true;
+})
+
+userSchema.path('name').validate(function(v) {
+  if (v.length < 4 ) {
+    let trueError = new UserError('Name require at least 4 characters','NAME_SHORT')    
     throw new Error(JSON.stringify(trueError))  
   }
   return true;

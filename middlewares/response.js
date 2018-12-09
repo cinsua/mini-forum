@@ -7,7 +7,7 @@ module.exports = {
         
         res.setHeader('Content-Type', 'application/json');
         //404 in api v1
-        throw new UserError('Fede Puto','PW1')
+        //throw new UserError('Fede Puto','PW1')
 
         if (!req.data && !req.status){
             req.status = 404

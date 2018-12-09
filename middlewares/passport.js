@@ -14,7 +14,9 @@ module.exports = function(passport){
         if(user) {
             return done(null, user);
         }else{
+            e = new Error('Not Valid Token')
             return done(null, false);
+            //throw 
         }
     }));
 }

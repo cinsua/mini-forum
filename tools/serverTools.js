@@ -54,5 +54,14 @@ module.exports = {
     console.log(`${request} ${method} ${status}${error}${req.originalUrl}`)
 
 
+  },
+  showTrace: (errors, err)=>{
+    console.log('\n')
+    for (error of errors){
+      errBanner = chalk.bgRed(('ERROR'.padStart(38)).padEnd(80))
+      console.log(errBanner)
+      console.log(`[${error.name}] [${error.code}] [${error.message}]\n`)
+    }
+    console.log(err.stack)
   }
 }
