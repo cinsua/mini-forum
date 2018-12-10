@@ -4,12 +4,16 @@ var server = require('../tools/serverTools')
 const success = require('../middlewares/response')
 const CONFIG = require('../config/config')
 
+const UnauthorizedError = require('../tools/customErrors').UnauthorizedError
+
 const apiV1 = express.Router();
 
 
 apiV1.route('/')
   .get((req, res, next) => {
     req.data={message: 'Server alive',version:CONFIG.VERSION,commit:CONFIG.COMMIT}
+    throw new UnauthorizedError ("You don't have enough privileges", 'AUTH01')
+    //throw new Error('Soy un NO CUSTOM ERROR')
     next()
   })
 
@@ -57,10 +61,16 @@ async function errorHandler(err, req ,res, next){
       e = JSON.parse(e)
       //for now, we will not keep stack from mongoose errors
       //e.stack = err.stack
-      errors.push(e)
+      errors.push(e);
     }
+  
+  }else if(err.getError){
+    // if it is a custom error has getError() defined
+    errors.push(err.getError())
+  
   }else{
-    errors.push(err)
+    // if this error is a generic one, we generate the error obj. Remember: message is a property
+    errors.push({name: err.name, message: err.message})
   }
 
   let result = {
@@ -80,4 +90,15 @@ async function errorHandler(err, req ,res, next){
 
   res.status(req.status)
   res.send(result);
+}
+
+class NormalError extends Error {
+  constructor(message, code,nameError) {
+    super(message);
+    this.name = nameError
+    this.code = code
+  }
+  getError(){
+    return {name:this.name, message:this.message,code:this.code}
+  }
 }
