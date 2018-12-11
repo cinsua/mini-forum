@@ -58,21 +58,6 @@ userSchema.methods.toWeb = function(){
   delete json.__v // front dont need it
   return json;
 };
-function Custom_error(code, name, msg){
-  this.code =  code;
-  this.message = msg;
-  this.name = name;
-
-}
-
-//validations:
-function Custom_error(code, name, msg){
-
-  this.code =  code;
-  this.message = msg;
-  this.name = name;
-
-}
 
 userSchema.path('password').validate(function(v) {
   if (v.length < 4 ) {

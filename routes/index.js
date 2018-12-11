@@ -12,7 +12,7 @@ const apiV1 = express.Router();
 apiV1.route('/')
   .get((req, res, next) => {
     req.data={message: 'Server alive',version:CONFIG.VERSION,commit:CONFIG.COMMIT}
-    throw new UnauthorizedError ("You don't have enough privileges", 'AUTH01')
+    //throw new UnauthorizedError ("You don't have enough privileges", 'AUTH01')
     //throw new Error('Soy un NO CUSTOM ERROR')
     next()
   })
