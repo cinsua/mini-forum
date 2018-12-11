@@ -4,16 +4,17 @@ var server = require('../tools/serverTools')
 const success = require('../middlewares/response')
 const CONFIG = require('../config/config')
 
+const passport      	= require('passport');
+
 const UnauthorizedError = require('../tools/customErrors').UnauthorizedError
 
 const apiV1 = express.Router();
 
 
 apiV1.route('/')
-  .get((req, res, next) => {
+  .get(passport.authenticate('Optional'), (req, res, next) => {
+    console.log(user.name)
     req.data={message: 'Server alive',version:CONFIG.VERSION,commit:CONFIG.COMMIT}
-    //throw new UnauthorizedError ("You don't have enough privileges", 'AUTH01')
-    //throw new Error('Soy un NO CUSTOM ERROR')
     next()
   })
 
@@ -90,15 +91,4 @@ async function errorHandler(err, req ,res, next){
 
   res.status(req.status)
   res.send(result);
-}
-
-class NormalError extends Error {
-  constructor(message, code,nameError) {
-    super(message);
-    this.name = nameError
-    this.code = code
-  }
-  getError(){
-    return {name:this.name, message:this.message,code:this.code}
-  }
 }
