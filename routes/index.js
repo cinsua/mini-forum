@@ -6,15 +6,20 @@ const CONFIG = require('../config/config')
 
 const passport      	= require('passport');
 
+// Setup Strategies for api/v1
+require('../strategies/guest')();
+require('../strategies/jwt')();
+//require('../middlewares/passport')(passport)
+
 const UnauthorizedError = require('../tools/customErrors').UnauthorizedError
 
 const apiV1 = express.Router();
 
 
 apiV1.route('/')
-  .get(passport.authenticate('Optional'), (req, res, next) => {
+  .get(passport.authenticate(['jwt','guest'],{session:false}), (req, res, next) => {
     console.log(user.name)
-    req.data={message: 'Server alive',version:CONFIG.VERSION,commit:CONFIG.COMMIT}
+    req.data={message: 'Server running',user: user.name ,version:CONFIG.VERSION,commit:CONFIG.COMMIT}
     next()
   })
 

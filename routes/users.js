@@ -1,6 +1,6 @@
 const controller = require('../controllers/users');
 const passport      	= require('passport');
-require('../middlewares/passport')(passport)
+
 const UnauthorizedError = require('../tools/customErrors').UnauthorizedError
 
 var express = require('express')

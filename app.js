@@ -40,8 +40,6 @@ app.use('/api/v1/', apiV1);
 app.listen(`${CONFIG.PORT}`, () => {
   console.log(`${server.tagGreen} ${CONFIG.APP_NAME} started at ${Date().toString().slice(0, 24)}\n${server.tagCyan} Listening on Port${CONFIG.PORT}`);
   console.log(`${server.tagWhite} Version: ${CONFIG.VERSION} Commit:${CONFIG.COMMIT} Environment: ${process.env.NODE_ENV} `)
-  
-  
 });
 
 //npm run dev
