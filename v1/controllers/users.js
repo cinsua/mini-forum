@@ -38,8 +38,6 @@ module.exports = {
 
   updateMe: async (req, res, next) => {
     user = await Service.updateMe(req)
-    //    .catch((e)=>{throw Error('Cannot save user')})
-    //if(!user) throw Error('Cannot save user');
     req.data = { user, message: 'Saved' }
     return next()
   }
