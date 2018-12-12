@@ -13,6 +13,8 @@ module.exports = function () {
   ))
 }
 
+// Custom Strategy for Guests
+
 function GuestStrategy(options, verify) {
   if (typeof options == 'function') {
     verify = options;

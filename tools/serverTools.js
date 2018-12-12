@@ -35,8 +35,8 @@ module.exports = {
       case 'DELETE':
         method = chalk.magenta('[DELETE]')
         break;
-      case 'PATCH':
-        method = chalk.yellow('[PATCH ]')
+      case 'PUT':
+        method = chalk.yellow('[ PUT  ]')
         break;
       default:
         method = chalk.red('[OTHER ]')

@@ -26,7 +26,7 @@ class _CustomErrorModels extends Error {
 class UserError extends _CustomErrorModels {
   constructor(message, code) {
     super(message, code, 'UserError');
-    //this.CUT_TAG.name = this.constructor.name
+    
     Error.captureStackTrace(this, this.constructor);
   }
 }

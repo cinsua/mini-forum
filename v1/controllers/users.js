@@ -1,18 +1,16 @@
-//const User = require('../models/users');
 const Service = require('../services/users');
 
 module.exports = {
 
   createUser: async (req, res, next) => {
     user = await Service.create(req.body)
-    req.status = 201 // see http standar
+    req.status = 201
     req.data = { message: 'User Created', user: user.toWeb(), token: user.getJWT() }
     return next()
   },
 
   getMe: async (req, res, next) => {
     let user = req.user
-    req.status = 201
     req.data = { user: user.toWeb(), message: 'You are logged in' }
     return next()
   },

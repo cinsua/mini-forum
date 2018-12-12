@@ -1,6 +1,5 @@
 //default response to all success scenarios
 var server = require('../../tools/serverTools')
-const UserError = require('../utils/customErrors').UserError
 
 module.exports = {
   sendRes: async function (req, res, next) {
@@ -23,7 +22,6 @@ module.exports = {
     if (!req.status) req.status = 200
     //let status = req.status || 200
     if (process.env.NODE_ENV === 'development') {
-      //console.log(`${server.tagGreen} [${req.originalUrl}] [${req.method}] [STATUS: ${req.status}]`)
       server.showReq(req)
     }
     res.status(req.status)

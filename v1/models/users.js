@@ -16,7 +16,6 @@ const userSchema = new Schema({
   },
   password: {
     type: 'String',
-    //minlength:[4,'Password must have at least 4 chars'],
     required: true,
     trim: true
   }
@@ -25,7 +24,6 @@ const userSchema = new Schema({
 // encrypt password before save
 userSchema.pre('save', async function (next) {
   const user = this;
-  //const saltRounds = 10;
   if (!user.isModified('password')) { // don't rehash if it's same password
     return next(); 
   }
@@ -55,7 +53,7 @@ userSchema.methods.toWeb = function () {
   let json = this.toJSON();
   json.id = this._id;//this is for the front end
   delete json.password; // i dont wanna send hash pwd
-  delete json._id; // alreadi sent in id
+  delete json._id; // already sent in id
   delete json.__v // front dont need it
   return json;
 };

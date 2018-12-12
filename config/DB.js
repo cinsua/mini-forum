@@ -1,11 +1,10 @@
-//require mongoose module
 var mongoose = require('mongoose');
 var server = require('../tools/serverTools')
 
 const CONFIG = require('./config')
 
 const options = CONFIG.MONGO.OPTIONS
-const uriDB = `${CONFIG.MONGO.CONN_URL}/${CONFIG.MONGO.DB_NAME}`
+const uriDB = `${CONFIG.MONGO.CONN_URL}:${CONFIG.MONGO.CONN_PORT}/${CONFIG.MONGO.DB_NAME}`
 
 //export this function and imported by app.js
 module.exports = {
@@ -14,7 +13,7 @@ module.exports = {
     mongoose.Promise = global.Promise
     mongoose.connect(uriDB, options);
     mongoose.connection.on('connected', function () {
-      console.log(`${server.tagCyan} Succefully connected to ${uriDB}`); // as ${options.user}
+      console.log(`${server.tagCyan} Succefully connected to ${uriDB}`);
     });
 
     mongoose.connection.on('error', function (err) {
