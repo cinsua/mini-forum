@@ -1,17 +1,17 @@
 const userRouter = require('./users');
 const express = require('express')
-var server = require('../tools/serverTools')
+var server = require('../../tools/serverTools')
 const success = require('../middlewares/response')
-const CONFIG = require('../config/config')
+const CONFIG = require('../../config/config')
 
 const passport      	= require('passport');
 
-// Setup Strategies for api/v1
+// Setup Passport Strategies for api/v1
 require('../strategies/guest')();
 require('../strategies/jwt')();
 //require('../middlewares/passport')(passport)
 
-const UnauthorizedError = require('../tools/customErrors').UnauthorizedError
+const UnauthorizedError = require('../utils/customErrors').UnauthorizedError
 
 const apiV1 = express.Router();
 
@@ -59,13 +59,13 @@ async function errorHandler(err, req ,res, next){
     // mongoose package all the validation errors, so we can have
     //more than 1 error
     let listOfErrors = err.message.split('"CUT_TAG"')
-    //ignore the first, not contain a json
+    //ignore the first, no contain a json
     for(i=1; i < listOfErrors.length; i++){
       let eWithJunk = listOfErrors[i]
       //slice the residual characters outside json
       let e = eWithJunk.slice(eWithJunk.indexOf('{'), eWithJunk.lastIndexOf('}'))
       e = JSON.parse(e)
-      //for now, we will not keep stack from mongoose errors
+      //for now, we will not keep stack for mongoose errors
       //e.stack = err.stack
       errors.push(e);
     }

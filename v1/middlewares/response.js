@@ -1,6 +1,6 @@
 //default response to all success scenarios
-var server = require('../tools/serverTools')
-const UserError = require('../tools/customErrors').UserError
+var server = require('../../tools/serverTools')
+const UserError = require('../utils/customErrors').UserError
 
 module.exports = {
     sendResponse: async function (req, res, next){

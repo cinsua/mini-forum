@@ -1,7 +1,7 @@
 const controller = require('../controllers/users');
 const passport      	= require('passport');
 
-const UnauthorizedError = require('../tools/customErrors').UnauthorizedError
+const UnauthorizedError = require('../utils/customErrors').UnauthorizedError
 
 var express = require('express')
 const userRouter = express.Router();

@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const CONFIG = require('../config/config')
-const UserError = require('../tools/customErrors').UserError
+const CONFIG = require('../../config/config')
+const UserError = require('../utils/customErrors').UserError
 
 // schema maps to a collection
 const Schema = mongoose.Schema;
