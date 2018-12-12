@@ -9,19 +9,19 @@ Of course, we can just filter looking for '{' and '}' directly, but is generic a
 know if the message compose format changes
 */
 class _CustomErrorModels extends Error {
-    constructor(message, code, nameError) {
-      super(message);
-      let TAG={}
-      TAG.name = nameError;
-      TAG.code = code;
-      TAG.message = message
-      this.CUT_TAG=TAG
-      Error.captureStackTrace(this, this.constructor);
-    }
-    setName(name) {
-        this.name = name
-    }
+  constructor(message, code, nameError) {
+    super(message);
+    let TAG = {}
+    TAG.name = nameError;
+    TAG.code = code;
+    TAG.message = message
+    this.CUT_TAG = TAG
+    Error.captureStackTrace(this, this.constructor);
   }
+  setName(name) {
+    this.name = name
+  }
+}
 // One per Model:
 class UserError extends _CustomErrorModels {
   constructor(message, code) {
@@ -41,15 +41,15 @@ class _NormalError extends Error {
     this.code = code
     Error.captureStackTrace(this, this.constructor);
   }
-  getError(){
-    return {name:this.name, message:this.message,code:this.code}
+  getError() {
+    return { name: this.name, message: this.message, code: this.code }
   }
 }
 //One per type of errors
-class UnauthorizedError extends _NormalError{
+class AuthError extends _NormalError {
   constructor(message, code) {
-    super(message, code, 'UnauthorizedError');
+    super(message, code, 'AuthError');
     Error.captureStackTrace(this, this.constructor);
   }
 }
-module.exports.UnauthorizedError = UnauthorizedError
+module.exports.AuthError = AuthError

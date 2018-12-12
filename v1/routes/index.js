@@ -4,24 +4,22 @@ var server = require('../../tools/serverTools')
 const success = require('../middlewares/response')
 const CONFIG = require('../../config/config')
 
-const passport      	= require('passport');
+const passport = require('passport');
 
 // Setup Passport Strategies for api/v1
 require('../strategies/guest')();
 require('../strategies/jwt')();
-//require('../middlewares/passport')(passport)
 
-const UnauthorizedError = require('../utils/customErrors').UnauthorizedError
 
 const apiV1 = express.Router();
 
 
 apiV1.route('/')
-  .get(passport.authenticate(['jwt','guest'],{session:false}), (req, res, next) => {
+  .get(passport.authenticate(['bearer', 'guest'], { session: false }), (req, res, next) => {
 
-    req.data={message: 'Server running',user: user.name ,version:CONFIG.VERSION,commit:CONFIG.COMMIT}
+    req.data = { message: 'Server running', user: user.name, version: CONFIG.VERSION, commit: CONFIG.COMMIT }
     next()
-    
+
   })
 
 //---------------------------------------------------------------
@@ -33,7 +31,7 @@ apiV1.use('/users', userRouter);
 //Middlewares to all api v1
 
 //Standar response middleware for every success scenario
-apiV1.use(success.sendResponse);
+apiV1.use(success.sendRes);
 
 //Error Handlers
 apiV1.use(errorHandler);
@@ -52,16 +50,16 @@ when error is caught in middleware for handler errors, the message is depured y 
 from CUT_TAG
 */
 
-async function errorHandler(err, req ,res, next){
+async function errorHandler(err, req, res, next) {
 
   let errors = []
 
-  if (err.message.includes('CUT_TAG')){
+  if (err.message.includes('CUT_TAG')) {
     // mongoose package all the validation errors, so we can have
     //more than 1 error
     let listOfErrors = err.message.split('"CUT_TAG"')
     //ignore the first, no contain a json
-    for(i=1; i < listOfErrors.length; i++){
+    for (i = 1; i < listOfErrors.length; i++) {
       let eWithJunk = listOfErrors[i]
       //slice the residual characters outside json
       let e = eWithJunk.slice(eWithJunk.indexOf('{'), eWithJunk.lastIndexOf('}'))
@@ -70,14 +68,14 @@ async function errorHandler(err, req ,res, next){
       //e.stack = err.stack
       errors.push(e);
     }
-  
-  }else if(err.getError){
+
+  } else if (err.getError) {
     // if it is a custom error has getError() defined
     errors.push(err.getError())
-  
-  }else{
+
+  } else {
     // if this error is a generic one, we generate the error obj. Remember: message is a property
-    errors.push({name: err.name, message: err.message})
+    errors.push({ name: err.name, message: err.message })
   }
 
   let result = {
@@ -86,12 +84,12 @@ async function errorHandler(err, req ,res, next){
     errors
   }
 
-  if (!req.status) req.status = 500
+  if (!req.status) req.status = 500 //req.statusCode
 
-  if (process.env.NODE_ENV === 'development'){
+  if (process.env.NODE_ENV === 'development') {
     server.showReq(req, err)
   }
-  if (CONFIG.TRACE_ERRORS_CONSOLE){
+  if (CONFIG.TRACE_ERRORS_CONSOLE) {
     server.showTrace(errors, err)
   }
 

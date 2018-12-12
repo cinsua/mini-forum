@@ -23,34 +23,34 @@ const userSchema = new Schema({
 });
 
 // encrypt password before save
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   const user = this;
   //const saltRounds = 10;
-  if(!user.isModified || !user.isNew) { // don't rehash if it's an old user
+  if (!user.isModified || !user.isNew) { // don't rehash if it's an old user
     return next();
   }
-  let pwHashed = await bcrypt.hash(user.password, CONFIG.JWT.SALTING_ROUNDS)   
+  let pwHashed = await bcrypt.hash(user.password, CONFIG.JWT.SALTING_ROUNDS)
   user.password = pwHashed
   //validations with trow custom errors
   return next()
 });
 
-userSchema.methods.comparePassword = async function(pw){
+userSchema.methods.comparePassword = async function (pw) {
   let err, pass;
-  if(!this.password) throw new Error('mono no tiene contra');
+  if (!this.password) throw new Error('mono no tiene contra');
 
   pass = await bcrypt.compare(pw, this.password);
   //if(!pass) throw new Error('mono no da la contra');
   return pass
 }
 
-userSchema.methods.getJWT = function(){
+userSchema.methods.getJWT = function () {
   //let expiration_time = parseInt(CONFIG.jwt_expiration);
   //see middleware/passport to change secret and expire
-  return "Bearer "+jwt.sign({user_id:this._id}, CONFIG.JWT.SECRET, {expiresIn: 10000});
+  return "Bearer " + jwt.sign({ user_id: this._id }, CONFIG.JWT.SECRET, { expiresIn: 10000 });
 };
 
-userSchema.methods.toWeb = function(){
+userSchema.methods.toWeb = function () {
   let json = this.toJSON();
   json.id = this._id;//this is for the front end
   delete json.password; // i dont wanna send hash pwd
@@ -59,18 +59,18 @@ userSchema.methods.toWeb = function(){
   return json;
 };
 
-userSchema.path('password').validate(function(v) {
-  if (v.length < 4 ) {
-    let trueError = new UserError('Password require at least 4 characters','PW_SHORT')    
-    throw new Error(JSON.stringify(trueError))  
+userSchema.path('password').validate(function (v) {
+  if (v.length < 4) {
+    let trueError = new UserError('Password require at least 4 characters', 'PW_SHORT')
+    throw new Error(JSON.stringify(trueError))
   }
   return true;
 })
 
-userSchema.path('name').validate(function(v) {
-  if (v.length < 4 ) {
-    let trueError = new UserError('Name require at least 4 characters','NAME_SHORT')    
-    throw new Error(JSON.stringify(trueError))  
+userSchema.path('name').validate(function (v) {
+  if (v.length < 4) {
+    let trueError = new UserError('Name require at least 4 characters', 'NAME_SHORT')
+    throw new Error(JSON.stringify(trueError))
   }
   return true;
 })

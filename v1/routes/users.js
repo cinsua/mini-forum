@@ -1,23 +1,21 @@
 const controller = require('../controllers/users');
-const passport      	= require('passport');
-
-const UnauthorizedError = require('../utils/customErrors').UnauthorizedError
+const passport = require('passport');
 
 var express = require('express')
 const userRouter = express.Router();
 
 userRouter.route('/')
-  .get(passport.authenticate('jwt', {session:false}),controller.getMe) //passport.authenticate('jwt', {session:false})
+  .get(passport.authenticate('bearer', { session: false, failWithError: true }), controller.getMe) //passport.authenticate('jwt', {session:false})
   .post(controller.createUser)
-  .delete(passport.authenticate('jwt', {session:false}),controller.deleteMe)
-  .put(passport.authenticate('jwt', {session:false}),controller.updateMe)
+  .delete(passport.authenticate('bearer', { session: false }), controller.deleteMe)
+  .put(passport.authenticate('bearer', { session: false }), controller.updateMe)
 
 userRouter.route('/login')
   .post(controller.login)
 
 module.exports = userRouter;
 
-
+/*
 //FOR YOUR INFORMATION -- ACTUALLY NOT USED
 async function middlePassport(req,res,next) {
   //WORKS!
@@ -51,4 +49,4 @@ async function middlePassport(req,res,next) {
   //BE CAREFUL authenticate dont seems to be async.. so escapes before get user
   //authenticate return a function!!
   //return await next()
-}
+}*/
