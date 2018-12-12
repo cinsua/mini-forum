@@ -19,12 +19,12 @@ module.exports = {
 
   login: async (req, res, next) => {
     let user = await Service.get(req.body);
-    if (!user) throw Error('name/password invalid');
+    if (!user) throw Error('Username/password invalid');
 
     access = await user.comparePassword(req.body.password);
-    if (!access) throw Error('name/password invalid');
+    if (!access) throw Error('Username/password invalid');
 
-    req.data = { token: user.getJWT(), user: user.toWeb(), message: `Welcome ${user.name}` }
+    req.data = { token: user.getJWT(), user: user.toWeb(), message: `Welcome ${user.username}` }
 
     return next()
   },

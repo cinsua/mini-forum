@@ -8,7 +8,7 @@ const UserError = require('../utils/customErrors').UserError
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  name: {
+  username: {
     type: 'String',
     required: true,
     trim: true,
@@ -26,9 +26,10 @@ const userSchema = new Schema({
 userSchema.pre('save', async function (next) {
   const user = this;
   //const saltRounds = 10;
-  if (!user.isModified || !user.isNew) { // don't rehash if it's an old user
-    return next();
+  if (!user.isModified('password')) { // don't rehash if it's same password
+    return next(); 
   }
+
   let pwHashed = await bcrypt.hash(user.password, CONFIG.JWT.SALTING_ROUNDS)
   user.password = pwHashed
   //validations with trow custom errors
@@ -67,9 +68,9 @@ userSchema.path('password').validate(function (v) {
   return true;
 })
 
-userSchema.path('name').validate(function (v) {
+userSchema.path('username').validate(function (v) {
   if (v.length < 4) {
-    let trueError = new UserError('Name require at least 4 characters', 'NAME_SHORT')
+    let trueError = new UserError('Username require at least 4 characters', 'USRNM_SHORT')
     throw new Error(JSON.stringify(trueError))
   }
   return true;

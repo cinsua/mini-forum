@@ -3,15 +3,15 @@ const User = require('../models/users');
 module.exports = {
 
   create: async (body) => {
-    const { name, password } = body
-    const user = new User({ name, password })
+    const { username, password } = body
+    const user = new User({ username, password })
     await user.save()
     return user
   },
 
   get: async (body) => {
-    const { name } = body
-    let user = await User.findOne({ name });
+    const { username } = body
+    let user = await User.findOne({ username });
     return user
   },
 

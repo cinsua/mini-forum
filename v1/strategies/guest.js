@@ -7,7 +7,7 @@ module.exports = function () {
     //here we should make sure this is not a fail attempt:
     // not token in header.. not username/pw in body to accept
 
-    user = { name: 'Guest' }
+    user = { username: 'Guest' }
     done(null, user)
   }
   ))

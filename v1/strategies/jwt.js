@@ -32,6 +32,9 @@ const verifyToken = async function (token, done) {
 
     //TODO check !user
     user = await User.findById(decoded.user_id);
+    if (!user) {
+      return done(new AuthError('User not found', 'USR_NOT_FOUND'))
+    }
 
     return done(null, user)
   })

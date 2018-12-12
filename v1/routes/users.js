@@ -4,14 +4,18 @@ const passport = require('passport');
 var express = require('express')
 const userRouter = express.Router();
 
+let authBearer = passport.authenticate('bearer', { session: false })
+
 userRouter.route('/')
-  .get(passport.authenticate('bearer', { session: false, failWithError: true }), controller.getMe) //passport.authenticate('jwt', {session:false})
+  .get(authBearer, controller.getMe) //passport.authenticate('jwt', {session:false})
   .post(controller.createUser)
-  .delete(passport.authenticate('bearer', { session: false }), controller.deleteMe)
-  .put(passport.authenticate('bearer', { session: false }), controller.updateMe)
+  .delete(authBearer, controller.deleteMe)
+  .put(authBearer, controller.updateMe)
 
 userRouter.route('/login')
   .post(controller.login)
+
+
 
 module.exports = userRouter;
 
