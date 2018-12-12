@@ -14,7 +14,6 @@ module.exports = {
     },
     deleteMe: async (req) =>{
         const {user} = req
-        //console.log(user)
         await user.remove()
         return
     },

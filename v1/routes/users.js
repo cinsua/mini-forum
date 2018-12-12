@@ -28,8 +28,6 @@ async function middlePassport(req,res,next) {
   //CAN BE ASYNC ONLY IF YOU MANUALLY PUT NEW ERROR ON NEXT()
   let authFunc = await passport.authenticate('jwt', async function(err, user, info) {
     //info gets an error if token is invalid
-    //console.log('in await cb')
-    //console.log(info.message)
     if (info){
       // no auth token / jwt expired / token invalid
       //throw new UnauthorizedError(info.message, 'AU01')
@@ -37,10 +35,10 @@ async function middlePassport(req,res,next) {
     }
     
     if (err) { 
-      console.log('MY ERROR FROM TOKEN')
+      // ERROR FROM TOKEN
       return next(new UnauthorizedError(err.message, 'AU02'))}
     if (!user) { 
-      console.log('MY ERROR FROM NOT USER')
+      // ERROR FROM NOT USER
       return next(new UnauthorizedError(err.message, 'AU03')) }
     
     req.user = user
@@ -50,8 +48,6 @@ async function middlePassport(req,res,next) {
   
   await authFunc(req, res, next)
 
-  //console.log('post await');
-  //await auth(req, res, next)
   //BE CAREFUL authenticate dont seems to be async.. so escapes before get user
   //authenticate return a function!!
   //return await next()

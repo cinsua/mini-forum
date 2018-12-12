@@ -6,9 +6,11 @@ module.exports = function(){
     passport.use(new GuestStrategy(function(req, done) {
         //var username = req.params.username;
         //var password = req.body.password;
-        console.log('asdasd')
+
+        //here we should make sure this is not a fail attempt:
+        // not token in header.. not username/pw in body to accept
+
         user = {name:'Guest'}
-        console.log(user)
         done(null, user)
         }
         ))
