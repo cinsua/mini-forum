@@ -69,6 +69,13 @@ module.exports = {
     if (oldRole === levelToPromote){
       throw new RoleError(`${userToPromote.username} already is a ${levelToPromote}`,'US_NPN')
     }
+    if (roles.levels[oldRole] > roles.levels[levelToPromote]){
+      throw new RoleError(`[${oldRole}] to [${levelToPromote}] is not a Promotion`,'US_NP')
+    }
+    // Only superadmin can create admins. admins can create moderators
+    if (roles.levels[levelToPromote] >= roles.levels [req.user.role]){
+      throw new RoleError(`You have not enought privileges to promote from [${oldRole}] to [${levelToPromote}]`,'US_NEP')
+    }
     userToPromote = await Service.update(userToPromote, {role: levelToPromote})
 
     req.data = { user: userToPromote.toWeb(), message: `Username ${userToPromote.username} promoted from [${oldRole}] to [${levelToPromote}]` }
@@ -76,11 +83,45 @@ module.exports = {
   },
 
   degradeUser:async (req, res, next) => {
+    const {idToDegrade, usernameToDegrade, levelToDegrade} = req.body
+
+    if (!idToDegrade && !usernameToDegrade){
+      throw new RoleError('You must provide idToDegrade or usernameToDegrade','IDUS_NF')
+    }else if(idToDegrade && usernameToDegrade){
+      throw new RoleError('You must provide ONLY ONE idToDegrade or usernameToDegrade','IDUS_BF')
+    }
+
+    if (!levelToDegrade){
+      throw new RoleError('You must provide a levelToDegrade','LP_NF')
+    }else if(!Object.keys(roles.levels).includes(levelToDegrade)){
+      throw new RoleError('You must provide a valid levelToDegrade','LP_INV')
+    }
+
+    let idOrUsername = idToDegrade || usernameToDegrade
+    userToDegrade = await Service.get(idOrUsername)
+    if (!userToDegrade){
+      throw new RoleError('User to degrade not found','USTD_NF')
+    }
+
+    let oldRole = userToDegrade.role
+    if (oldRole === levelToDegrade){
+      throw new RoleError(`${userToDegrade.username} already is a ${levelToDegrade}`,'US_NPN')
+    }
+    if (roles.levels[oldRole] < roles.levels[levelToDegrade]){
+      throw new RoleError(`[${oldRole}] to [${levelToDegrade}] is not a Degrade`,'US_ND')
+    }
+    // Only superadmin can degrade admins. admins can degrade moderators
+    if (roles.levels[levelToDegrade] >= roles.levels [req.user.role]){
+      throw new RoleError(`You have not enought privileges to degrade from [${oldRole}] to [${levelToDegrade}]`,'US_NEP')
+    }
+    userToDegrade = await Service.update(userToDegrade, {role: levelToDegrade})
+
+    req.data = { user: userToDegrade.toWeb(), message: `Username ${userToDegrade.username} degraded from [${oldRole}] to [${levelToDegrade}]` }
     return next()
   },
 
   iAmAdmin: async (req, res, next) => {
-    req.data = {message: `Yes ${req.user.username}, you are an admin`}
+    req.data = {message: `${req.user.username} you have acces to admin tools`}
     return next()
 
   }

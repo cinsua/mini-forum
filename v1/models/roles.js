@@ -3,7 +3,8 @@ module.exports = {
         guest: 0,
         user: 1,
         moderator: 2,
-        admin: 3
+        admin: 3,
+        superadmin: 10
     },
     default: 'user',
     guestLevel: 'guest',

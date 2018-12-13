@@ -42,12 +42,14 @@ module.exports = {
 }
 
 async function createAdmin(){
-  admin = await User.findOne({username: 'admin'})
-  if(!admin){
-    admin = new User
-    admin.username = 'admin'
-    admin.password = 'admin'
-    admin.role = 'admin'
-    admin.save()
+  //temporary patch to nasty MS Windows ctrl+c 
+  mongoose.connection.dropDatabase();
+  superadmin = await User.findOne({username: 'superadmin'})
+  if(!superadmin){
+    superadmin = new User
+    superadmin.username = 'superadmin'
+    superadmin.password = CONFIG.MONGO.SUPERADMIN_PASS
+    superadmin.role = 'superadmin'
+    superadmin.save()
   }
 }

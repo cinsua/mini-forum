@@ -31,7 +31,14 @@ module.exports = {
   },
 
   get: async (idOrUsername) => {
-    let user = await User.findOne( {$or: [{username: idOrUsername }, {id: idOrUsername }] });
+    var user = {}
+    try{
+      user = await User.findById(idOrUsername)
+    }catch(e){
+      //console.log(e)
+      user = await User.findOne({username: idOrUsername });
+    }
+    //let user = await User.findOne( {$or: [{username: idOrUsername }, {_id: idOrUsername }] });
     return user
   },
 
