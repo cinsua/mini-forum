@@ -2,6 +2,7 @@ const userRouter = require('./users');
 const express = require('express')
 var server = require('../../tools/serverTools')
 const success = require('../middlewares/response')
+const auth = require('../middlewares/requiredLevel')
 const CONFIG = require('../../config/config')
 
 const passport = require('passport');
@@ -15,7 +16,7 @@ const apiV1 = express.Router();
 
 
 apiV1.route('/')
-  .get(passport.authenticate(['bearer', 'guest'], { session: false }), (req, res, next) => {
+  .get(passport.authenticate(['bearer', 'guest'], { session: false }),auth.requiredRole('user'), (req, res, next) => {
 
     req.data = { message: 'Server running', user: user.username, version: CONFIG.VERSION, commit: CONFIG.COMMIT }
     next()

@@ -18,6 +18,13 @@ const userSchema = new Schema({
     type: 'String',
     required: true,
     trim: true
+  },
+  role: {
+    type: 'String',
+    required: true,
+    trim: true,
+    enum: ['guest', 'user','moderator','admin'],
+    default: 'user'
   }
 });
 

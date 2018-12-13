@@ -53,3 +53,11 @@ class AuthError extends _NormalError {
   }
 }
 module.exports.AuthError = AuthError
+
+class RoleError extends _NormalError {
+  constructor(message, code) {
+    super(message, code, 'RoleError');
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+module.exports.RoleError = RoleError

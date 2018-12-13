@@ -6,8 +6,7 @@ module.exports = function () {
   passport.use(new GuestStrategy(function (req, done) {
     //here we should make sure this is not a fail attempt:
     // not token in header.. not username/pw in body to accept
-
-    user = { username: 'Guest' }
+    user = { username: 'Guest', role: 'guest'}
     done(null, user)
   }
   ))
