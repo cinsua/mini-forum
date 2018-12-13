@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var server = require('../tools/serverTools')
+const User = require('../v1/models/user');
 
 const CONFIG = require('./config')
 
@@ -14,6 +15,7 @@ module.exports = {
     mongoose.connect(uriDB, options);
     mongoose.connection.on('connected', function () {
       console.log(`${server.tagCyan} Succefully connected to ${uriDB}`);
+      createAdmin()
     });
 
     mongoose.connection.on('error', function (err) {
@@ -35,5 +37,17 @@ module.exports = {
       process.exit(0);
     })
 
+  }
+
+}
+
+async function createAdmin(){
+  admin = await User.findOne({username: 'admin'})
+  if(!admin){
+    admin = new User
+    admin.username = 'admin'
+    admin.password = 'admin'
+    admin.role = 'admin'
+    admin.save()
   }
 }

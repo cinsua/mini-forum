@@ -1,4 +1,5 @@
-const userRouter = require('./users');
+const userRouter = require('./user');
+const adminRouter = require('./admin');
 const express = require('express')
 var server = require('../../tools/serverTools')
 const success = require('../middlewares/response')
@@ -16,7 +17,7 @@ const apiV1 = express.Router();
 
 
 apiV1.route('/')
-  .get(passport.authenticate(['bearer', 'guest'], { session: false }),auth.requiredRole('user'), (req, res, next) => {
+  .get(passport.authenticate(['bearer', 'guest'], { session: false }),auth.requiredRole('guest'), (req, res, next) => {
 
     req.data = { message: 'Server running', user: user.username, version: CONFIG.VERSION, commit: CONFIG.COMMIT }
     next()
@@ -25,7 +26,8 @@ apiV1.route('/')
 
 //---------------------------------------------------------------
 // routes form controllers
-apiV1.use('/users', userRouter);
+apiV1.use('/user', userRouter);
+apiV1.use('/admin', adminRouter)
 
 
 //---------------------------------------------------------------

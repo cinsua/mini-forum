@@ -1,12 +1,13 @@
 const passport = require('passport');
 const util = require('util');
 const Strategy = require('passport-strategy');
+const roles = require('../models/roles')
 
 module.exports = function () {
   passport.use(new GuestStrategy(function (req, done) {
     //here we should make sure this is not a fail attempt:
     // not token in header.. not username/pw in body to accept
-    user = { username: 'Guest', role: 'guest'}
+    user = { username: roles.guestName, role: roles.guestLevel}
     done(null, user)
   }
   ))

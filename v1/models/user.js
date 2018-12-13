@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const CONFIG = require('../../config/config')
 const UserError = require('../utils/customErrors').UserError
+const roles = require('./roles');
 
 // schema maps to a collection
 const Schema = mongoose.Schema;
@@ -23,8 +24,8 @@ const userSchema = new Schema({
     type: 'String',
     required: true,
     trim: true,
-    enum: ['guest', 'user','moderator','admin'],
-    default: 'user'
+    enum: Object.keys(roles.levels),
+    default: roles.default
   }
 });
 
@@ -43,7 +44,7 @@ userSchema.pre('save', async function (next) {
 
 userSchema.methods.comparePassword = async function (pw) {
   let err, pass;
-  if (!this.password) throw new Error('mono no tiene contra');
+  if (!this.password) throw new UserError('No Password was provided', 'PW_NF');
 
   pass = await bcrypt.compare(pw, this.password);
   //if(!pass) throw new Error('mono no da la contra');

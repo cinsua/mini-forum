@@ -1,4 +1,4 @@
-const User = require('../models/users');
+const User = require('../models/user');
 
 module.exports = {
 
@@ -9,7 +9,7 @@ module.exports = {
     return user
   },
 
-  get: async (body) => {
+  getMe: async (body) => {
     const { username } = body
     let user = await User.findOne({ username });
     return user
@@ -26,6 +26,17 @@ module.exports = {
     user = req.user;
     data = req.body;
     user.set(data);
+    user = await user.save();
+    return user
+  },
+
+  get: async (idOrUsername) => {
+    let user = await User.findOne( {$or: [{username: idOrUsername }, {id: idOrUsername }] });
+    return user
+  },
+
+  update:async (user, updObj) => {
+    user.set(updObj)
     user = await user.save();
     return user
   }

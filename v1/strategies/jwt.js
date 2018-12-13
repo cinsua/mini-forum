@@ -1,5 +1,5 @@
 const passport = require('passport');
-const User = require('../models/users');
+const User = require('../models/user');
 const CONFIG = require('../../config/config')
 const BearerStrategy = require('passport-http-bearer').Strategy
 const jwt = require('jsonwebtoken')

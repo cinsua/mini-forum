@@ -1,4 +1,4 @@
-const controller = require('../controllers/users');
+const controller = require('../controllers/user');
 const passport = require('passport');
 
 var express = require('express')
