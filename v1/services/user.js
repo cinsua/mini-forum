@@ -42,6 +42,10 @@ module.exports = {
     return user
   },
 
+  getAll: async () => {
+    return User.find({})
+  },
+
   update:async (user, updObj) => {
     user.set(updObj)
     user = await user.save();

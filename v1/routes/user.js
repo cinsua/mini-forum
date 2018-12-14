@@ -7,10 +7,13 @@ const userRouter = express.Router();
 let passportBearer = passport.authenticate('bearer', { session: false })
 
 userRouter.route('/')
-  .get(passportBearer, controller.getMe)
+  .get(controller.getAll)
   .post(controller.createUser)
+
+userRouter.route('/me')
+  .get(passportBearer, controller.getMe)
   .delete(passportBearer, controller.deleteMe)
-  .put(passportBearer, controller.updateMe)
+  .patch(passportBearer, controller.updateMe)
 
 userRouter.route('/login')
   .post(controller.login)

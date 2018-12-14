@@ -12,12 +12,12 @@ adminRouter.use(passportBearer, auth.requiredRole('admin'))
 adminRouter.route('/')
   .get(controller.iAmAdmin)
 
-//require body: idToPromote || usernameToPromote, levelToPromote 
-adminRouter.route('/promoteuser')
+//require body: id || username, newRole 
+adminRouter.route('/users.promote')
   .post(controller.promoteUser)
 
-  //require body: idToDegrade || usernameToDegrade, levelToDegrade 
-adminRouter.route('/degradeUser')
+// require body: id || username, newRole 
+adminRouter.route('/users.degrade')
   .post(controller.degradeUser)
 
 module.exports = adminRouter;

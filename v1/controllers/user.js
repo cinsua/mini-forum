@@ -1,5 +1,5 @@
 const Service = require('../services/user');
-const UserError = require('../utils/customErrors').UserError
+const AuthError = require('../utils/customErrors').AuthError
 const RoleError = require('../utils/customErrors').RoleError
 const roles = require('../models/roles')
 
@@ -18,12 +18,23 @@ module.exports = {
     return next()
   },
 
+  getAll:async(req, res, next) => {
+    // TODO
+    users = await Service.getAll()
+    usersToWeb = []
+    for (user of users){
+      usersToWeb. push(user.toWeb())
+    }
+    req.data = { users: usersToWeb, message: 'List of users' }
+    return next()
+  },
+
   login: async (req, res, next) => {
     let user = await Service.getMe(req.body);
-    if (!user) throw new UserError('Username/password invalid', 'USPW_INV');
+    if (!user) throw new AuthError('Username/password invalid', 'USPW_INV');
 
     access = await user.comparePassword(req.body.password);
-    if (!access) throw new UserError('Username/password invalid', 'USPW_INV');
+    if (!access) throw new AuthError('Username/password invalid', 'USPW_INV');
 
     req.data = { token: user.getJWT(), user: user.toWeb(), message: `Welcome ${user.username}` }
 
@@ -45,78 +56,53 @@ module.exports = {
 
   promoteUser: async (req, res, next) => {
 
-    const {idToPromote, usernameToPromote, levelToPromote} = req.body
+    const {id, username, newRole} = await checkBodyForChangeRole(req.body)
 
-    if (!idToPromote && !usernameToPromote){
-      throw new RoleError('You must provide idToPromote or usernameToPromote','IDUS_NF')
-    }else if(idToPromote && usernameToPromote){
-      throw new RoleError('You must provide ONLY ONE idToPromote or usernameToPromote','IDUS_BF')
-    }
-
-    if (!levelToPromote){
-      throw new RoleError('You must provide a levelToPromote','LP_NF')
-    }else if(!Object.keys(roles.levels).includes(levelToPromote)){
-      throw new RoleError('You must provide a valid levelToPromote','LP_INV')
-    }
-
-    let idOrUsername = idToPromote || usernameToPromote
-    userToPromote = await Service.get(idOrUsername)
+    userToPromote = await Service.get(id || username)
     if (!userToPromote){
       throw new RoleError('User to Promote not found','USTP_NF')
     }
 
     let oldRole = userToPromote.role
-    if (oldRole === levelToPromote){
-      throw new RoleError(`${userToPromote.username} already is a ${levelToPromote}`,'US_NPN')
+    if (oldRole === newRole){
+      throw new RoleError(`${userToPromote.username} already is a ${newRole}`,'US_NPN')
     }
-    if (roles.levels[oldRole] > roles.levels[levelToPromote]){
-      throw new RoleError(`[${oldRole}] to [${levelToPromote}] is not a Promotion`,'US_NP')
+    if (roles.levels[oldRole] > roles.levels[newRole]){
+      throw new RoleError(`[${oldRole}] to [${newRole}] is not a Promotion`,'US_NP')
     }
     // Only superadmin can create admins. admins can create moderators
-    if (roles.levels[levelToPromote] >= roles.levels [req.user.role]){
-      throw new RoleError(`You have not enought privileges to promote from [${oldRole}] to [${levelToPromote}]`,'US_NEP')
+    if (roles.levels[newRole] >= roles.levels [req.user.role]){
+      throw new RoleError(`You have not enought privileges to promote from [${oldRole}] to [${newRole}]`,'US_NEP')
     }
-    userToPromote = await Service.update(userToPromote, {role: levelToPromote})
+    userToPromote = await Service.update(userToPromote, {role: newRole})
 
-    req.data = { user: userToPromote.toWeb(), message: `Username ${userToPromote.username} promoted from [${oldRole}] to [${levelToPromote}]` }
+    req.data = { user: userToPromote.toWeb(), message: `Username ${userToPromote.username} promoted from [${oldRole}] to [${newRole}]` }
     return next()
   },
 
   degradeUser:async (req, res, next) => {
-    const {idToDegrade, usernameToDegrade, levelToDegrade} = req.body
+    
+    const {id, username, newRole} = await checkBodyForChangeRole(req.body)
 
-    if (!idToDegrade && !usernameToDegrade){
-      throw new RoleError('You must provide idToDegrade or usernameToDegrade','IDUS_NF')
-    }else if(idToDegrade && usernameToDegrade){
-      throw new RoleError('You must provide ONLY ONE idToDegrade or usernameToDegrade','IDUS_BF')
-    }
-
-    if (!levelToDegrade){
-      throw new RoleError('You must provide a levelToDegrade','LP_NF')
-    }else if(!Object.keys(roles.levels).includes(levelToDegrade)){
-      throw new RoleError('You must provide a valid levelToDegrade','LP_INV')
-    }
-
-    let idOrUsername = idToDegrade || usernameToDegrade
-    userToDegrade = await Service.get(idOrUsername)
+    userToDegrade = await Service.get(id || username)
     if (!userToDegrade){
       throw new RoleError('User to degrade not found','USTD_NF')
     }
 
     let oldRole = userToDegrade.role
-    if (oldRole === levelToDegrade){
-      throw new RoleError(`${userToDegrade.username} already is a ${levelToDegrade}`,'US_NPN')
+    if (oldRole === newRole){
+      throw new RoleError(`${userToDegrade.username} already is a ${newRole}`,'US_NPN')
     }
-    if (roles.levels[oldRole] < roles.levels[levelToDegrade]){
-      throw new RoleError(`[${oldRole}] to [${levelToDegrade}] is not a Degrade`,'US_ND')
+    if (roles.levels[oldRole] < roles.levels[newRole]){
+      throw new RoleError(`[${oldRole}] to [${newRole}] is not a Degrade`,'US_ND')
     }
     // Only superadmin can degrade admins. admins can degrade moderators
-    if (roles.levels[levelToDegrade] >= roles.levels [req.user.role]){
-      throw new RoleError(`You have not enought privileges to degrade from [${oldRole}] to [${levelToDegrade}]`,'US_NEP')
+    if (roles.levels[newRole] >= roles.levels [req.user.role]){
+      throw new RoleError(`You have not enought privileges to degrade from [${oldRole}] to [${newRole}]`,'US_NEP')
     }
-    userToDegrade = await Service.update(userToDegrade, {role: levelToDegrade})
+    userToDegrade = await Service.update(userToDegrade, {role: newRole})
 
-    req.data = { user: userToDegrade.toWeb(), message: `Username ${userToDegrade.username} degraded from [${oldRole}] to [${levelToDegrade}]` }
+    req.data = { user: userToDegrade.toWeb(), message: `Username ${userToDegrade.username} degraded from [${oldRole}] to [${newRole}]` }
     return next()
   },
 
@@ -126,4 +112,21 @@ module.exports = {
 
   }
   
+}
+
+async function checkBodyForChangeRole(body) {
+  const {id, username, newRole} = body
+
+  if (!id && !username){
+    throw new RoleError('You must provide id or username','IDUS_NF')
+  }else if(id && username){
+    throw new RoleError('You must provide ONLY ONE id or username','IDUS_BF')
+  }
+
+  if (!newRole){
+    throw new RoleError('You must provide a newRole','LP_NF')
+  }else if(!Object.keys(roles.levels).includes(newRole)){
+    throw new RoleError('You must provide a valid newRole','LP_INV')
+  }
+  return {id, username, newRole}
 }
