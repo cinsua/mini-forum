@@ -78,7 +78,8 @@ async function errorHandler(err, req, res, next) {
 
   } else {
     // if this error is a generic one, we generate the error obj. Remember: message is a property
-    errors.push({ name: err.name, message: err.message })
+    // we should intercept mongo errors (11000 for example), it gives dbname/model/field
+    errors.push({ name: err.name, message: err.message, code: err.code })//{ name: err.name, message: err.message }
   }
 
   let result = {
