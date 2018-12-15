@@ -20,7 +20,7 @@ module.exports = {
     await user.remove()
     return
   },
-  
+
   updateMe: async (req) => {
     let user, data
     user = req.user;
@@ -30,26 +30,29 @@ module.exports = {
     return user
   },
 
-  get: async (idOrUsername) => {
-    var user = {}
-    try{
-      user = await User.findById(idOrUsername)
-    }catch(e){
-      //console.log(e)
-      user = await User.findOne({username: idOrUsername });
-    }
-    //let user = await User.findOne( {$or: [{username: idOrUsername }, {_id: idOrUsername }] });
+  get: async (body) => {
+    const { id, username } = body
+
+    id ?
+      user = await User.findById(id) :
+      user = await User.findOne({ username })
+
     return user
   },
 
   getAll: async () => {
-    return User.find({}).populate('bans')
+    return User.find({})
   },
 
-  update:async (user, updObj) => {
+  update: async (user, updObj) => {
     user.set(updObj)
     user = await user.save();
     return user
+  },
+
+  addPenalty: async (user, penalty) => {
+    user.penalties.push(penalty)
+    user.save()
   }
 
 }

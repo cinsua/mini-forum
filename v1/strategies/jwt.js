@@ -34,6 +34,10 @@ const verifyToken = async function (token, done) {
       return done(new AuthError('User not found', 'USR_NOT_FOUND'))
     }
 
+    if (user.banned){
+      return done(new AuthError('User is banned', 'USR_BANNED'))
+    }
+
     return done(null, user)
   })
 }

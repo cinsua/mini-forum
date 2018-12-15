@@ -1,5 +1,9 @@
 
+const AdminError = require('../utils/customErrors').AdminError
+const RoleError = require('../utils/customErrors').RoleError
+const roles = require('../models/roles')
 
+// TODO checks id to be mongoose id
 
 module.exports = {
   checkBodyForChangeRole: async (body) => {
@@ -16,12 +20,12 @@ module.exports = {
     } else if (!Object.keys(roles.levels).includes(newRole)) {
       throw new RoleError('You must provide a valid newRole', 'LP_INV')
     }
-
+    // i dont need it, just in case
     return { id, username, newRole }
   },
 
-  checkBodyForBanUser: async (body) => {
-    const { id, username, reason, timeBanned, expireBan } = body
+  checkBodyForPenaltyUser: async (body) => {
+    const { id, username, reason, timePenalty, expirePenalty } = body
 
     if (!id && !username) {
       throw new AdminError('You must provide id or username', 'IDUS_NF')
@@ -29,17 +33,18 @@ module.exports = {
       throw new AdminError('You must provide ONLY ONE id or username', 'IDUS_BF')
     }
 
-    if (!timeBanned && !expireBan) {
-      throw new AdminError('You must provide timeBanned or expireBan', 'IDUS_NF')
-    } else if (timeBanned && expireBan) {
-      throw new AdminError('You must provide ONLY ONE timeBanned or expireBan', 'IDUS_BF')
+    if (!timePenalty && !expirePenalty) {
+      throw new AdminError('You must provide timePenalty or expirePenalty', 'IDUS_NF')
+    } else if (timePenalty && expirePenalty) {
+      throw new AdminError('You must provide ONLY ONE timePenalty or expirePenalty', 'IDUS_BF')
     }
 
     if (!reason) {
       throw new AdminError('You must provide a reason', 'LP_NF')
     }
-    
-    return { id, username, reason, timeBanned, expireBan }
+
+    // i dont need it, just in case
+    return { id, username, reason, timePenalty, expirePenalty }
   }
 
 }

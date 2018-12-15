@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const CONFIG = require('../../config/config')
 const UserError = require('../utils/customErrors').UserError
 const roles = require('./roles');
-const Ban = require('./bans');
+const Penalty = require('./penalties');
 
 const Schema = mongoose.Schema;
 
@@ -32,7 +32,7 @@ const userSchema = new Schema({
     type: Schema.Types.ObjectId, 
     ref: 'Ban' }]
   */
-  bans: [Ban.schema]
+  penalties: [Penalty.schema]
 },
   {
     timestamps: true,
@@ -41,15 +41,35 @@ const userSchema = new Schema({
     runSettersOnQuery: true
   });
 
-userSchema.virtual('isBanned').get(function () {
+userSchema.virtual('banned').get(function () {
 
-  if (this.bans.length === 0) return undefined
+  if (this.penalties.length === 0) return undefined
 
-  let datesBan = this.bans.map(ban => ban.expireDate)
+  // get an array of dates of bans
+  let datesBan = this.penalties
+    .map(ban => (ban.kind === 'ban') ? ban.expireDate : undefined)
+    .filter(date => date)
   let lastBan = Math.max.apply(null, datesBan);
 
   if (lastBan > Date.now()) return new Date(lastBan)// .toUTCString()
 
+  // can be omitted, keep for sanity
+  return undefined
+});
+
+userSchema.virtual('silenced').get(function () {
+
+  if (this.penalties.length === 0) return undefined
+
+  // get an array of dates of silences
+  let datesSilences = this.penalties
+    .map(silence => (silence.kind === 'silence') ? silence.expireDate : undefined)
+    .filter(date => date)
+  let lastSilence = Math.max.apply(null, datesSilences);
+
+  if (lastSilence > Date.now()) return new Date(lastSilence)// .toUTCString()
+
+  // can be omitted, keep for sanity
   return undefined
 });
 

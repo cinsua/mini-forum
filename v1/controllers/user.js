@@ -1,10 +1,5 @@
 const Service = require('../services/user');
 const AuthError = require('../utils/customErrors').AuthError
-const RoleError = require('../utils/customErrors').RoleError
-const AdminError = require('../utils/customErrors').AdminError
-const roles = require('../models/roles')
-const Ban = require('../models/bans');
-const User = require('../models/user');
 
 module.exports = {
 
@@ -12,7 +7,7 @@ module.exports = {
     user = await Service.create(req.body)
     req.status = 201
     req.data = { message: 'User Created', user: user.toWeb(), token: user.getJWT() }
-    
+
     return next()
   },
 
@@ -40,6 +35,10 @@ module.exports = {
 
     access = await user.comparePassword(req.body.password);
     if (!access) throw new AuthError('Username/password invalid', 'USPW_INV');
+
+    if (user.banned){
+      return next(new AuthError('User is banned', 'USR_BANNED'))
+    }
 
     req.data = { token: user.getJWT(), user: user.toWeb(), message: `Welcome ${user.username}` }
 

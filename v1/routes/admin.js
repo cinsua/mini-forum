@@ -1,4 +1,3 @@
-const userController = require('../controllers/user');
 const adminController = require('../controllers/admin');
 const passport = require('passport');
 const auth = require('../middlewares/requiredLevel')
@@ -21,8 +20,12 @@ adminRouter.route('/users.promote')
 adminRouter.route('/users.degrade')
   .post(adminController.degradeUser)
 
-// require body: id || username, reason, timeBanned || expireBan
+// require body: id || username, reason, timePenalty || expirePenalty
 adminRouter.route('/users.ban')
   .post(adminController.banUser)
+
+// require body: id || username, reason, timePenalty || expirePenalty
+adminRouter.route('/users.silence')
+  .post(adminController.silenceUser)
 
 module.exports = adminRouter;
