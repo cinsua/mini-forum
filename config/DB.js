@@ -52,4 +52,6 @@ async function createAdmin(){
     superadmin.role = 'superadmin'
     superadmin.save()
   }
+  user1 = new User({username:'user1', password: 'user1', role: 'user'})
+  user1.save()
 }

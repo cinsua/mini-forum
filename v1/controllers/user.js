@@ -1,7 +1,10 @@
 const Service = require('../services/user');
 const AuthError = require('../utils/customErrors').AuthError
 const RoleError = require('../utils/customErrors').RoleError
+const AdminError = require('../utils/customErrors').AdminError
 const roles = require('../models/roles')
+const Ban = require('../models/bans');
+const User = require('../models/user');
 
 module.exports = {
 
@@ -110,6 +113,23 @@ module.exports = {
     req.data = {message: `${req.user.username} you have acces to admin tools`}
     return next()
 
+  },
+
+  banUser: async (req, res, next) => {
+    const {id, username, reason, timeBanned, expireBan} = await checkBodyForBanUser(req.body)
+    let ban = new Ban({reason})
+    ban.author = req.user
+    if (timeBanned) ban.timeBanned = timeBanned
+    if (expireBan) ban.expireDate = expireBan
+    userToBan = await Service.get(id || username)
+
+    //await ban.save()
+    userToBan.bans.push(ban)
+    await userToBan.save()
+    //us = await User.findOne({username:'user1'})//.populate('bans')    
+    req.data = {message: `Banned Succesfully`, user:userToBan}
+    return next()
+
   }
   
 }
@@ -129,4 +149,25 @@ async function checkBodyForChangeRole(body) {
     throw new RoleError('You must provide a valid newRole','LP_INV')
   }
   return {id, username, newRole}
+}
+
+async function checkBodyForBanUser(body) {
+  const {id, username, reason, timeBanned, expireBan} = body
+
+  if (!id && !username){
+    throw new AdminError('You must provide id or username','IDUS_NF')
+  }else if(id && username){
+    throw new AdminError('You must provide ONLY ONE id or username','IDUS_BF')
+  }
+
+  if (!timeBanned && !expireBan){
+    throw new AdminError('You must provide timeBanned or expireBan','IDUS_NF')
+  }else if(timeBanned && expireBan){
+    throw new AdminError('You must provide ONLY ONE timeBanned or expireBan','IDUS_BF')
+  }
+
+  if (!reason){
+    throw new AdminError('You must provide a reason','LP_NF')
+  }
+  return {id, username, reason, timeBanned, expireBan}
 }

@@ -4,6 +4,9 @@ const jwt = require('jsonwebtoken');
 const CONFIG = require('../../config/config')
 const UserError = require('../utils/customErrors').UserError
 const roles = require('./roles');
+const Ban = require('./bans');
+
+
 
 // schema maps to a collection
 const Schema = mongoose.Schema;
@@ -26,7 +29,36 @@ const userSchema = new Schema({
     trim: true,
     enum: Object.keys(roles.levels),
     default: roles.default
-  }
+  },
+  /*
+  bans: [{ 
+    type: Schema.Types.ObjectId, 
+    ref: 'Ban' }]
+  */
+  bans: [Ban.schema]
+},
+{timestamps: true, 
+toObject: {getters: true, setters: true}, 
+toJSON: {getters: true, setters: true}, 
+runSettersOnQuery: true});
+
+userSchema.virtual('isBanned').get(function () {
+  if (this.bans.length === 0) return undefined
+  /*
+  let activeBans = this.bans.filter(ban => ban.active)
+  console.log(activeBans)
+  if (activeBans.length === 0) return false
+  //let date = Math.max.apply(null, activeBans.expireDate);
+  return true
+  */
+  //let activeBans = this.bans.filter(ban => ban.expireDate > Date.now())
+  //console.log(activeBans)
+  let datesBan = this.bans.map(ban => ban.expireDate)
+  let dateBan = Math.max.apply(null, datesBan);
+  console.log(dateBan)
+  if (dateBan > Date.now()) return new Date(dateBan)//.toUTCString()
+  return undefined
+
 });
 
 // encrypt password before save

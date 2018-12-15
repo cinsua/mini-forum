@@ -20,4 +20,8 @@ adminRouter.route('/users.promote')
 adminRouter.route('/users.degrade')
   .post(controller.degradeUser)
 
+// require body: id 
+adminRouter.route('/users.ban')
+  .post(controller.banUser)
+
 module.exports = adminRouter;

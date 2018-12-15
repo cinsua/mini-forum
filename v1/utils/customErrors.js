@@ -61,3 +61,11 @@ class RoleError extends _NormalError {
   }
 }
 module.exports.RoleError = RoleError
+
+class AdminError extends _NormalError {
+  constructor(message, code) {
+    super(message, code, 'AdminError');
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+module.exports.AdminError = AdminError

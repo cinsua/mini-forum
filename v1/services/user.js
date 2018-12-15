@@ -43,7 +43,7 @@ module.exports = {
   },
 
   getAll: async () => {
-    return User.find({})
+    return User.find({}).populate('bans')
   },
 
   update:async (user, updObj) => {
