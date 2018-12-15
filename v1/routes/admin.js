@@ -1,4 +1,5 @@
-const controller = require('../controllers/user');
+const userController = require('../controllers/user');
+const adminCcontroller = require('../controllers/admin');
 const passport = require('passport');
 const auth = require('../middlewares/requiredLevel')
 var express = require('express')
@@ -10,18 +11,18 @@ let passportBearer = passport.authenticate('bearer', { session: false })
 adminRouter.use(passportBearer, auth.requiredRole('admin'))
 
 adminRouter.route('/')
-  .get(controller.iAmAdmin)
+  .get(adminCcontroller.iAmAdmin)
 
 //require body: id || username, newRole 
 adminRouter.route('/users.promote')
-  .post(controller.promoteUser)
+  .post(adminCcontroller.promoteUser)
 
 // require body: id || username, newRole 
 adminRouter.route('/users.degrade')
-  .post(controller.degradeUser)
+  .post(adminCcontroller.degradeUser)
 
 // require body: id 
 adminRouter.route('/users.ban')
-  .post(controller.banUser)
+  .post(adminCcontroller.banUser)
 
 module.exports = adminRouter;
