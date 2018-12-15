@@ -31,6 +31,7 @@ module.exports = {
     userToPromote = await Service.update(userToPromote, { role: newRole })
 
     req.data = { user: userToPromote.toWeb(), message: `Username ${userToPromote.username} promoted from [${oldRole}] to [${newRole}]` }
+
     return next()
   },
 
@@ -57,11 +58,13 @@ module.exports = {
     userToDegrade = await Service.update(userToDegrade, { role: newRole })
 
     req.data = { user: userToDegrade.toWeb(), message: `Username ${userToDegrade.username} degraded from [${oldRole}] to [${newRole}]` }
+
     return next()
   },
 
   iAmAdmin: async (req, res, next) => {
     req.data = { message: `${req.user.username} you have acces to admin tools` }
+
     return next()
   },
 
@@ -77,6 +80,7 @@ module.exports = {
     await userToBan.save()
  
     req.data = { message: `Banned Succesfully`, user: userToBan }
+    
     return next()
   }
 

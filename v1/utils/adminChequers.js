@@ -16,6 +16,7 @@ module.exports = {
     } else if (!Object.keys(roles.levels).includes(newRole)) {
       throw new RoleError('You must provide a valid newRole', 'LP_INV')
     }
+
     return { id, username, newRole }
   },
 
@@ -37,6 +38,7 @@ module.exports = {
     if (!reason) {
       throw new AdminError('You must provide a reason', 'LP_NF')
     }
+    
     return { id, username, reason, timeBanned, expireBan }
   }
 

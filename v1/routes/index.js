@@ -36,7 +36,7 @@ apiV1.use('/admin', adminRouter)
 //Standar response middleware for every success scenario
 apiV1.use(response.sendSuccess);
 
-//Error Handlers
+//Standar response middleware for every Error scenario
 apiV1.use(response.sendError);
 
 

@@ -6,9 +6,6 @@ const UserError = require('../utils/customErrors').UserError
 const roles = require('./roles');
 const Ban = require('./bans');
 
-
-
-// schema maps to a collection
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -37,40 +34,35 @@ const userSchema = new Schema({
   */
   bans: [Ban.schema]
 },
-{timestamps: true, 
-toObject: {getters: true, setters: true}, 
-toJSON: {getters: true, setters: true}, 
-runSettersOnQuery: true});
+  {
+    timestamps: true,
+    toObject: { getters: true, setters: true },
+    toJSON: { getters: true, setters: true },
+    runSettersOnQuery: true
+  });
 
 userSchema.virtual('isBanned').get(function () {
-  if (this.bans.length === 0) return undefined
-  /*
-  let activeBans = this.bans.filter(ban => ban.active)
-  console.log(activeBans)
-  if (activeBans.length === 0) return false
-  //let date = Math.max.apply(null, activeBans.expireDate);
-  return true
-  */
-  //let activeBans = this.bans.filter(ban => ban.expireDate > Date.now())
-  //console.log(activeBans)
-  let datesBan = this.bans.map(ban => ban.expireDate)
-  let dateBan = Math.max.apply(null, datesBan);
-  console.log(dateBan)
-  if (dateBan > Date.now()) return new Date(dateBan)//.toUTCString()
-  return undefined
 
+  if (this.bans.length === 0) return undefined
+
+  let datesBan = this.bans.map(ban => ban.expireDate)
+  let lastBan = Math.max.apply(null, datesBan);
+
+  if (lastBan > Date.now()) return new Date(lastBan)// .toUTCString()
+
+  return undefined
 });
 
 // encrypt password before save
 userSchema.pre('save', async function (next) {
   const user = this;
   if (!user.isModified('password')) { // don't rehash if it's same password
-    return next(); 
+    return next();
   }
 
   let pwHashed = await bcrypt.hash(user.password, CONFIG.JWT.SALTING_ROUNDS)
   user.password = pwHashed
-  //validations with trow custom errors
+
   return next()
 });
 
@@ -79,25 +71,25 @@ userSchema.methods.comparePassword = async function (pw) {
   if (!this.password) throw new UserError('No Password was provided', 'PW_NF');
 
   pass = await bcrypt.compare(pw, this.password);
-  //if(!pass) throw new Error('mono no da la contra');
   return pass
 }
 
 userSchema.methods.getJWT = function () {
-  //let expiration_time = parseInt(CONFIG.jwt_expiration);
-  //see middleware/passport to change secret and expire
+  // TODO
+  // let expiration_time = parseInt(CONFIG.jwt_expiration);
   return "Bearer " + jwt.sign({ user_id: this._id }, CONFIG.JWT.SECRET, { expiresIn: 10000 });
 };
 
 userSchema.methods.toWeb = function () {
   let json = this.toJSON();
-  json.id = this._id;//this is for the front end
+  json.id = this._id;// this is for the front end
   delete json.password; // i dont wanna send hash pwd
   delete json._id; // already sent in id
   delete json.__v // front dont need it
   return json;
 };
 
+// Simple validations. TODO
 userSchema.path('password').validate(function (v) {
   if (v.length < 4) {
     let trueError = new UserError('Password require at least 4 characters', 'PW_SHORT')

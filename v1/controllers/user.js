@@ -12,23 +12,25 @@ module.exports = {
     user = await Service.create(req.body)
     req.status = 201
     req.data = { message: 'User Created', user: user.toWeb(), token: user.getJWT() }
+    
     return next()
   },
 
   getMe: async (req, res, next) => {
     let user = req.user
     req.data = { user: user.toWeb(), message: 'You are logged in' }
+
     return next()
   },
 
   getAll:async(req, res, next) => {
-    // TODO
     users = await Service.getAll()
     usersToWeb = []
     for (user of users){
       usersToWeb. push(user.toWeb())
     }
     req.data = { users: usersToWeb, message: 'List of users' }
+
     return next()
   },
 
@@ -54,6 +56,7 @@ module.exports = {
   updateMe: async (req, res, next) => {
     user = await Service.updateMe(req)
     req.data = { user, message: 'Saved' }
+
     return next()
   },
 
