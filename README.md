@@ -1,6 +1,6 @@
 # mini-forum
 
-mini-forum is an REST/GraphQL(not yet) Api with passport local strategy
+mini-forum is an REST(ish)/GraphQL(not yet) Api with passport local strategy
 Consist in one pool of threads. Each one can be private (only logged in can see the content) or public.
 Threads will support comments, notifications, likes, pin and edit/remove
 
@@ -39,6 +39,3 @@ HA! not yet, again
 // run battery of tests
 // benchmark some typical simple request per sec
 ```
-
-### Colaborations
-If you want to colaborate, criticize, cheer me up or just say how bad is my code, please go ahead! Im open to comments, every chunk of words can be used to learn.
