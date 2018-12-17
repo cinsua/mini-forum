@@ -13,7 +13,7 @@ module.exports = {
     await helper.checkBodyForChangeRole(req.body)
     newRole = req.body.newRole
 
-    userToPromote = await serviceUser.get(req.body)
+    userToPromote = await serviceUser.get(req)
     if (!userToPromote) throw new RoleError('User to Promote not found', 'USTP_NF')
 
     let oldRole = userToPromote.role
@@ -36,7 +36,7 @@ module.exports = {
     await helper.checkBodyForChangeRole(req.body)
     newRole = req.body.newRole
 
-    userToDegrade = await serviceUser.get(req.body)
+    userToDegrade = await serviceUser.get(req)
     if (!userToDegrade) throw new RoleError('User to degrade not found', 'USTD_NF')
 
     let oldRole = userToDegrade.role
@@ -66,7 +66,7 @@ module.exports = {
     await helper.checkBodyForPenaltyUser(req.body)
 
     ban = await servicePenalty.create(req, 'ban')
-    userToBan = await serviceUser.get(req.body)
+    userToBan = await serviceUser.get(req)
     if (!userToBan) throw new AdminError(`User to penalty not found`, 'USP_NF')
 
     await serviceUser.addPenalty(userToBan, ban)
@@ -80,7 +80,7 @@ module.exports = {
     await helper.checkBodyForPenaltyUser(req.body)
     
     silence = await servicePenalty.create(req, 'silence')
-    userToSilence = await serviceUser.get(req.body)
+    userToSilence = await serviceUser.get(req)
     if (!userToSilence) throw new AdminError(`User to penalty not found`, 'USP_NF')
 
     await serviceUser.addPenalty(userToSilence, silence)

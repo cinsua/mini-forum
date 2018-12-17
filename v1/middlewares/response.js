@@ -42,7 +42,7 @@ module.exports = {
   */
   sendError: async function (err, req, res, next) {
 
-    res.setHeader('Content-Type', 'application/json');
+    //res.setHeader('Content-Type', 'application/json');
     let errors = []
 
     // MONGOOSE VALIDATION ERRORS HANDLER

@@ -12,6 +12,7 @@ module.exports = {
   },
 
   getMe: async (req, res, next) => {
+    console.log('im on getme')
     let user = req.user
     req.data = { user: user.toWeb(), message: 'You are logged in' }
 
@@ -19,6 +20,7 @@ module.exports = {
   },
 
   getAll:async(req, res, next) => {
+    console.log('im on all')
     users = await Service.getAll()
     usersToWeb = []
     for (user of users){
@@ -55,6 +57,40 @@ module.exports = {
   updateMe: async (req, res, next) => {
     user = await Service.updateMe(req)
     req.data = { user, message: 'Saved' }
+
+    return next()
+  },
+
+  getById: async (req, res, next) => {
+    // if data is loaded, means that another match route already was fired. so skip this one
+    // in this case, if we call users/me, that route already charge the user, and this one dont have
+    // nothing to do
+    // maybe is better implement 'req.readyToSend'
+    if (req.data) return next()
+
+    /*
+    // this no longer needed. we check for data
+    if (req.params.id === 'me' || req.params.id === 'login') {
+      console.log('getbyid param: ',req.params.id)
+      return next()
+    }
+    */
+
+    if (req.params.id === req.user.id){
+
+      return res.redirect(req.baseUrl + '/me')
+    }
+    
+    user = await Service.get(req)
+
+    req.data = { user: user.toWeb() }
+
+    return next()
+  },
+
+  getPenalties: async (req, res, next) => {
+    //user = await Service.updateMe(req)
+    req.data = { user: user.penalties, message: 'penalties' }
 
     return next()
   },
