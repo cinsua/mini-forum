@@ -20,19 +20,20 @@ const userSchema = new Schema({
     required: true,
     trim: true
   },
+  /*
   role: {
     type: 'String',
     required: true,
     trim: true,
     enum: Object.keys(roles.levels),
     default: roles.default
-  },
+  },*/
   /*
   bans: [{ 
     type: Schema.Types.ObjectId, 
     ref: 'Ban' }]
   */
-  penalties: [Penalty.schema]
+  //penalties: [Penalty.schema]
 },
   {
     timestamps: true,
@@ -41,29 +42,40 @@ const userSchema = new Schema({
     runSettersOnQuery: true
   });
 
-userSchema.virtual('banned').get(function () {
+userSchema.virtual('penalties', {
+  ref: 'Penalty', // The model to use
+  localField:'_id', //'_id', // Find Penalties where `localField`
+  foreignField: 'user', //'user', // is equal to `foreignField`
+  justOne: false, // gives us an array
+});
 
+userSchema.virtual('banned').get(function () {
+  this.populate('penalties')//.execPopulate()
+  if (!this.penalties) return undefined
   if (this.penalties.length === 0) return undefined
 
+  console.log(this.penalties)
   // get an array of dates of bans
   let datesBan = this.penalties
-    .map(ban => (ban.kind === 'ban') ? ban.expireDate : undefined)
+    .map(ban => (ban.kind === 'ban') ? ban.expiresAt : undefined)
     .filter(date => date)
-  let lastBan = Math.max.apply(null, datesBan);
-
+  console.log(datesBan)
+  let lastBan = Math.max.apply(null, datesBan)
+  console.log(new Date(lastBan))
   if (lastBan > Date.now()) return new Date(lastBan)// .toUTCString()
 
   // can be omitted, keep for sanity
   return undefined
 });
 
-userSchema.virtual('silenced').get(function () {
-
+userSchema.virtual('silenced').get(async function () {
+  await this.populate('penalties').execPopulate()
+  if (!this.penalties) return undefined
   if (this.penalties.length === 0) return undefined
 
   // get an array of dates of silences
   let datesSilences = this.penalties
-    .map(silence => (silence.kind === 'silence') ? silence.expireDate : undefined)
+    .map(silence => (silence.kind === 'silence') ? silence.expiresAt : undefined)
     .filter(date => date)
   let lastSilence = Math.max.apply(null, datesSilences);
 
@@ -100,13 +112,20 @@ userSchema.methods.getJWT = function () {
   return "Bearer " + jwt.sign({ user_id: this._id }, CONFIG.JWT.SECRET, { expiresIn: 10000 });
 };
 
-userSchema.methods.toWeb = function (role = 'user') {
+userSchema.methods.toWeb = async function (role = 'admin') {
+  role = 'admin'
+  //penalties = await Penalty.find({'user': this._id}) //'user._id': this._id
+  //console.log(penalties)
+
+  //us = User.find({}).populate('penalties')
+
+  //this.populate('penalties')//.execPopulate()
   let json = this.toJSON();
   json.id = this._id;// this is for the front end
   delete json.password; // i dont wanna send hash pwd
   delete json._id; // already sent in id
   delete json.__v // front dont need it
-  if (role === 'user' || role === 'guest' ){
+  if (role === 'user' || role === 'guest') {
     delete json.penalties
     delete json.updatedAt
   }

@@ -26,23 +26,23 @@ userRouter.route('/login')
   // Carefoul, /:id and /me matchs for both
 userRouter.route('/:id') 
   .get(passportBearerAndGuest, controller.getById)
+
+userRouter.route('/:id/penalties/bans')
+  .post(passportBearer, controller.banUser)
 /*
-  add penalties services
-  we can split silences n ban or use descriptors
-  add roles services
-  CHANGE all to own collections (ref)
-  populate when required
+  add penalties services [incomplete]
+  we can split silences n ban or use descriptors [not necesary]
+  add roles services 
+  CHANGE all to own collections (ref) [ban/silence implemented]
+  populate when required [incomplete]
   add filters
-  add soft delete
+  add soft delete [incomplete]
   dont show soft deleted, except when required
-  implement better querys
+  implement better querys [incomplete]
   implement roles similar to penalties
 
   USER:
-    bans: [ref]
-    silences: [ref]
-    or penalties: [ref] with descriptors
-    roles: [ref]
+    penalties: [ref]
 
 // we can populate later on the query:
 var user = { name: 'Indiana Jones', weapon: 389 }

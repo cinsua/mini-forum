@@ -13,7 +13,7 @@ const penaltySchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
-  expireDate: {
+  expiresAt: {
     type: Date,
     required: true,
     default: function () { return Date.now() + 60 * 1000 }
@@ -23,6 +23,15 @@ const penaltySchema = new Schema({
     required: true,
     enum: ['ban','silence'],
     default: 'silence'
+  },
+  user:{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  deleted:{
+    type: Boolean,
+    required: true,
+    default: false
   }
 
 },

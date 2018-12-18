@@ -27,7 +27,7 @@ apiV1.route('/')
 //---------------------------------------------------------------
 // routes form controllers
 apiV1.use('/users', userRouter);
-apiV1.use('/admin', adminRouter)
+//apiV1.use('/admin', adminRouter)
 
 
 //---------------------------------------------------------------

@@ -56,10 +56,16 @@ module.exports = {
   },
 
   getAll: async (req) => {
-    users = await User.find({})
+    users = await User.find({}).populate('penalties')
     // care with iterators, can be problematic
     //users = await Promise.all( users.map( user => user.toWeb()))
     //users = users.map(user => user.toWeb(role))
+    //us = await User.find({}).populate('penalties')
+    //us.populate('penalties')
+    //Penalty.populate(us[1], {path: 'penalties', model:'Penalty'})
+    //console.log(us)
+    //console.log(us[1].penalties)
+    //console.log(JSON.stringify(us))
 
     return users
 

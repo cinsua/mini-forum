@@ -3,13 +3,13 @@ const helper = require('../utils/adminChequers')
 
 module.exports = {
 
-  create: async (req, kind) => {
+  create: async (req, user, kind) => {
     const { reason, timePenalty, expirePenalty } = req.body
-    let penalty = new Penalty({ reason, kind, author: req.user })
+    let penalty = new Penalty({ reason, kind, author: req.user, user })
     if (timePenalty) penalty.timePenalty = timePenalty
-    if (expirePenalty) penalty.expireDate = expirePenalty
+    if (expirePenalty) penalty.expiresAt = expirePenalty
 
-    // dont save here. every penalty is attached to an user array of penalties
+    penalty.save()
     return penalty
   },
 }
