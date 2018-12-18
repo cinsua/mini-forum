@@ -18,8 +18,8 @@ const apiV1 = express.Router();
 
 apiV1.route('/')
   .get(passport.authenticate(['bearer', 'guest'], { session: false }),auth.requiredRole('guest'), (req, res, next) => {
-
     req.data = { message: 'Server running', user: user.username, version: CONFIG.VERSION, commit: CONFIG.COMMIT }
+    req.readyToSend = true
     next()
 
   })

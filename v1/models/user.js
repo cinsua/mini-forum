@@ -100,12 +100,16 @@ userSchema.methods.getJWT = function () {
   return "Bearer " + jwt.sign({ user_id: this._id }, CONFIG.JWT.SECRET, { expiresIn: 10000 });
 };
 
-userSchema.methods.toWeb = function () {
+userSchema.methods.toWeb = function (role = 'user') {
   let json = this.toJSON();
   json.id = this._id;// this is for the front end
   delete json.password; // i dont wanna send hash pwd
   delete json._id; // already sent in id
   delete json.__v // front dont need it
+  if (role === 'user' || role === 'guest' ){
+    delete json.penalties
+    delete json.updatedAt
+  }
   return json;
 };
 

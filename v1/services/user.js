@@ -37,10 +37,10 @@ module.exports = {
     const { username } = req.body
     req.params.id ? id = req.params.id : { id } = req.body
 
-    if (id){
-      try{
+    if (id) {
+      try {
         idValid = new ObjectId(id)
-      }catch(e){
+      } catch (e) {
         idValid = undefined
       }
       if (id != idValid) {
@@ -55,11 +55,13 @@ module.exports = {
     return user
   },
 
-  getAll: async () => {
-    console.log('penalties')
-    asd = await User.find({}).select('penalties')
-    console.log(asd)
-    return User.find({})
+  getAll: async (req) => {
+    users = await User.find({})
+    // care with iterators, can be problematic
+    //users = await Promise.all( users.map( user => user.toWeb()))
+    //users = users.map(user => user.toWeb(role))
+
+    return users
 
   },
 
