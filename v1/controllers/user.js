@@ -7,7 +7,7 @@ module.exports = {
   createUser: async (req, res, next) => {
     user = await Service.create(req.body)
     req.status = 201
-    req.data = { message: 'User Created', user: await user.toWeb('admin'), token: user.getJWT() }
+    req.data = { message: 'User Created', user: await user.toWeb(req.permissions.role), token: user.getJWT() }
 
     return next()
   },
@@ -15,7 +15,7 @@ module.exports = {
   getMe: async (req, res, next) => {
     let user = req.user
     // if we get here, we are owners, so we want to know everything > role: admin
-    req.data = { user: await user.toWeb('admin'), message: 'You are logged in' }
+    req.data = { user: await user.toWeb(req.permissions.role), message: 'You are logged in' }
 
     return next()
   },
@@ -23,7 +23,7 @@ module.exports = {
   getAll: async (req, res, next) => {
     
     users = await Service.getAll(req)
-    users = await Promise.all( users.map( user => user.toWeb()))
+    users = await Promise.all( users.map( user => user.toWeb(req.permissions.role)))
 
     req.data = { users: users, message: 'List of users' }
 
@@ -41,7 +41,7 @@ module.exports = {
       return next(new AuthError('User is banned', 'USR_BANNED'))
     }
 
-    req.data = { token: user.getJWT(), user: await user.toWeb(), message: `Welcome ${user.username}` }
+    req.data = { token: user.getJWT(), user: await user.toWeb(req.permissions.role), message: `Welcome ${user.username}` }
 
     return next()
   },
@@ -82,7 +82,7 @@ module.exports = {
 
     user = await Service.get(req)
 
-    req.data = { user: await user.toWeb(req.user.role) }
+    req.data = { user: await user.toWeb(req.permissions.role) }
 
     return next()
   },

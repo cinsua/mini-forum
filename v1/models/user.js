@@ -5,6 +5,7 @@ const CONFIG = require('../../config/config')
 const UserError = require('../utils/customErrors').UserError
 const roles = require('./roles');
 const Penalty = require('./penalties');
+const mongoose_delete = require('mongoose-delete');
 
 const Schema = mongoose.Schema;
 
@@ -20,14 +21,8 @@ const userSchema = new Schema({
     required: true,
     trim: true
   },
-  roles: [String]
-  ,
-  /*
-  bans: [{ 
-    type: Schema.Types.ObjectId, 
-    ref: 'Ban' }]
-  */
-  //penalties: [Penalty.schema]
+  roles: [String],
+
 },
   {
     timestamps: true,
@@ -35,6 +30,9 @@ const userSchema = new Schema({
     toJSON: { getters: true, setters: true },
     runSettersOnQuery: true
   });
+
+
+userSchema.plugin(mongoose_delete, { deletedAt : true, deletedBy : true,overrideMethods: 'all' });
 
 userSchema.virtual('penalties', {
   ref: 'Penalty', // The model to use
@@ -53,14 +51,15 @@ userSchema.virtual('banned').get(function () {
     .map(ban => (ban.kind === 'ban') ? ban.expiresAt : undefined)
     .filter(date => date)
   let lastBan = Math.max.apply(null, datesBan)
+
   if (lastBan > Date.now()) return new Date(lastBan)// .toUTCString()
 
   // can be omitted, keep for sanity
   return undefined
 });
 
-userSchema.virtual('silenced').get(async function () {
-  await this.populate('penalties').execPopulate()
+userSchema.virtual('silenced').get(function () {
+  this.populate('penalties')
   if (!this.penalties) return undefined
   if (this.penalties.length === 0) return undefined
 
@@ -79,12 +78,11 @@ userSchema.virtual('silenced').get(async function () {
 // encrypt password before save
 userSchema.pre('save', async function (next) {
   const user = this;
-  if (!user.isModified('password')) { // don't rehash if it's same password
-    return next();
-  }
 
-  let pwHashed = await bcrypt.hash(user.password, CONFIG.JWT.SALTING_ROUNDS)
-  user.password = pwHashed
+  // don't rehash if it's same password
+  if (!user.isModified('password')) return next()
+
+  user.password = await bcrypt.hash(user.password, CONFIG.JWT.SALTING_ROUNDS)
 
   return next()
 });

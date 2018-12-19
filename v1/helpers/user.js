@@ -1,4 +1,3 @@
-
 const AdminError = require('../utils/customErrors').AdminError
 const RoleError = require('../utils/customErrors').RoleError
 const roles = require('../models/roles')

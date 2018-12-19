@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const User = require('./user');
+const mongoose_delete = require('mongoose-delete');
 
 const Schema = mongoose.Schema;
 
@@ -28,11 +29,6 @@ const penaltySchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
-  deleted:{
-    type: Boolean,
-    required: true,
-    default: false
-  }
 
 },
   {
@@ -41,6 +37,8 @@ const penaltySchema = new Schema({
     toJSON: { getters: true, setters: true },
     runSettersOnQuery: true
   });
+
+penaltySchema.plugin(mongoose_delete, { deletedAt : true, deletedBy : true,overrideMethods: 'all' });
 
 penaltySchema.virtual('timePenalty').set(function (v) {
   this.expireDate = Date.now() + v
