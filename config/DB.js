@@ -49,13 +49,13 @@ async function createAdmin(){
     superadmin = new User
     superadmin.username = 'superadmin'
     superadmin.password = CONFIG.MONGO.SUPERADMIN_PASS
-    superadmin.role = 'superadmin'
+    superadmin.roles = ['moderator','admin','superadmin']
     superadmin.save()
     console.log('Superadmin created')
   }
   user1 = await User.findOne({username: 'user1'})
   if (!user1){
-    user1 = new User({username:'user1', password: 'user1', role: 'user'})
+    user1 = new User({username:'user1', password: 'user1', roles: ['user']})
     user1.save()
     console.log('user1 created')
   }

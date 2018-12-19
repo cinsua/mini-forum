@@ -20,14 +20,8 @@ const userSchema = new Schema({
     required: true,
     trim: true
   },
-  /*
-  role: {
-    type: 'String',
-    required: true,
-    trim: true,
-    enum: Object.keys(roles.levels),
-    default: roles.default
-  },*/
+  roles: [String]
+  ,
   /*
   bans: [{ 
     type: Schema.Types.ObjectId, 
@@ -54,14 +48,11 @@ userSchema.virtual('banned').get(function () {
   if (!this.penalties) return undefined
   if (this.penalties.length === 0) return undefined
 
-  console.log(this.penalties)
   // get an array of dates of bans
   let datesBan = this.penalties
     .map(ban => (ban.kind === 'ban') ? ban.expiresAt : undefined)
     .filter(date => date)
-  console.log(datesBan)
   let lastBan = Math.max.apply(null, datesBan)
-  console.log(new Date(lastBan))
   if (lastBan > Date.now()) return new Date(lastBan)// .toUTCString()
 
   // can be omitted, keep for sanity

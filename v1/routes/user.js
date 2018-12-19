@@ -9,37 +9,42 @@ var express = require('express')
 const userRouter = express.Router();
 
 let passportBearer = passport.authenticate('bearer', { session: false })
-let passportBearerAndGuest = passport.authenticate(['bearer', 'guest'], { session: false })
+let passp = passport.authenticate(['bearer', 'guest'], { session: false })
+
+userRouter.use(passp)
+//userRouter.use(auth.role)
 
 userRouter.route('/')
-  .get(passportBearerAndGuest, controller.getAll)
-  .post(controller.createUser)
+  .get(auth.role, controller.getAll)
+  .post(auth.role, controller.createUser)
 
 userRouter.route('/me')
-  .get(passportBearer, controller.getMe)//, response.sendSuccess)
-  .delete(passportBearer, controller.deleteMe)
-  .patch(passportBearer, controller.updateMe)
+  .get(auth.role, controller.getMe)//, response.sendSuccess)
+  .delete(auth.role, controller.deleteMe)
+  .patch(auth.role, controller.updateMe)
 
 userRouter.route('/login')
-  .post(controller.login)
+  .post(auth.role, controller.login)
 
-  // Carefoul, /:id and /me matchs for both
-userRouter.route('/:id') 
-  .get(passportBearerAndGuest, controller.getById)
+// Carefoul, /:id and /me matchs for both
+userRouter.route('/:id')
+  .get(auth.role, controller.getById)
 
 userRouter.route('/:id/penalties/bans')
-  .post(passportBearer, controller.banUser)
+  .post(auth.role, controller.banUser)
+
+userRouter.route('/:id/penalties')
+  .get(auth.role, controller.getPenalties)
 /*
   add penalties services [incomplete]
-  we can split silences n ban or use descriptors [not necesary]
-  add roles services 
+  add roles services [not necesary, middleware requiredLevel implemented]
   CHANGE all to own collections (ref) [ban/silence implemented]
   populate when required [incomplete]
   add filters
   add soft delete [incomplete]
   dont show soft deleted, except when required
   implement better querys [incomplete]
-  implement roles similar to penalties
+  implement roles similar to penalties [implemented in models/roles]
 
   USER:
     penalties: [ref]
@@ -62,7 +67,6 @@ Weapon.populate(user, { path: 'weapon', model: 'Weapon' }, function (err, user) 
   :id/roles
     get, post, delete
 */
-userRouter.route('/:id/penalties') 
-  .get(passportBearer,auth.requiredRole('moderator'), controller.getPenalties)
+
 
 module.exports = userRouter;

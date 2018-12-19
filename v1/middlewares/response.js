@@ -20,11 +20,6 @@ module.exports = {
       data: req.data,
       success: true
     }
-    //console.log(req)
-    //console.log(req.app._router)
-    //console.log(req.route)
-    //console.log(req.baseUrl + req.route.path)
-    //console.log(req.url)
 
     if (!req.status) req.status = 200
     //let status = req.status || 200

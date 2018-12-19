@@ -4,19 +4,43 @@ const roles = require('../models/roles')
 
 module.exports = {
 
-  requiredRole: (role) => {
-    return function (req, res, next) {
+  role: async function (req, res, next) {
 
-      if (!Object.keys(roles.levels).includes(role)){
-        return next(new RoleError("Role don't exist", "RO_NE"))
-      }
+    // based on route and method we pick the best role, or die trying
+    usrRoles = req.user.roles
+    requiredRoles = roles.routes[req.baseUrl + req.route.path][req.method]
 
-      if (roles.levels[role] > roles.levels [req.user.role]){
-        return next(new AuthError(`Not enough privileges. Required Level [${role}]`,'AUTH_LEVEL'))
-      }
+    let availableRoles = requiredRoles.filter(role => usrRoles.includes(role))
 
-      return next()
-
+    // i have no fucking idea what kind of array need this check for empty
+    if (!Array.isArray(availableRoles) || !availableRoles.length) {
+      throw new AuthError('Not Enought privileges', 'AU_NEP')
     }
+
+    // we put values to available roles, taken from roles.levels
+    const rolesLevel = availableRoles
+      .reduce((obj, key) => ({ ...obj, [key]: roles.levels[key] }), {});
+
+    // best role based on values taken from rolesLevel
+    bestRole = Object.keys(rolesLevel).reduce((a, b) => rolesLevel[a] > rolesLevel[b] ? a : b)
+
+    // req.permissions will collect all benefits granted by the best role
+    req.permissions = {}
+    req.permissions.role = bestRole
+
+    // Based on method and route we set permission method
+    
+    // we skip if not option defined for method/route
+    if (!(req.method in roles)) return next()
+    if (!((req.baseUrl + req.route.path) in roles[req.method])) return next()
+
+    allOptions = roles[req.method][req.baseUrl + req.route.path]
+    bestRole in allOptions ?
+      opt = bestRole :
+      opt = 'default'
+    req.permissions.options = allOptions[opt]
+
+    return next()
+
   }
 }

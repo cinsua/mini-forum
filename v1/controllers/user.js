@@ -61,9 +61,7 @@ module.exports = {
   },
 
   getById: async (req, res, next) => {
-    // we should use this to map permissions
-    //console.log(req.baseUrl + req.route.path)
-    //console.log(req.url)
+
     // if data is loaded, means that another match route already was fired. so skip this one
     // in this case, if we call users/me, that route already charge the user, and this one dont have
     // nothing to do
@@ -100,10 +98,8 @@ module.exports = {
     user = await Service.get(req)
     if (!user) throw new Error('user not found')
     let ban = await ServicePenalty.create(req, user, 'ban')
-    console.log(ban)
     user.populate('penalties').populate('author')
-    console.log(user)
-
+    req.data = { ban }
     return next()
   }
 
