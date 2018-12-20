@@ -5,8 +5,10 @@ const CONFIG = require('../../config/config')
 const UserError = require('../utils/customErrors').UserError
 const roles = require('./roles');
 const Penalty = require('./penalties');
-const mongoose_delete = require('mongoose-delete');
 
+// plugins
+const mongoose_delete = require('mongoose-delete');
+var mongoosePaginate = require('mongoose-paginate');
 let mongooseHidden = require('mongoose-hidden')()
 
 const Schema = mongoose.Schema;
@@ -34,7 +36,8 @@ const userSchema = new Schema({
     runSettersOnQuery: true
   });
 
-//userSchema.plugin(mongooseHidden)//,{ virtuals: { penalties: 'hide' }})
+userSchema.plugin(mongooseHidden)//,{ virtuals: { penalties: 'hide' }})
+userSchema.plugin(mongoosePaginate);
 userSchema.plugin(mongoose_delete, { deletedAt : true, deletedBy : true,overrideMethods: 'all' });
 
 userSchema.virtual('penalties', {
@@ -45,7 +48,6 @@ userSchema.virtual('penalties', {
 });
 
 userSchema.virtual('banned').get(function () {
-  //this.populate('penalties')//.execPopulate()
   if (!this.penalties) return undefined
   if (this.penalties.length === 0) return undefined
 
@@ -62,7 +64,6 @@ userSchema.virtual('banned').get(function () {
 });
 
 userSchema.virtual('silenced').get(function () {
-  //this.populate('penalties')
   if (!this.penalties) return undefined
   if (this.penalties.length === 0) return undefined
 

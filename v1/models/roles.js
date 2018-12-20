@@ -39,8 +39,8 @@ module.exports = {
 
   GET: {
     "/api/v1/users/": {
-      'guest': ['username', 'createdAt', 'banned', 'silenced','penalties'],
-      'user': ['username', 'createdAt', 'banned', 'silenced', '_id'],
+      'guest': ['username', 'createdAt', 'banned', 'silenced'],
+      'user': ['username', 'createdAt', 'banned', 'silenced','penalties'],
       'default': ['all']
     },
     "/api/v1/users/me": {

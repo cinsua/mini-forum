@@ -12,6 +12,30 @@ module.exports = {
     return user
   },
 
+  getAll: async (req) => {
+    //TODO if query in url remove the rest
+    fieldsToSelect = req.permissions.options.join(' ')
+    query = getPaginateQueryUsers({}, req.permissions.options,req.query)
+
+    // TODO (remove all populates basically that not included)
+    usersAndMetaData = await query//find().populate('penalties')
+        // output
+    // "docs":[user]
+    // "total": 2,
+    // "limit": 12,
+    // "page": 1,
+    // "pages": 1
+    
+    //console.log(users.docs)
+    users = usersAndMetaData.docs
+    delete usersAndMetaData.docs
+    metaData = usersAndMetaData
+    users = cleanUsers(users, req.permissions.options)
+
+    return users
+
+  },
+
   getMe: async (body) => {
     const { username } = body
     let user = await User.findOne({ username });
@@ -58,17 +82,7 @@ module.exports = {
     return user
   },
 
-  getAll: async (req) => {
-    //TODO if query in url remove the rest
-    fieldsToSelect = req.permissions.options.join(' ')
-    query = prepareQueryUser({}, req.permissions.options)
-
-    // TODO removes penalties if not includes (remove all populates basically that not included)
-    users = await query//find().populate('penalties')
-
-    return users
-
-  },
+  
 
   update: async (user, updObj) => {
     user.set(updObj)
@@ -83,10 +97,40 @@ module.exports = {
 
 }
 
-function prepareQueryUser(user, options) {
-  query = User.find(User)
-  query.populate('penalties')
+async function getPaginateQueryUsers(user, options, queryUrl) {
+
   fieldsToSelect = options.join(' ')
-  query.select(fieldsToSelect)
+  if (fieldsToSelect == 'all') fieldsToSelect = undefined
+  let {page=1, limit=1} = queryUrl
+
+  var optionss = {
+    select: fieldsToSelect,
+    sort: { createdAt: -1 },
+    populate: 'penalties',
+    // can be truth?
+    leanWithId: false ,
+    page: Number(page), 
+    limit: Number(limit)
+  };
+
+  query = User.paginate(user,optionss)
+  //console.log(query)
+
   return query
+}
+
+function cleanUsers(users, options) {
+
+  // why i need this? check paginate, seems to no lean
+  users = users.map((us)=>(us.toObject()))
+
+  if (!options.includes('penalties')){
+    console.log(options)
+    //asd = users.map(({...tails}) => tails)
+    //console.log(asd)
+
+    users = users.map(({penalties, ...restOfUser }) => restOfUser)
+    //users[0]['penalties'] = 'asd'
+  }
+  return users
 }
