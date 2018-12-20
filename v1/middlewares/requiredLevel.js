@@ -5,6 +5,9 @@ const roles = require('../models/roles')
 module.exports = {
 
   role: async function (req, res, next) {
+    
+    // we add 'owner' to our roles in some cases
+    if (req.owner) req.user.roles.push('owner')
 
     // based on route and method we pick the best role, or die trying
     usrRoles = req.user.roles

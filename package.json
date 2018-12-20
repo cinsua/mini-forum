@@ -1,6 +1,6 @@
 {
-  "name": "netprinter",
-  "version": "0.0.1",
+  "name": "mini-forum",
+  "version": "0.0.3",
   "description": "NetPrinter for private use",
   "main": "app.js",
   "scripts": {
@@ -21,6 +21,7 @@
     "jsonwebtoken": "^8.4.0",
     "mongoose": "^5.3.14",
     "mongoose-delete": "^0.5.0",
+    "mongoose-hidden": "^1.6.0",
     "node-pre-gyp": "^0.12.0",
     "parse-error": "^0.2.0",
     "passport": "^0.4.0",

@@ -7,6 +7,8 @@ const roles = require('./roles');
 const Penalty = require('./penalties');
 const mongoose_delete = require('mongoose-delete');
 
+let mongooseHidden = require('mongoose-hidden')()
+
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -19,19 +21,20 @@ const userSchema = new Schema({
   password: {
     type: 'String',
     required: true,
-    trim: true
+    trim: true,
+    //hide: true
   },
   roles: [String],
 
 },
   {
     timestamps: true,
-    toObject: { getters: true, setters: true },
-    toJSON: { getters: true, setters: true },
+    toObject: { getters: true, setters: true, virtuals: true },
+    toJSON: { getters: true, setters: true, virtuals: true },
     runSettersOnQuery: true
   });
 
-
+//userSchema.plugin(mongooseHidden)//,{ virtuals: { penalties: 'hide' }})
 userSchema.plugin(mongoose_delete, { deletedAt : true, deletedBy : true,overrideMethods: 'all' });
 
 userSchema.virtual('penalties', {
@@ -42,7 +45,7 @@ userSchema.virtual('penalties', {
 });
 
 userSchema.virtual('banned').get(function () {
-  this.populate('penalties')//.execPopulate()
+  //this.populate('penalties')//.execPopulate()
   if (!this.penalties) return undefined
   if (this.penalties.length === 0) return undefined
 
@@ -59,7 +62,7 @@ userSchema.virtual('banned').get(function () {
 });
 
 userSchema.virtual('silenced').get(function () {
-  this.populate('penalties')
+  //this.populate('penalties')
   if (!this.penalties) return undefined
   if (this.penalties.length === 0) return undefined
 

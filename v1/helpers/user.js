@@ -5,6 +5,9 @@ const roles = require('../models/roles')
 // TODO checks id to be mongoose id
 
 module.exports = {
+  forCreateUser: (req) => {
+    return { username, password } = req.body
+  },
   checkBodyForChangeRole: async (body) => {
     const { id, username, newRole } = body
 

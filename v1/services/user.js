@@ -3,10 +3,11 @@ const Penalty = require('../models/penalties');
 var ObjectId = require('mongoose').Types.ObjectId
 
 module.exports = {
-
-  create: async (body) => {
-    const { username, password } = body
+  // TODO CHECK EMPTY ERRORS
+  create: async ({ username, password }) => {
+    //const { username, password } = body
     const user = new User({ username, password })
+    user.roles.push('user')
     await user.save()
     return user
   },
@@ -58,7 +59,13 @@ module.exports = {
   },
 
   getAll: async (req) => {
-    users = await User.find({}).populate('penalties')
+    //TODO if query in url remove the rest
+    fieldsToSelect = req.permissions.options.join(' ')
+    query = prepareQueryUser({}, req.permissions.options)
+
+    // TODO removes penalties if not includes (remove all populates basically that not included)
+    users = await query//find().populate('penalties')
+
     return users
 
   },
@@ -74,4 +81,12 @@ module.exports = {
     user.save()
   }
 
+}
+
+function prepareQueryUser(user, options) {
+  query = User.find(User)
+  query.populate('penalties')
+  fieldsToSelect = options.join(' ')
+  query.select(fieldsToSelect)
+  return query
 }

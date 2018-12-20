@@ -27,7 +27,9 @@ module.exports = {
       'POST': ['guest']
     },
     "/api/v1/users/:id": {
-      'GET': ['guest', 'user', 'moderator', 'admin', 'owner', 'superadmin']
+      'GET': ['guest', 'user', 'moderator', 'admin', 'owner', 'superadmin'],
+      'DELETE': ['admin', 'owner', 'superadmin'],
+      'PATCH': ['admin', 'owner', 'superadmin'],
     },
     "/api/v1/users/:id/penalties/bans": {
       'POST': ['admin', 'superadmin'],
@@ -37,9 +39,9 @@ module.exports = {
 
   GET: {
     "/api/v1/users/": {
-      'admin': ['timeAlive'],
-      'superadmin': ['timeAlive'],
-      'default':[]
+      'guest': ['username', 'createdAt', 'banned', 'silenced','penalties'],
+      'user': ['username', 'createdAt', 'banned', 'silenced', '_id'],
+      'default': ['all']
     },
     "/api/v1/users/me": {
       'owner': ['all']

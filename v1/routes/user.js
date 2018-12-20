@@ -1,6 +1,7 @@
 const controller = require('../controllers/user');
 const response = require('../middlewares/response')
 const auth = require('../middlewares/requiredLevel')
+const check = require('../middlewares/checkOwner')
 //auth.requiredRole('guest')
 
 const passport = require('passport');
@@ -18,23 +19,21 @@ userRouter.route('/')
   .get(auth.role, controller.getAll)
   .post(auth.role, controller.createUser)
 
-userRouter.route('/me')
-  .get(auth.role, controller.getMe)//, response.sendSuccess)
-  .delete(auth.role, controller.deleteMe)
-  .patch(auth.role, controller.updateMe)
+// Carefoul, /:id and /me and /login matchs in same method
+//works users/:id users/username users/me
+userRouter.route('/:id')
+  .get(check.Owner, auth.role, controller.getById)
+  .delete(check.Owner, auth.role, controller.deleteMe)
+  .patch(check.Owner,auth.role, controller.updateMe)
 
 userRouter.route('/login')
   .post(auth.role, controller.login)
-
-// Carefoul, /:id and /me matchs for both
-userRouter.route('/:id')
-  .get(auth.role, controller.getById)
 
 userRouter.route('/:id/penalties/bans')
   .post(auth.role, controller.banUser)
 
 userRouter.route('/:id/penalties')
-  .get(auth.role, controller.getPenalties)
+  .get(check.Owner, auth.role, controller.getPenalties)
 /*
   add penalties services [incomplete]
   add roles services [not necesary, middleware requiredLevel implemented]
