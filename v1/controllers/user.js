@@ -2,6 +2,7 @@ const Service = require('../services/user');
 const ServicePenalty = require('../services/penalty');
 const AuthError = require('../utils/customErrors').AuthError
 const GetParams = require('../helpers/user');
+const roles = require('../models/roles')
 
 module.exports = {
 
@@ -15,7 +16,7 @@ module.exports = {
   },
 
   getAll: async (req, res, next) => {
-    
+
     users = await Service.getAll(req)
     //users = await Promise.all( users.map( user => user.toWeb(req.permissions.role)))
 
@@ -58,26 +59,97 @@ module.exports = {
     // supported /:id /me /:username
     user = await Service.get(req)
 
-    req.data = { user: await user.toWeb(req.permissions.role) }
+    req.data = { user }
 
     return next()
   },
 
+  // TODO FILTER
   getPenalties: async (req, res, next) => {
+    user = await Service.get(req)
+    penalties = await ServicePenalty.getPenalties(user)
+    req.data = { penalties, message: 'penalties' }
+
+    return next()
+  },
+
+  // TODO FILTER
+  getBans: async (req, res, next) => {
     //user = await Service.updateMe(req)
-    req.data = { user: user.penalties, message: 'penalties' }
+    user = await Service.get(req)
+    bans = await ServicePenalty.getBans(user)
+    req.data = { bans, message: 'bans' }
 
     return next()
   },
 
   banUser: async (req, res, next) => {
-    user = await Service.get(req)
+    user = await Service.get(req, false)
     if (!user) throw new Error('user not found')
-    let ban = await ServicePenalty.create(req, user, 'ban')
-    user.populate('penalties').populate('author')
+    ban = await ServicePenalty.create(req, user, 'ban')
+    ban.populate('user').populate('author')
+    //user = await Service.get(req)
     req.data = { ban }
     return next()
+  },
+
+  // TODO FILTER
+  getSilences: async (req, res, next) => {
+    //user = await Service.updateMe(req)
+    user = await Service.get(req)
+    bans = await ServicePenalty.getSilences(user)
+    req.data = { bans, message: 'silences' }
+
+    return next()
+  },
+
+  silenceUser: async (req, res, next) => {
+    user = await Service.get(req, false)
+    if (!user) throw new Error('user not found')
+    silence = await ServicePenalty.create(req, user, 'silence')
+    silence.populate('user').populate('author')
+    //user = await Service.get(req)
+    req.data = { silence }
+    return next()
+  },
+
+  //TODO check > < for permissions
+  addRol: async (req, res, next) => {
+    user = await Service.get(req, false)
+    await GetParams.checkRol(user, req.body.rol)
+    await Service.addRol(user, req.body.rol)
+
+    req.data = { user, message: 'rol added' }
+    return next()
+  },
+  
+  //TODO check > < for permissions
+  removeRol:async (req, res, next) => {
+    user = await Service.get(req, false)
+    await GetParams.checkRol(user, req.body.rol, true)
+
+    await Service.removeRol(user, req.body.rol)
+    req.data = { user, message: 'rol removed' }
+
+    return next()
+  },
+
+  removeBan:async (req, res, next) => {
+    user = await Service.get(req, false)
+    ban = await ServicePenalty.getBan(user, req.params.banId)
+    await ServicePenalty.deletePenalty(ban)
+    req.data = { user, message: 'ban removed' }
+    return next()
+  },
+
+  removeSilence:async (req, res, next) => {
+    user = await Service.get(req, false)
+    silence = await ServicePenalty.getSilence(user, req.params.silenceId)
+    await ServicePenalty.deletePenalty(silence)
+    req.data = { user, message: 'silence removed' }
+    return next()
   }
+
 
 }
 

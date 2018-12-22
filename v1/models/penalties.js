@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const User = require('./user');
 const mongoose_delete = require('mongoose-delete');
+var mongoosePaginate = require('mongoose-paginate');
+let mongooseHidden = require('mongoose-hidden')()
 
 const Schema = mongoose.Schema;
 
@@ -22,10 +24,10 @@ const penaltySchema = new Schema({
   kind: {
     type: String,
     required: true,
-    enum: ['ban','silence'],
+    enum: ['ban', 'silence'],
     default: 'silence'
   },
-  user:{
+  user: {
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
@@ -33,12 +35,14 @@ const penaltySchema = new Schema({
 },
   {
     timestamps: true,
-    toObject: { getters: true, setters: true },
-    toJSON: { getters: true, setters: true },
+    toObject: { getters: true, setters: true, virtuals: true },
+    toJSON: { getters: true, setters: true, virtuals: true },
     runSettersOnQuery: true
   });
 
-penaltySchema.plugin(mongoose_delete, { deletedAt : true, deletedBy : true,overrideMethods: 'all' });
+penaltySchema.plugin(mongooseHidden)//, { hidden: { _id: false } })
+penaltySchema.plugin(mongoosePaginate);
+penaltySchema.plugin(mongoose_delete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' });
 
 penaltySchema.virtual('timePenalty').set(function (v) {
   this.expireDate = Date.now() + v

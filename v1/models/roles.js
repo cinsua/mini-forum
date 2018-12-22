@@ -31,16 +31,34 @@ module.exports = {
       'DELETE': ['admin', 'owner', 'superadmin'],
       'PATCH': ['admin', 'owner', 'superadmin'],
     },
+    "/api/v1/users/:id/penalties": {
+      'GET': ['owner', 'admin', 'superadmin']
+    },
     "/api/v1/users/:id/penalties/bans": {
       'POST': ['admin', 'superadmin'],
-      'GET': ['owner', 'admin', 'superadmin']
+      'GET': ['owner', 'moderator', 'admin', 'superadmin']
+    },
+    "/api/v1/users/:id/penalties/silences": {
+      'POST': ['moderator', 'admin', 'superadmin'],
+      'GET': ['owner', 'moderator', 'admin', 'superadmin']
+    },
+    "/api/v1/users/:id/roles": {
+      'GET': ['guest', 'user', 'moderator', 'admin', 'owner', 'superadmin'],
+      'DELETE': ['admin', 'superadmin'],
+      'POST': ['admin', 'superadmin'],
+    },
+    "/api/v1/users/:id/penalties/bans/:banId": {
+      'DELETE': ['admin', 'superadmin'],
+    },
+    "/api/v1/users/:id/penalties/silences/:silenceId": {
+      'DELETE': ['moderator', 'admin', 'superadmin'],
     },
   },
 
   GET: {
     "/api/v1/users/": {
       'guest': ['username', 'createdAt', 'banned', 'silenced'],
-      'user': ['username', 'createdAt', 'banned', 'silenced','penalties'],
+      'user': ['username', 'createdAt', 'banned', 'silenced', 'penalties'],
       'default': ['all']
     },
     "/api/v1/users/me": {
@@ -51,11 +69,41 @@ module.exports = {
       'user': ['username', 'createdAt', 'banned', 'silenced', '_id'],
       'default': ['all']
     },
+    "/api/v1/users/:id/penalties": {
+      'default': ['all']
+    },
     "/api/v1/users/:id/penalties/bans": {
-      'default': 'all'
-    }
-  },
-  POST:{
+      'default': ['all']
+    },
+    "/api/v1/users/:id/penalties/silences": {
+      'default': ['all']
+    },
+    "/api/v1/users/:id/roles": {
+      'default': ['all']
+    },
 
+  },
+  POST: {
+    "/api/v1/users/:id/penalties/bans": {
+      'default': ['all']
+    },
+    "/api/v1/users/:id/penalties/silences": {
+      'default': ['all']
+    },
+    "/api/v1/users/:id/roles": {
+      'default': ['all']
+    },
+
+  },
+  DELETE: {
+    "/api/v1/users/:id/roles": {
+      'default': ['all']
+    },
+    "/api/v1/users/:id/penalties/bans/:banId": {
+      'default': ['all']
+    },
+    "/api/v1/users/:id/penalties/silences/:silenceId": {
+      'default': ['all']
+    },
   }
 }

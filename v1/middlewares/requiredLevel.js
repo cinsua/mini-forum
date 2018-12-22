@@ -11,6 +11,8 @@ module.exports = {
 
     // based on route and method we pick the best role, or die trying
     usrRoles = req.user.roles
+    console.log(req.baseUrl + req.route.path);
+    
     requiredRoles = roles.routes[req.baseUrl + req.route.path][req.method]
 
     let availableRoles = requiredRoles.filter(role => usrRoles.includes(role))

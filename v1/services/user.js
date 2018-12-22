@@ -15,18 +15,17 @@ module.exports = {
   getAll: async (req) => {
     //TODO if query in url remove the rest
     fieldsToSelect = req.permissions.options.join(' ')
-    query = getPaginateQueryUsers({}, req.permissions.options,req.query)
+    query = getPaginateUsersQuery({}, req.permissions.options, req.query)
 
     // TODO (remove all populates basically that not included)
-    usersAndMetaData = await query//find().populate('penalties')
-        // output
+    usersAndMetaData = await query
+    // output
     // "docs":[user]
     // "total": 2,
     // "limit": 12,
     // "page": 1,
     // "pages": 1
-    
-    //console.log(users.docs)
+
     users = usersAndMetaData.docs
     delete usersAndMetaData.docs
     metaData = usersAndMetaData
@@ -35,7 +34,16 @@ module.exports = {
     return users
 
   },
+  get: async (req, clean = true) => {
 
+    query = getUserquery(req.params.id, req.permissions.options, req.query)
+    user = await query
+    if (clean) user = cleanUser(user, req.permissions.options)
+
+    return user
+  },
+
+  // only for login
   getMe: async (body) => {
     const { username } = body
     let user = await User.findOne({ username });
@@ -44,7 +52,7 @@ module.exports = {
 
   deleteMe: async (req) => {
     const { user } = req
-    await user.delete()
+    await user.remove()
     return
   },
 
@@ -56,33 +64,7 @@ module.exports = {
     user = await user.save();
     return user
   },
-
-  get: async (req) => {
-    //const id
-    const { username } = req.body
-    req.params.id ? id = req.params.id : { id } = req.body
-
-    user = await User.findOne({ username: id })
-    if (user) return user
-
-    if (id) {
-      try {
-        idValid = new ObjectId(id)
-      } catch (e) {
-        idValid = undefined
-      }
-
-      if (id != idValid) id = undefined
-    }
-
-    id ?
-      user = await User.findById(id) :
-      user = await User.findOne({ username })
-
-    return user
-  },
-
-  
+  //*******
 
   update: async (user, updObj) => {
     user.set(updObj)
@@ -93,44 +75,87 @@ module.exports = {
   addPenalty: async (user, penalty) => {
     user.penalties.push(penalty)
     user.save()
+  },
+
+  addRol: async (user, rol) => {
+    user.roles.push(rol)
+    user.save()
+  },
+
+  removeRol: async (user, rol) => {
+    user.roles = user.roles.filter(r => r !== rol)
+    //const filteredItems = items.filter(item => item !== valueToRemove)
+
+    user.save()
+  },
+  removePenalty: async (user, penalty) => {
+    user.roles = user.penalties.filter(p => p._id !== penalty.id)
+    //const filteredItems = items.filter(item => item !== valueToRemove)
+
+    user.save()
   }
 
 }
 
-async function getPaginateQueryUsers(user, options, queryUrl) {
+//TODO query url filter
+function getUserquery(userId, options, queryUrl) {
+  fieldsToSelect = options.join(' ')
+  if (fieldsToSelect == 'all') fieldsToSelect = undefined
+
+  // check if req.params.id is an id or username
+  try {
+    idValid = new ObjectId(userId)
+  } catch (e) {
+    idValid = undefined
+  }
+
+  (userId != idValid) ?
+    userQuery = User.findOne({ username: userId }) :
+    userQuery = User.findById(userId)
+
+  userQuery.select(fieldsToSelect).populate('penalties')
+
+  return userQuery
+
+}
+
+//TODO query url filter
+async function getPaginateUsersQuery(user, options, queryUrl) {
 
   fieldsToSelect = options.join(' ')
   if (fieldsToSelect == 'all') fieldsToSelect = undefined
-  let {page=1, limit=1} = queryUrl
+  let { page = 1, limit = 20 } = queryUrl
 
   var optionss = {
     select: fieldsToSelect,
     sort: { createdAt: -1 },
     populate: 'penalties',
     // can be truth?
-    leanWithId: false ,
-    page: Number(page), 
+    leanWithId: false,
+    page: Number(page),
     limit: Number(limit)
   };
 
-  query = User.paginate(user,optionss)
-  //console.log(query)
+  query = User.paginate(user, optionss)
 
   return query
+}
+
+function cleanUser(user, options) {
+
+  user = user.toObject()
+  if (!options.includes('penalties') && !options.includes('all')) delete user.penalties
+
+  return user
 }
 
 function cleanUsers(users, options) {
 
   // why i need this? check paginate, seems to no lean
-  users = users.map((us)=>(us.toObject()))
+  users = users.map((us) => (us.toObject()))
 
-  if (!options.includes('penalties')){
-    console.log(options)
-    //asd = users.map(({...tails}) => tails)
-    //console.log(asd)
-
-    users = users.map(({penalties, ...restOfUser }) => restOfUser)
-    //users[0]['penalties'] = 'asd'
+  if (!options.includes('penalties') && !options.includes('all')) {
+    users = users.map(({ penalties, ...restOfUser }) => restOfUser)
   }
   return users
 }

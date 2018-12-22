@@ -29,7 +29,7 @@ module.exports = {
     process.on('SIGINT', () => {
       if (CONFIG.MONGO.DROP_DATABASE_AT_EXIT) {
         console.log(`${server.tagMagenta} Deleting DB`);
-        mongoose.connection.dropDatabase();
+        //mongoose.connection.dropDatabase();
       }
       console.log(`${server.tagRed} Closing DB connection`);
       mongoose.connection.close()

@@ -24,16 +24,35 @@ userRouter.route('/')
 userRouter.route('/:id')
   .get(check.Owner, auth.role, controller.getById)
   .delete(check.Owner, auth.role, controller.deleteMe)
+  // patch should be redone
   .patch(check.Owner,auth.role, controller.updateMe)
 
 userRouter.route('/login')
   .post(auth.role, controller.login)
 
-userRouter.route('/:id/penalties/bans')
-  .post(auth.role, controller.banUser)
-
 userRouter.route('/:id/penalties')
   .get(check.Owner, auth.role, controller.getPenalties)
+
+userRouter.route('/:id/penalties/bans')
+  .post(auth.role, controller.banUser)
+  .get(check.Owner, auth.role, controller.getBans)
+
+userRouter.route('/:id/penalties/bans/:banId')
+  .delete(check.Owner, auth.role, controller.removeBan)
+
+userRouter.route('/:id/penalties/silences')
+  .post(auth.role, controller.silenceUser)
+  .get(check.Owner, auth.role, controller.getSilences)
+
+userRouter.route('/:id/penalties/silences/:silenceId')
+  .delete(check.Owner, auth.role, controller.removeSilence)
+
+// TODO add get route
+userRouter.route('/:id/roles')
+  //.get(check.Owner, auth.role, controller.getPenalties)
+  .post(check.Owner, auth.role, controller.addRol)
+  .delete(check.Owner, auth.role, controller.removeRol)
+
 /*
   add penalties services [incomplete]
   add roles services [not necesary, middleware requiredLevel implemented]

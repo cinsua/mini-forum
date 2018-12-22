@@ -8,45 +8,17 @@ module.exports = {
   forCreateUser: (req) => {
     return { username, password } = req.body
   },
-  checkBodyForChangeRole: async (body) => {
-    const { id, username, newRole } = body
-
-    if (!id && !username) {
-      throw new RoleError('You must provide id or username', 'IDUS_NF')
-    } else if (id && username) {
-      throw new RoleError('You must provide ONLY ONE id or username', 'IDUS_BF')
+  checkRol: async (user, rol, remove=false) => {
+    if (!rol) {
+      throw new RoleError('You must provide a rol', 'LP_NF')
+    } else if (!Object.keys(roles.levels).includes(rol)) {
+      throw new RoleError('You must provide a valid rol', 'LP_INV')
     }
-
-    if (!newRole) {
-      throw new RoleError('You must provide a newRole', 'LP_NF')
-    } else if (!Object.keys(roles.levels).includes(newRole)) {
-      throw new RoleError('You must provide a valid newRole', 'LP_INV')
+    if (user.roles.includes(rol) && !remove ) {
+      throw new RoleError(`${user.username} already have [${rol}] rol`, 'LP_INV')
     }
-    // i dont need it, just in case
-    return { id, username, newRole }
+    if (!user.roles.includes(rol) && remove ){
+      throw new RoleError(`${user.username} dont have [${rol}] rol`, 'LP_INV')
+    }
   },
-
-  checkBodyForPenaltyUser: async (body) => {
-    const { id, username, reason, timePenalty, expirePenalty } = body
-
-    if (!id && !username) {
-      throw new AdminError('You must provide id or username', 'IDUS_NF')
-    } else if (id && username) {
-      throw new AdminError('You must provide ONLY ONE id or username', 'IDUS_BF')
-    }
-
-    if (!timePenalty && !expirePenalty) {
-      throw new AdminError('You must provide timePenalty or expirePenalty', 'IDUS_NF')
-    } else if (timePenalty && expirePenalty) {
-      throw new AdminError('You must provide ONLY ONE timePenalty or expirePenalty', 'IDUS_BF')
-    }
-
-    if (!reason) {
-      throw new AdminError('You must provide a reason', 'LP_NF')
-    }
-
-    // i dont need it, just in case
-    return { id, username, reason, timePenalty, expirePenalty }
-  }
-
 }
