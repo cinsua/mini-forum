@@ -1,4 +1,4 @@
-//default response to all success scenarios
+//default response to all success scenarios AND all errors
 var server = require('../../tools/serverTools')
 const CONFIG = require('../../config/config')
 
@@ -15,7 +15,7 @@ module.exports = {
       res.send('Not Found in API/v1')
       return next();
     }
-    
+
     let response = {
       data: req.data,
       success: true
@@ -30,7 +30,7 @@ module.exports = {
     res.send(response);
     return next();
   },
-  
+
   /*
   Mongoose intercepts every error in validation, drop him, and keep the message.
   Therefore generate another ValidationError and boilerplate the message inside other
@@ -56,30 +56,31 @@ module.exports = {
         // slice the residual characters outside json. Ex: ': { json }, '
         let e = eWithJunk.slice(eWithJunk.indexOf('{'), eWithJunk.lastIndexOf('}'))
         e = JSON.parse(e)
+        console.log('e :', e);
         // for now, we will not keep stack for mongoose errors
         // e.stack = err.stack
         errors.push(e);
       }
-  
+
     } else if (err.getError) {
       // if it is a custom error has getError() defined
       errors.push(err.getError())
-  
+
     } else {
       // if this error is a generic one, we generate the error obj. Remember: message is a property
       // we should intercept mongo errors (11000 for example), it gives dbname/model/field
       errors.push({ name: err.name, message: err.message, code: err.code })
     }
-  
+
     let response = {
       success: false,
       data: req.data,
       errors
     }
-    
+
     // TODO use standar status codes
     if (!req.status) req.status = 500
-  
+
     if (process.env.NODE_ENV === 'development') {
       server.showReq(req, err)
     }
@@ -87,7 +88,7 @@ module.exports = {
     if (CONFIG.TRACE_ERRORS_CONSOLE) {
       server.showTrace(errors, err)
     }
-  
+
     res.status(req.status)
     res.send(response);
   }

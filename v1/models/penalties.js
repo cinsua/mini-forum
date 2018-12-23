@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const User = require('./user');
 const mongoose_delete = require('mongoose-delete');
 var mongoosePaginate = require('mongoose-paginate');
 let mongooseHidden = require('mongoose-hidden')()
@@ -45,7 +44,7 @@ penaltySchema.plugin(mongoosePaginate);
 penaltySchema.plugin(mongoose_delete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' });
 
 penaltySchema.virtual('timePenalty').set(function (v) {
-  this.expireDate = Date.now() + v
+  this.expiresAt = Date.now() + v
 });
 
 module.exports = mongoose.model('Penalty', penaltySchema);

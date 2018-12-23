@@ -3,8 +3,7 @@ const User = require('../models/user');
 const CONFIG = require('../../config/config')
 const BearerStrategy = require('passport-http-bearer').Strategy
 const jwt = require('jsonwebtoken')
-
-const AuthError = require('../utils/customErrors').AuthError
+const { newError, newErrorCustom } = require('../utils/customErrors')
 
 module.exports = function () {
   passport.use(new BearerStrategy(verifyToken))
@@ -26,16 +25,16 @@ const verifyToken = async function (token, done) {
       msg = err.message
       //Unexpected or unexpected, lead to some errors, we group them
       if (msg.includes('nexpected')) msg = 'unexpected token'
-      return done(new AuthError(msg, codes[msg]))
+      return done(newErrorCustom(codes[msg], 'LoginError', msg))
     }
 
     user = await User.findById(decoded.user_id);
     if (!user) {
-      return done(new AuthError('User not found', 'USR_NOT_FOUND'))
+      return done(newError('LOGIN_PW_UNAME_INVALID'))
     }
 
-    if (user.banned){
-      return done(new AuthError('User is banned', 'USR_BANNED'))
+    if (user.banned) {
+      return done(newError('LOGIN_USER_BANNED'))
     }
 
     return done(null, user)

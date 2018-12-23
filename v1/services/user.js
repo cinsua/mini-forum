@@ -1,9 +1,8 @@
 const User = require('../models/user');
-const Penalty = require('../models/penalties');
 var ObjectId = require('mongoose').Types.ObjectId
+const { newError } = require('../utils/customErrors')
 
 module.exports = {
-  // TODO CHECK EMPTY ERRORS
   create: async ({ username, password }) => {
     //const { username, password } = body
     const user = new User({ username, password })
@@ -38,21 +37,22 @@ module.exports = {
 
     query = getUserquery(req.params.id, req.permissions.options, req.query)
     user = await query
+    if (!user) throw newError('REQUEST_USER_NOT_FOUND');
     if (clean) user = cleanUser(user, req.permissions.options)
 
     return user
   },
 
   // only for login
-  getMe: async (body) => {
-    const { username } = body
-    let user = await User.findOne({ username });
+  getByUsername: async (username) => {
+    query = getUserquery(username, ['all'])
+    let user = await query
     return user
   },
 
   deleteMe: async (req) => {
     const { user } = req
-    await user.remove()
+    await user.delete()
     return
   },
 

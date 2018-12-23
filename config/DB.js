@@ -20,6 +20,7 @@ module.exports = {
 
     mongoose.connection.on('error', function (err) {
       console.log(`${server.tagRed} Cannot connect to DB, reason: ${err}`);
+      // TODO reconnect mechanism
     });
 
     mongoose.connection.on('disconnected', function () {
@@ -41,23 +42,23 @@ module.exports = {
 
 }
 
-async function createAdmin(){
+async function createAdmin() {
   //temporary patch to nasty MS Windows ctrl+c 
   //mongoose.connection.dropDatabase();
-  superadmin = await User.findOne({username: 'superadmin'})
-  if(!superadmin){
+  superadmin = await User.findOne({ username: 'superadmin' })
+  if (!superadmin) {
     superadmin = new User
     superadmin.username = 'superadmin'
     superadmin.password = CONFIG.MONGO.SUPERADMIN_PASS
-    superadmin.roles = ['moderator','admin','superadmin']
+    superadmin.roles = ['moderator', 'admin', 'superadmin']
     superadmin.save()
     console.log('Superadmin created')
   }
-  user1 = await User.findOne({username: 'user1'})
-  if (!user1){
-    user1 = new User({username:'user1', password: 'user1', roles: ['user']})
+  user1 = await User.findOne({ username: 'user1' })
+  if (!user1) {
+    user1 = new User({ username: 'user1', password: 'user1', roles: ['user'] })
     user1.save()
     console.log('user1 created')
   }
-  
+
 }

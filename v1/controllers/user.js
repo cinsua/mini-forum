@@ -1,8 +1,7 @@
 const Service = require('../services/user');
 const ServicePenalty = require('../services/penalty');
-const AuthError = require('../utils/customErrors').AuthError
 const GetParams = require('../helpers/user');
-const roles = require('../models/roles')
+const { newError } = require('../utils/customErrors')
 
 module.exports = {
 
@@ -10,7 +9,7 @@ module.exports = {
     //console.log(GetParams.forCreateUser(req))
     user = await Service.create(GetParams.forCreateUser(req))
     req.status = 201
-    req.data = { message: 'User Created', user: await user.toWeb(req.permissions.role), token: user.getJWT() }
+    req.data = { message: 'User Created', user: { username: user.username }, token: user.getJWT() }
 
     return next()
   },
@@ -18,7 +17,6 @@ module.exports = {
   getAll: async (req, res, next) => {
 
     users = await Service.getAll(req)
-    //users = await Promise.all( users.map( user => user.toWeb(req.permissions.role)))
 
     req.data = { users: users, message: 'List of users' }
 
@@ -26,28 +24,29 @@ module.exports = {
   },
 
   login: async (req, res, next) => {
-    let user = await Service.getMe(req.body);
-    if (!user) throw new AuthError('Username/password invalid', 'USPW_INV');
+    let { username, password } = GetParams.forLoginUser(req)
+    let user = await Service.getByUsername(username);
+    if (!user) throw newError('LOGIN_PW_UNAME_INVALID');
 
-    access = await user.comparePassword(req.body.password);
-    if (!access) throw new AuthError('Username/password invalid', 'USPW_INV');
+    access = await user.comparePassword(password);
+    if (!access) throw newError('LOGIN_PW_UNAME_INVALID');
 
-    if (user.banned) {
-      return next(new AuthError('User is banned', 'USR_BANNED'))
-    }
+    if (user.banned) throw newError('LOGIN_USER_BANNED');
 
-    req.data = { token: user.getJWT(), user: await user.toWeb(req.permissions.role), message: `Welcome ${user.username}` }
+    req.data = { token: user.getJWT(), message: `Welcome ${user.username}` }
 
     return next()
   },
 
+  // refactor this
   deleteMe: async (req, res, next) => {
     let user = await Service.deleteMe(req);
-    req.data = { user, message: 'User logged in deleted' }
+    req.data = { message: 'User logged in deleted' }
 
     return next()
   },
 
+  // refactor this
   updateMe: async (req, res, next) => {
     user = await Service.updateMe(req)
     req.data = { user, message: 'Saved' }
@@ -85,7 +84,6 @@ module.exports = {
 
   banUser: async (req, res, next) => {
     user = await Service.get(req, false)
-    if (!user) throw new Error('user not found')
     ban = await ServicePenalty.create(req, user, 'ban')
     ban.populate('user').populate('author')
     //user = await Service.get(req)
@@ -105,7 +103,6 @@ module.exports = {
 
   silenceUser: async (req, res, next) => {
     user = await Service.get(req, false)
-    if (!user) throw new Error('user not found')
     silence = await ServicePenalty.create(req, user, 'silence')
     silence.populate('user').populate('author')
     //user = await Service.get(req)
@@ -114,27 +111,27 @@ module.exports = {
   },
 
   //TODO check > < for permissions
-  addRol: async (req, res, next) => {
+  addRole: async (req, res, next) => {
     user = await Service.get(req, false)
-    await GetParams.checkRol(user, req.body.rol)
-    await Service.addRol(user, req.body.rol)
+    await GetParams.checkRole(user, req.body.role, req)
+    await Service.addRol(user, req.body.role)
 
-    req.data = { user, message: 'rol added' }
+    req.data = { user, message: 'role added' }
     return next()
   },
-  
+
   //TODO check > < for permissions
-  removeRol:async (req, res, next) => {
+  removeRole: async (req, res, next) => {
     user = await Service.get(req, false)
-    await GetParams.checkRol(user, req.body.rol, true)
+    await GetParams.checkRole(user, req.body.role, req, true)
 
-    await Service.removeRol(user, req.body.rol)
-    req.data = { user, message: 'rol removed' }
+    await Service.removeRol(user, req.body.role)
+    req.data = { user, message: 'role removed' }
 
     return next()
   },
 
-  removeBan:async (req, res, next) => {
+  removeBan: async (req, res, next) => {
     user = await Service.get(req, false)
     ban = await ServicePenalty.getBan(user, req.params.banId)
     await ServicePenalty.deletePenalty(ban)
@@ -142,7 +139,7 @@ module.exports = {
     return next()
   },
 
-  removeSilence:async (req, res, next) => {
+  removeSilence: async (req, res, next) => {
     user = await Service.get(req, false)
     silence = await ServicePenalty.getSilence(user, req.params.silenceId)
     await ServicePenalty.deletePenalty(silence)

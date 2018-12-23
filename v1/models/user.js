@@ -2,9 +2,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const CONFIG = require('../../config/config')
-const UserError = require('../utils/customErrors').UserError
-const roles = require('./roles');
-const Penalty = require('./penalties');
+
+const { newMongooseError } = require('../utils/customErrors')
 
 // plugins
 const mongoose_delete = require('mongoose-delete');
@@ -38,11 +37,11 @@ const userSchema = new Schema({
 
 userSchema.plugin(mongooseHidden)//,{ virtuals: { penalties: 'hide' }})
 userSchema.plugin(mongoosePaginate);
-userSchema.plugin(mongoose_delete, { deletedAt : true, deletedBy : true,overrideMethods: 'all' });
+userSchema.plugin(mongoose_delete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' });
 
 userSchema.virtual('penalties', {
   ref: 'Penalty', // The model to use
-  localField:'_id', //'_id', // Find Penalties where `localField`
+  localField: '_id', //'_id', // Find Penalties where `localField`
   foreignField: 'user', //'user', // is equal to `foreignField`
   justOne: false, // gives us an array
 });
@@ -93,7 +92,8 @@ userSchema.pre('save', async function (next) {
 
 userSchema.methods.comparePassword = async function (pw) {
   let err, pass;
-  if (!this.password) throw new UserError('No Password was provided', 'PW_NF');
+  //if (!pw) throw newMongooseError('USER_CREATION_PW_SHORT')
+  //new UserError('No Password was provided', 'PW_NF');
 
   pass = await bcrypt.compare(pw, this.password);
   return pass
@@ -128,16 +128,14 @@ userSchema.methods.toWeb = async function (role = 'admin') {
 // Simple validations. TODO
 userSchema.path('password').validate(function (v) {
   if (v.length < 4) {
-    let trueError = new UserError('Password require at least 4 characters', 'PW_SHORT')
-    throw new Error(JSON.stringify(trueError))
+    throw newMongooseError('USER_CREATION_PW_SHORT')
   }
   return true;
 })
 
 userSchema.path('username').validate(function (v) {
   if (v.length < 4) {
-    let trueError = new UserError('Username require at least 4 characters', 'USRNM_SHORT')
-    throw new Error(JSON.stringify(trueError))
+    throw newMongooseError('USER_CREATION_UNAME_SHORT')
   }
   return true;
 })

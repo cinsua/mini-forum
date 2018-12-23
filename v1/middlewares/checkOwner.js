@@ -1,3 +1,5 @@
+const { newError } = require('../utils/customErrors')
+
 module.exports = {
   Owner: async function (req, res, next) {
 
@@ -15,7 +17,7 @@ module.exports = {
         req.params.id = req.user.id
         req.owner = true
       } else {
-        throw new Error('You must be logged in to access')
+        throw newError('LOGIN_REQUIRED')
       }
 
     }
