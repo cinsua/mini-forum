@@ -32,6 +32,7 @@ userRouter.route('/:id/penalties/bans')
   .post(auth.role, controller.banUser)
   .get(check.Owner, auth.role, controller.getBans)
 
+  // TODO get
 userRouter.route('/:id/penalties/bans/:banId')
   .delete(check.Owner, auth.role, controller.removeBan)
 
@@ -39,6 +40,7 @@ userRouter.route('/:id/penalties/silences')
   .post(auth.role, controller.silenceUser)
   .get(check.Owner, auth.role, controller.getSilences)
 
+  // TODO get
 userRouter.route('/:id/penalties/silences/:silenceId')
   .delete(check.Owner, auth.role, controller.removeSilence)
 

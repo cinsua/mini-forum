@@ -2,6 +2,7 @@ const Service = require('../services/user');
 const ServicePenalty = require('../services/penalty');
 const GetParams = require('../helpers/user');
 const { newError } = require('../utils/customErrors')
+const hateoas = require('../services/hateoas')
 
 module.exports = {
 
@@ -9,16 +10,15 @@ module.exports = {
     //console.log(GetParams.forCreateUser(req))
     user = await Service.create(GetParams.forCreateUser(req))
     req.status = 201
-    req.data = { message: 'User Created', user: { username: user.username }, token: user.getJWT() }
-
+    req.data = await hateoas.createUser(user)
     return next()
   },
 
   getAll: async (req, res, next) => {
 
-    users = await Service.getAll(req)
+    data = await Service.getAll(req)
 
-    req.data = { users: users, message: 'List of users' }
+    req.data = data//{ users: users, message: 'List of users' }
 
     return next()
   },
@@ -33,7 +33,10 @@ module.exports = {
 
     if (user.banned) throw newError('LOGIN_USER_BANNED');
 
-    req.data = { token: user.getJWT(), message: `Welcome ${user.username}` }
+    req.data = { 
+      token: user.getJWT(), 
+      message: `Welcome ${user.username}`,
+      links: {self: '/api/v1/users/me'} }
 
     return next()
   },

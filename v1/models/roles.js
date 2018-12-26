@@ -32,7 +32,7 @@ module.exports = {
       'PATCH': ['admin', 'owner', 'superadmin'],
     },
     "/api/v1/users/:id/penalties": {
-      'GET': ['owner', 'admin', 'superadmin']
+      'GET': ['owner','moderator', 'admin', 'superadmin']
     },
     "/api/v1/users/:id/penalties/bans": {
       'POST': ['admin', 'superadmin'],
@@ -81,6 +81,22 @@ module.exports = {
     "/api/v1/users/:id/roles": {
       'default': ['all']
     },
+    User:{
+      guest: ['username', 'createdAt', 'banned', 'silenced'],
+      user: ['username', 'createdAt', 'banned', 'silenced'],
+      moderator: ['username', 'createdAt', 'updatedAt', 'banned', 'silenced', 'penalties'],
+      owner:['username', 'createdAt', 'updatedAt', 'banned', 'silenced', 'penalties'],
+      admin: ['all'],
+      superadmin: ['all']
+    },
+    Penalty:{
+      guest: ['none'],
+      user: ['none'],
+      moderator: ['reason','author', 'user', 'expiresAt', 'kind', 'createdAt'],
+      owner:['reason', 'user', 'expiresAt', 'kind', 'createdAt'],
+      admin: ['all'],
+      superadmin: ['all']
+    }
 
   },
   POST: {

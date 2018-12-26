@@ -1,6 +1,7 @@
 const User = require('../models/user');
 var ObjectId = require('mongoose').Types.ObjectId
 const { newError } = require('../utils/customErrors')
+const hateoas = require('./hateoas')
 
 module.exports = {
   create: async ({ username, password }) => {
@@ -29,8 +30,10 @@ module.exports = {
     delete usersAndMetaData.docs
     metaData = usersAndMetaData
     users = cleanUsers(users, req.permissions.options)
+    
+    data = hateoas.listOfUsers(req, users, metaData)
 
-    return users
+    return data
 
   },
   get: async (req, clean = true) => {
@@ -38,7 +41,10 @@ module.exports = {
     query = getUserquery(req.params.id, req.permissions.options, req.query)
     user = await query
     if (!user) throw newError('REQUEST_USER_NOT_FOUND');
-    if (clean) user = cleanUser(user, req.permissions.options)
+    if (clean){
+      user = cleanUser(user, req.permissions.options)
+      user = hateoas.singleUser(req, user)
+    }
 
     return user
   },
