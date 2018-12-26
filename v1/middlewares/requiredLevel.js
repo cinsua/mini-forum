@@ -37,11 +37,17 @@ module.exports = {
     if (!(req.method in roles)) return next()
     if (!((req.baseUrl + req.route.path) in roles[req.method])) return next()
 
+    // todo next to deprecate
     allOptions = roles[req.method][req.baseUrl + req.route.path]
     bestRole in allOptions ?
       opt = bestRole :
       opt = 'default'
     req.permissions.options = allOptions[opt]
+
+    req.permissions.readFields = {}
+
+    req.permissions.readFields.user = roles.READ.user[bestRole]
+    req.permissions.readFields.penalty = roles.READ.penalty[bestRole]
 
     return next()
 

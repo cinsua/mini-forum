@@ -15,7 +15,7 @@ module.exports = {
   getAll: async (req) => {
     //TODO if query in url remove the rest
     fieldsToSelect = req.permissions.options.join(' ')
-    query = getPaginateUsersQuery({}, req.permissions.options, req.query)
+    query = getPaginateUsersQuery({}, req.permissions.readFields, req.query)
 
     // TODO (remove all populates basically that not included)
     usersAndMetaData = await query
@@ -30,7 +30,7 @@ module.exports = {
     delete usersAndMetaData.docs
     metaData = usersAndMetaData
     users = cleanUsers(users, req.permissions.options)
-    
+
     data = hateoas.listOfUsers(req, users, metaData)
 
     return data
@@ -41,7 +41,7 @@ module.exports = {
     query = getUserquery(req.params.id, req.permissions.options, req.query)
     user = await query
     if (!user) throw newError('REQUEST_USER_NOT_FOUND');
-    if (clean){
+    if (clean) {
       user = cleanUser(user, req.permissions.options)
       user = hateoas.singleUser(req, user)
     }
@@ -126,25 +126,33 @@ function getUserquery(userId, options, queryUrl) {
 }
 
 //TODO query url filter
-async function getPaginateUsersQuery(user, options, queryUrl) {
+async function getPaginateUsersQuery(user, readFields, queryUrl) {
+  console.log('readFields.user :', readFields.user);
+  userFields = readFields.user.join(' ')
 
-  fieldsToSelect = options.join(' ')
-  if (fieldsToSelect == 'all') fieldsToSelect = undefined
+  if (userFields == 'all') userFields = undefined
+
+  penaltyFields = readFields.penalty.join(' ')
+
+  population = { path: 'penalties' }
+  if (!readFields.penalty.includes('none') &&
+    !readFields.penalty.includes('all'))
+    population.select = penaltyFields
+
+  // TODO this should be extract from config
   let { page = 1, limit = 20 } = queryUrl
 
-  var optionss = {
-    select: fieldsToSelect,
+  let pagination = {
+    select: userFields,
     sort: { createdAt: -1 },
-    populate: 'penalties',
-    // can be truth?
-    leanWithId: false,
+    populate: population,
+    lean: false,
     page: Number(page),
     limit: Number(limit)
-  };
+  }
 
-  query = User.paginate(user, optionss)
+  return User.paginate(user, pagination)
 
-  return query
 }
 
 function cleanUser(user, options) {
@@ -155,6 +163,7 @@ function cleanUser(user, options) {
   return user
 }
 
+// TODO use readFields 
 function cleanUsers(users, options) {
 
   // why i need this? check paginate, seems to no lean

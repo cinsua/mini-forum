@@ -81,7 +81,10 @@ module.exports = {
     "/api/v1/users/:id/roles": {
       'default': ['all']
     },
-    User:{
+  },
+
+  READ: {
+    user:{
       guest: ['username', 'createdAt', 'banned', 'silenced'],
       user: ['username', 'createdAt', 'banned', 'silenced'],
       moderator: ['username', 'createdAt', 'updatedAt', 'banned', 'silenced', 'penalties'],
@@ -89,7 +92,7 @@ module.exports = {
       admin: ['all'],
       superadmin: ['all']
     },
-    Penalty:{
+    penalty:{
       guest: ['none'],
       user: ['none'],
       moderator: ['reason','author', 'user', 'expiresAt', 'kind', 'createdAt'],
