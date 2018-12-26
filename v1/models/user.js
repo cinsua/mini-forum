@@ -77,6 +77,13 @@ userSchema.virtual('silenced').get(function () {
   // can be omitted, keep for sanity
   return undefined
 });
+userSchema.virtual('_links').get(function () {
+
+  self = {
+    href: `/api/v1/users/${this.username} or /api/v1/users/${this.id}`
+  }
+  return {self}
+})
 
 // encrypt password before save
 userSchema.pre('save', async function (next) {
