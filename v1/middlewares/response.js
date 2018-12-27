@@ -56,7 +56,6 @@ module.exports = {
         // slice the residual characters outside json. Ex: ': { json }, '
         let e = eWithJunk.slice(eWithJunk.indexOf('{'), eWithJunk.lastIndexOf('}'))
         e = JSON.parse(e)
-        console.log('e :', e);
         // for now, we will not keep stack for mongoose errors
         // e.stack = err.stack
         errors.push(e);
@@ -66,7 +65,11 @@ module.exports = {
       // if it is a custom error has getError() defined
       errors.push(err.getError())
 
-    } else {
+    } else if (err.isJoi){
+      // is a request Joi validation
+      errors = err.details.map((detail) => ({code:'REQUEST_VALIDATION',name:err.name, message:detail.message}))
+
+    }else{
       // if this error is a generic one, we generate the error obj. Remember: message is a property
       // we should intercept mongo errors (11000 for example), it gives dbname/model/field
       errors.push({ name: err.name, message: err.message, code: err.code })

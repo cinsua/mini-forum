@@ -14,7 +14,6 @@ module.exports = {
 
   getAll: async (req) => {
     //TODO if query in url remove the rest
-    fieldsToSelect = req.permissions.options.join(' ')
     query = getPaginateUsersQuery({}, req.permissions.readFields, req.query)
 
     // TODO (remove all populates basically that not included)
@@ -29,7 +28,7 @@ module.exports = {
     users = usersAndMetaData.docs
     delete usersAndMetaData.docs
     metaData = usersAndMetaData
-    users = cleanUsers(users, req.permissions.options)
+    users = cleanUsers(users, req.permissions.readFields, req.query)
 
     data = hateoas.listOfUsers(req, users, metaData)
 
@@ -38,11 +37,11 @@ module.exports = {
   },
   get: async (req, clean = true) => {
 
-    query = getUserquery(req.params.id, req.permissions.options, req.query)
+    query = getUserquery(req.params.id, req.permissions.readFields, req.query)
     user = await query
     if (!user) throw newError('REQUEST_USER_NOT_FOUND');
     if (clean) {
-      user = cleanUser(user, req.permissions.options)
+      user = cleanUser(user, req.permissions.readFields, req.query)
       user = hateoas.singleUser(req, user)
     }
 
@@ -51,7 +50,8 @@ module.exports = {
 
   // only for login
   getByUsername: async (username) => {
-    query = getUserquery(username, ['all'])
+
+    query = getUserquery(username, {user: ['all'], penalty:['all']})
     let user = await query
     return user
   },
@@ -104,9 +104,16 @@ module.exports = {
 }
 
 //TODO query url filter
-function getUserquery(userId, options, queryUrl) {
-  fieldsToSelect = options.join(' ')
-  if (fieldsToSelect == 'all') fieldsToSelect = undefined
+async function getUserquery(userId, readFields, queryUrl) {
+
+  userFields = readFields.user.join(' ')
+  if (userFields == 'all') userFields = undefined
+
+  penaltyFields = readFields.penalty.join(' ')
+  population = { path: 'penalties' }
+  if (!readFields.penalty.includes('none') &&
+    !readFields.penalty.includes('all'))
+    population.select = penaltyFields
 
   // check if req.params.id is an id or username
   try {
@@ -119,7 +126,7 @@ function getUserquery(userId, options, queryUrl) {
     userQuery = User.findOne({ username: userId }) :
     userQuery = User.findById(userId)
 
-  userQuery.select(fieldsToSelect).populate('penalties')
+  userQuery.select(userFields).populate(population)
 
   return userQuery
 
@@ -127,7 +134,7 @@ function getUserquery(userId, options, queryUrl) {
 
 //TODO query url filter
 async function getPaginateUsersQuery(user, readFields, queryUrl) {
-  console.log('readFields.user :', readFields.user);
+
   userFields = readFields.user.join(' ')
 
   if (userFields == 'all') userFields = undefined
@@ -155,21 +162,21 @@ async function getPaginateUsersQuery(user, readFields, queryUrl) {
 
 }
 
-function cleanUser(user, options) {
+function cleanUser(user, readFields, query) {
 
   user = user.toObject()
-  if (!options.includes('penalties') && !options.includes('all')) delete user.penalties
+  if (!readFields.user.includes('penalties') && !readFields.user.includes('all')) delete user.penalties
 
   return user
 }
 
 // TODO use readFields 
-function cleanUsers(users, options) {
+function cleanUsers(users, readFields, query) {
 
   // why i need this? check paginate, seems to no lean
   users = users.map((us) => (us.toObject()))
 
-  if (!options.includes('penalties') && !options.includes('all')) {
+  if (!readFields.user.includes('penalties') && !readFields.user.includes('all')) {
     users = users.map(({ penalties, ...restOfUser }) => restOfUser)
   }
   return users

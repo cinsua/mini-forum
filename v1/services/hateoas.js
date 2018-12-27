@@ -51,14 +51,15 @@ module.exports = {
   },
 
   singleUser: async (req, user) => {
-    options = req.permissions.options
+    readFieldsUser = req.permissions.readFields.user
     if (req.user.roles.includes('owner'))
       user.links = [{
         type: 'GET', rel: 'self',
         href: `/api/v1/users/me`
       }]
-
-    if (options.includes('penalties') || options.includes('all')) {
+    
+    // read
+    if (readFieldsUser.includes('penalties') || readFieldsUser.includes('all')) {
       user.links.push({
         type: 'GET', rel: 'penalties',
         href: user.links[0].href + '/penalties'

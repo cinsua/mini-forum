@@ -113,9 +113,6 @@ userSchema.methods.getJWT = function () {
 
 userSchema.methods.toWeb = async function (role = 'admin') {
   role = 'admin'
-  //penalties = await Penalty.find({'user': this._id}) //'user._id': this._id
-  //console.log(penalties)
-
   //us = User.find({}).populate('penalties')
 
   //this.populate('penalties')//.execPopulate()

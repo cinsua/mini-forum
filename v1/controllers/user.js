@@ -7,7 +7,6 @@ const hateoas = require('../services/hateoas')
 module.exports = {
 
   createUser: async (req, res, next) => {
-    //console.log(GetParams.forCreateUser(req))
     user = await Service.create(GetParams.forCreateUser(req))
     req.status = 201
     req.data = await hateoas.createUser(user)
@@ -27,7 +26,7 @@ module.exports = {
     let { username, password } = GetParams.forLoginUser(req)
     let user = await Service.getByUsername(username);
     if (!user) throw newError('LOGIN_PW_UNAME_INVALID');
-
+    
     access = await user.comparePassword(password);
     if (!access) throw newError('LOGIN_PW_UNAME_INVALID');
 
