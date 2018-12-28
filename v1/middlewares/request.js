@@ -12,7 +12,7 @@ const roles = require('../models/roles')
 const mongooseIdSchema = Joi.string().regex(/^[0-9a-fA-F]{24}$/)
 
 // User
-const usernameSchema = Joi.string().alphanum().min(3).max(30).lowercase()
+const usernameSchema = Joi.string().alphanum().min(4).max(20).lowercase()
 const passwordSchema = Joi.string().regex(/^[a-zA-Z0-9]{4,30}$/)
 const roleSchema = Joi.string().lowercase().valid(Object.keys(roles.levels)).invalid('owner')
 const rolesSchema = Joi.array().items(roleSchema)
@@ -26,94 +26,116 @@ const expirePenaltySchema = Joi.date().min('now');
 const pageSchema = Joi.number().positive()
 const limitSchema = Joi.number().positive()
 
-const schemaTest = { //Joi.object().keys(
-  body: {
-    username: usernameSchema.required(),
-    //expiresPenalty: Joi.string().alphanum().min(3).max(30),
-    timePenalty: timePenaltySchema,
-    password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
-    expirePenalty: expirePenaltySchema
-    //role: roleSchema,
-    //roles:rolesSchema
-  },
-  params: Joi.any(),
-  query: Joi.any(),
-
-}
-//password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
-//access_token: [Joi.string(), Joi.number()],
-//birthyear: Joi.number().integer().min(1900).max(2013),
-//email: Joi.string().email({ minDomainAtoms: 2 })
-
 //.with('username', 'password')
 //.without('body.expiresPenalty', 'body.timePenalty');
 
 //.with(params required together)
 //.withouth(params required exclusively)
 
+const noBodySchema = Joi.object().keys({
+  body: {}
+})
+const noQuerySchema = Joi.object().keys({
+  query: {}
+})
+const noParamsSchema = Joi.object().keys({
+  params: {}
+})
+const anyQuerySchema = Joi.object().keys({
+  query: Joi.any()
+})
+const anyParamsSchema = Joi.object().keys({
+  params: Joi.any()
+})
+const noReqSchema = Joi.object().keys({
+  params: {}, query: {}, body: {}
+})
 
-const createUserSchema =
-  Joi.object().keys({
-    body: {
-      username: usernameSchema.required(),
-      password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/).required(),
-    },
-    params: {},//Joi.any(),
-    query: {}//Joi.any(),
-  })
-const getUsersSchema =
-  Joi.object().keys({
-    body: {},
-    params: {},
-    query: {
-      page: pageSchema,
-      limit: limitSchema
-    },
-  })
+const paginationQuerySchema = Joi.object().keys({
+  query: {
+    page: pageSchema,
+    limit: limitSchema
+  },
+})
+
+const baseCreatePenaltySchema = Joi.object().keys({
+  body: {
+    reason: reasonSchema.required(), 
+    timePenalty: timePenaltySchema, 
+    expirePenalty:expirePenaltySchema
+  } 
+}).xor('body.expirePenalty', 'body.timePenalty')
+
+const baseUserSchema = Joi.object().keys({
+  body: {
+    username: usernameSchema.required(),
+    password: passwordSchema.required(),
+  },
+})
+
+const baseRoleSchema = Joi.object().keys({
+  body: {
+    role: roleSchema.required(),
+  },
+})
+const baseGetUserSchema = Joi.object().keys({
+  params: {
+    id: Joi.alternatives().try(usernameSchema, mongooseIdSchema)//Joi.valid(usernameSchema, mongooseIdSchema).required()
+  }
+})
+const baseGetPenaltySchema = Joi.object().keys({
+  params: {
+    banId: mongooseIdSchema,//Joi.valid(usernameSchema, mongooseIdSchema).required()
+    silenceId: mongooseIdSchema
+  }
+}).xor('params.banId', 'params.silenceId')
+
+const loginUserSchema = baseUserSchema.concat(noParamsSchema).concat(noQuerySchema)
+const createUserSchema = baseUserSchema.concat(noParamsSchema).concat(noQuerySchema)
+const getUsersSchema = paginationQuerySchema.concat(noParamsSchema).concat(noBodySchema)
+const getUserSchema = baseGetUserSchema.concat(noBodySchema).concat(noQuerySchema)
+const getPenaltiesSchema = baseGetUserSchema.concat(paginationQuerySchema).concat(noParamsSchema)
+const createPenaltySchema = baseCreatePenaltySchema.concat(baseGetUserSchema).concat(noQuerySchema)
+const getPenaltySchema = baseGetPenaltySchema.concat(baseGetUserSchema).concat(noBodySchema).concat(noQuerySchema)
+const setRoleSchema = baseRoleSchema.concat(baseGetUserSchema).concat(noQuerySchema)
 
 const routes = {
   "/api/v1/": {
-    'GET': getUsersSchema,// 
-    'POST': createUserSchema
+    'GET': noReqSchema,// 
   },
   "/api/v1/users/": {
-    'GET': Joi.any(),// 
+    'GET': getUsersSchema, 
     'POST': createUserSchema
   },
-  "/api/v1/users/me": {
-    'GET': ['guest', 'user', 'moderator', 'admin', 'owner', 'superadmin'],
-    'DELETE': ['user', 'moderator', 'admin', 'owner', 'superadmin'],
-    'PATCH': ['user', 'moderator', 'admin', 'owner', 'superadmin'],
-  },
   "/api/v1/users/login": {
-    'POST': ['guest']
+    'POST': loginUserSchema
   },
   "/api/v1/users/:id": {
-    'GET': ['guest', 'user', 'moderator', 'admin', 'owner', 'superadmin'],
-    'DELETE': ['admin', 'owner', 'superadmin'],
+    'GET': getUserSchema,
+    'DELETE': getUserSchema,
     'PATCH': ['admin', 'owner', 'superadmin'],
   },
   "/api/v1/users/:id/penalties": {
-    'GET': ['owner', 'moderator', 'admin', 'superadmin']
+    'GET': getPenaltiesSchema
   },
   "/api/v1/users/:id/penalties/bans": {
-    'POST': ['admin', 'superadmin'],
-    'GET': ['owner', 'moderator', 'admin', 'superadmin']
+    'POST': createPenaltySchema,
+    'GET': getPenaltiesSchema
   },
   "/api/v1/users/:id/penalties/silences": {
-    'POST': ['moderator', 'admin', 'superadmin'],
-    'GET': ['owner', 'moderator', 'admin', 'superadmin']
+    'POST': createPenaltySchema,
+    'GET': getPenaltiesSchema
   },
   "/api/v1/users/:id/roles": {
-    'GET': ['guest', 'user', 'moderator', 'admin', 'owner', 'superadmin'],
-    'DELETE': ['admin', 'superadmin'],
-    'POST': ['admin', 'superadmin'],
+    'GET': getUserSchema,
+    'DELETE': setRoleSchema,
+    'POST': setRoleSchema,
   },
   "/api/v1/users/:id/penalties/bans/:banId": {
-    'DELETE': ['admin', 'superadmin'],
+    'DELETE': getPenaltySchema,
   },
   "/api/v1/users/:id/penalties/silences/:silenceId": {
-    'DELETE': ['moderator', 'admin', 'superadmin'],
+    'DELETE': getPenaltySchema,
   },
 }
 
@@ -134,8 +156,7 @@ module.exports = {
       console.log(result.error.name)
       next(result.error)
     }
-    console.log(result.value)
-    console.log(!Object.keys(result.value.query).length)
+    req.request = result.value
     next()
   }
 }
