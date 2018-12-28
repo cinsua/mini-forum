@@ -2,9 +2,16 @@ var express = require('express')
 const userRouter = express.Router();
 
 const controller = require('../controllers/user');
-const auth = require('../middlewares/requiredLevel')
-const check = require('../middlewares/checkOwner')
-const { reqValidation } = require('../middlewares/request')
+const {getCredentials} = require('../middlewares/getCredentials')
+const {reqValidator } = require('../middlewares/request')
+
+/*
+TODO LIST
+remove req dependecy of all services
+create penalty controller?
+create standar response, including hateoas
+put a serious logger
+*/
 
 
 const passport = require('passport');
@@ -13,44 +20,41 @@ let passp = passport.authenticate(['bearer', 'guest'], { session: false })
 userRouter.use(passp)
 
 userRouter.route('/')
-  .get(auth.role, reqValidation, controller.getAll)
-  .post(auth.role, controller.createUser)
+  .get(getCredentials, reqValidator, controller.getAll)
+  .post(getCredentials,reqValidator, controller.createUser)
 
-// Carefoul, /:id and /me and /login matchs in same method
 //works users/:id users/username users/me
 userRouter.route('/:id')
-  .get(check.Owner, auth.role, reqValidation, controller.getById)
-  .delete(check.Owner, auth.role,reqValidation,  controller.deleteMe)
+  .get(getCredentials, reqValidator, controller.getById)
+  .delete(getCredentials,reqValidator,  controller.deleteMe)
   // patch should be redone
-  .patch(check.Owner, auth.role, controller.updateMe)
+  .patch(getCredentials, controller.updateMe)
 
 userRouter.route('/login')
-  .post(auth.role, reqValidation, controller.login)
+  .post(getCredentials, reqValidator, controller.login)
 
 userRouter.route('/:id/penalties')
-  .get(check.Owner, auth.role, reqValidation, controller.getPenalties)
+  .get(getCredentials, reqValidator, controller.getPenalties)
 
 userRouter.route('/:id/penalties/bans')
-  .post(auth.role, reqValidation, controller.banUser)
-  .get(check.Owner, auth.role, reqValidation, controller.getBans)
+  .post(getCredentials, reqValidator, controller.banUser)
+  .get(getCredentials, reqValidator, controller.getBans)
 
 // TODO get
 userRouter.route('/:id/penalties/bans/:banId')
-  .delete(check.Owner, auth.role, reqValidation, controller.removeBan)
+  .delete(getCredentials, reqValidator, controller.removeBan)
 
 userRouter.route('/:id/penalties/silences')
-  .post(auth.role, reqValidation, controller.silenceUser)
-  .get(check.Owner, auth.role, reqValidation, controller.getSilences)
+  .post(getCredentials, reqValidator, controller.silenceUser)
+  .get(getCredentials, reqValidator, controller.getSilences)
 
 // TODO get
 userRouter.route('/:id/penalties/silences/:silenceId')
-  .delete(check.Owner, auth.role, reqValidation, controller.removeSilence)
+  .delete(getCredentials, reqValidator, controller.removeSilence)
 
 // TODO get route
 userRouter.route('/:id/roles')
-  //.get(check.Owner, auth.role, controller.getPenalties)
-  // REQUIRES BODY.ROLE
-  .post(check.Owner, auth.role,reqValidation, controller.addRole)
-  .delete(check.Owner, auth.role,reqValidation, controller.removeRole)
+  .post(getCredentials,reqValidator, controller.addRole)
+  .delete(getCredentials,reqValidator, controller.removeRole)
 
 module.exports = userRouter;

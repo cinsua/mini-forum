@@ -54,7 +54,7 @@ module.exports = {
       'DELETE': ['moderator', 'admin', 'superadmin'],
     },
   },
-
+  /*
   GET: {
     "/api/v1/users/": {
       'guest': ['username', 'createdAt', 'banned', 'silenced'],
@@ -82,6 +82,7 @@ module.exports = {
       'default': ['all']
     },
   },
+  */
 
   READ: {
     user:{

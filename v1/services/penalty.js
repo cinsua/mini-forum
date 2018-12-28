@@ -1,6 +1,6 @@
 const Penalty = require('../models/penalties');
 const { newError } = require('../utils/customErrors')
-
+// TODO delete req dependency
 module.exports = {
 
   create: async (req, user, kind) => {
@@ -21,7 +21,7 @@ module.exports = {
 
   getBan: async (user, banId) => {
     ban = await Penalty.findById(banId)//.populate('author')
-    if (!ban) throw newError(REQUEST_PENALTY_NOT_FOUND)
+    if (!ban) throw newError('REQUEST_PENALTY_NOT_FOUND')
 
     return ban
   },
@@ -33,7 +33,7 @@ module.exports = {
 
   getSilence: async (user, silenceId) => {
     silence = await Penalty.findById(silenceId)
-    if (!silence) throw newError(REQUEST_PENALTY_NOT_FOUND)
+    if (!silence) throw newError('REQUEST_PENALTY_NOT_FOUND')
 
     return silence
   },

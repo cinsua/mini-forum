@@ -94,7 +94,7 @@ const loginUserSchema = baseUserSchema.concat(noParamsSchema).concat(noQuerySche
 const createUserSchema = baseUserSchema.concat(noParamsSchema).concat(noQuerySchema)
 const getUsersSchema = paginationQuerySchema.concat(noParamsSchema).concat(noBodySchema)
 const getUserSchema = baseGetUserSchema.concat(noBodySchema).concat(noQuerySchema)
-const getPenaltiesSchema = baseGetUserSchema.concat(paginationQuerySchema).concat(noParamsSchema)
+const getPenaltiesSchema = baseGetUserSchema.concat(paginationQuerySchema).concat(noBodySchema)
 const createPenaltySchema = baseCreatePenaltySchema.concat(baseGetUserSchema).concat(noQuerySchema)
 const getPenaltySchema = baseGetPenaltySchema.concat(baseGetUserSchema).concat(noBodySchema).concat(noQuerySchema)
 const setRoleSchema = baseRoleSchema.concat(baseGetUserSchema).concat(noQuerySchema)
@@ -140,8 +140,7 @@ const routes = {
 }
 
 module.exports = {
-  reqValidation: async function (req, res, next) {
-    console.log(req.baseUrl + req.route.path)
+  reqValidator: async function (req, res, next) {
     schemaValidation = routes[req.baseUrl + req.route.path][req.method]
     request = {
       body: req.body,
@@ -150,13 +149,13 @@ module.exports = {
     }
     const result = Joi.validate(request, schemaValidation, { abortEarly: false });
     if (result.error) {
-      console.log(Object.keys(result.error))
-      console.log(result.error.details)
-      console.log('isjoy', result.error.isJoi)
-      console.log(result.error.name)
+      //console.log(Object.keys(result.error))
+      //console.log(result.error.details)
+      //console.log('isjoy', result.error.isJoi)
+      //console.log(result.error.name)
       next(result.error)
     }
-    req.request = result.value
+    req.validRequest = result.value
     next()
   }
 }

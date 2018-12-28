@@ -20,7 +20,7 @@ module.exports = {
     }
      
   },
-  listOfUsers: async (req, users, pagination) => {
+  listOfUsers: async (users, pagination) => {
     data = {}
     data.pages = pagination.pages
     data.page = pagination.page
@@ -50,9 +50,10 @@ module.exports = {
     return data
   },
 
-  singleUser: async (req, user) => {
-    readFieldsUser = req.permissions.readFields.user
-    if (req.user.roles.includes('owner'))
+  singleUser: async (user, readFields, roles, queryUrl) => {
+    console.log('roles :', roles);
+    readFieldsUser = readFields.user
+    if (roles.includes('owner'))
       user.links = [{
         type: 'GET', rel: 'self',
         href: `/api/v1/users/me`
@@ -74,16 +75,16 @@ module.exports = {
       })
     }
 
-    if (req.user.roles.includes('owner')) {
+    if (roles.includes('owner')) {
       user.links.push({
         type: 'DELETE', rel: 'DeleteUser',
         href: user.links[0].href
       })
     }
 
-    if ((req.user.roles.includes('moderator') ||
-      req.user.roles.includes('admin')) &&
-      !req.user.roles.includes('owner')) {
+    if ((roles.includes('moderator') ||
+      roles.includes('admin')) &&
+      !roles.includes('owner')) {
 
       user.links.push({
         type: 'POST', rel: 'SilenceUser',
@@ -92,8 +93,8 @@ module.exports = {
       })
     }
 
-    if (req.user.roles.includes('admin') &&
-      !req.user.roles.includes('owner')) {
+    if (roles.includes('admin') &&
+      !roles.includes('owner')) {
 
       user.links.push({
         type: 'POST', rel: 'BanUser',

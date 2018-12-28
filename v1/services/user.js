@@ -12,11 +12,10 @@ module.exports = {
     return user
   },
 
-  getAll: async (req) => {
-    //TODO if query in url remove the rest
-    query = getPaginateUsersQuery({}, req.permissions.readFields, req.query)
+  getAll: async (readFields, queryUrl) => {
+    //TODO if filter in query in url remove the rest
+    query = getPaginateUsersQuery({}, readFields, queryUrl)
 
-    // TODO (remove all populates basically that not included)
     usersAndMetaData = await query
     // output
     // "docs":[user]
@@ -28,21 +27,24 @@ module.exports = {
     users = usersAndMetaData.docs
     delete usersAndMetaData.docs
     metaData = usersAndMetaData
-    users = cleanUsers(users, req.permissions.readFields, req.query)
 
-    data = hateoas.listOfUsers(req, users, metaData)
+    // TODO Services should not clean and hateoas
+    users = cleanUsers(users, readFields, queryUrl)
+    data = hateoas.listOfUsers(users, metaData)
 
     return data
 
   },
-  get: async (req, clean = true) => {
 
-    query = getUserquery(req.params.id, req.permissions.readFields, req.query)
+  // TODO Services should not clean and hateoas
+  get: async (idOrUsername, readFields, queryUrl, roles, clean = true) => {
+
+    query = getUserquery(idOrUsername, readFields, queryUrl)
     user = await query
     if (!user) throw newError('REQUEST_USER_NOT_FOUND');
     if (clean) {
-      user = cleanUser(user, req.permissions.readFields, req.query)
-      user = hateoas.singleUser(req, user)
+      user = cleanUser(user, readFields, queryUrl)
+      user = hateoas.singleUser(user, readFields, roles, queryUrl)
     }
 
     return user
@@ -170,10 +172,9 @@ function cleanUser(user, readFields, query) {
   return user
 }
 
-// TODO use readFields 
 function cleanUsers(users, readFields, query) {
+  // can be map of cleanUser
 
-  // why i need this? check paginate, seems to no lean
   users = users.map((us) => (us.toObject()))
 
   if (!readFields.user.includes('penalties') && !readFields.user.includes('all')) {

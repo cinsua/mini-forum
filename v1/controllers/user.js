@@ -4,10 +4,13 @@ const GetParams = require('../helpers/user');
 const { newError } = require('../utils/customErrors')
 const hateoas = require('../services/hateoas')
 
+// TODO move all penalties related to penalty controller
+
 module.exports = {
 
   createUser: async (req, res, next) => {
-    user = await Service.create(GetParams.forCreateUser(req))
+    const { username, password } = req.validRequest.body
+    user = await Service.create({ username, password })
     req.status = 201
     req.data = await hateoas.createUser(user)
     return next()
@@ -15,7 +18,10 @@ module.exports = {
 
   getAll: async (req, res, next) => {
 
-    data = await Service.getAll(req)
+    const queryUrl = req.validRequest.query
+    const readFields = req.credentials.readFields
+
+    data = await Service.getAll(readFields, queryUrl)
 
     req.data = data//{ users: users, message: 'List of users' }
 
@@ -23,7 +29,7 @@ module.exports = {
   },
 
   login: async (req, res, next) => {
-    let { username, password } = GetParams.forLoginUser(req)
+    let { username, password } = req.validRequest.body
     let user = await Service.getByUsername(username);
     if (!user) throw newError('LOGIN_PW_UNAME_INVALID');
     
@@ -57,8 +63,12 @@ module.exports = {
   },
 
   getById: async (req, res, next) => {
-    // supported /:id /me /:username
-    user = await Service.get(req)
+    const idOrUsername = req.validRequest.params.id
+    const readFields = req.credentials.readFields
+    const queryUrl = req.validRequest.query
+    const roles = req.credentials.roles
+
+    user = await Service.get(idOrUsername, readFields, queryUrl, roles)
 
     req.data = { user }
 
@@ -67,7 +77,13 @@ module.exports = {
 
   // TODO FILTER
   getPenalties: async (req, res, next) => {
-    user = await Service.get(req)
+    const idOrUsername = req.validRequest.params.id
+    const readFields = req.credentials.readFields
+    const queryUrl = req.validRequest.query
+    const roles = req.credentials.roles
+
+    user = await Service.get(idOrUsername, readFields, queryUrl, roles)
+    
     penalties = await ServicePenalty.getPenalties(user)
     req.data = { penalties, message: 'penalties' }
 
@@ -76,8 +92,13 @@ module.exports = {
 
   // TODO FILTER
   getBans: async (req, res, next) => {
-    //user = await Service.updateMe(req)
-    user = await Service.get(req)
+    const idOrUsername = req.validRequest.params.id
+    const readFields = req.credentials.readFields
+    const queryUrl = req.validRequest.query
+    const roles = req.credentials.roles
+
+    user = await Service.get(idOrUsername, readFields, queryUrl, roles)
+
     bans = await ServicePenalty.getBans(user)
     req.data = { bans, message: 'bans' }
 
@@ -85,7 +106,13 @@ module.exports = {
   },
 
   banUser: async (req, res, next) => {
-    user = await Service.get(req, false)
+    const idOrUsername = req.validRequest.params.id
+    const readFields = req.credentials.readFields
+    const queryUrl = req.validRequest.query
+    const roles = req.credentials.roles
+
+    user = await Service.get(idOrUsername, readFields, queryUrl, roles, false)
+
     ban = await ServicePenalty.create(req, user, 'ban')
     ban.populate('user').populate('author')
     //user = await Service.get(req)
@@ -95,8 +122,13 @@ module.exports = {
 
   // TODO FILTER
   getSilences: async (req, res, next) => {
-    //user = await Service.updateMe(req)
-    user = await Service.get(req)
+    const idOrUsername = req.validRequest.params.id
+    const readFields = req.credentials.readFields
+    const queryUrl = req.validRequest.query
+    const roles = req.credentials.roles
+
+    user = await Service.get(idOrUsername, readFields, queryUrl, roles)
+
     bans = await ServicePenalty.getSilences(user)
     req.data = { bans, message: 'silences' }
 
@@ -104,17 +136,29 @@ module.exports = {
   },
 
   silenceUser: async (req, res, next) => {
-    user = await Service.get(req, false)
+    const idOrUsername = req.validRequest.params.id
+    const readFields = req.credentials.readFields
+    const queryUrl = req.validRequest.query
+    const roles = req.credentials.roles
+
+    user = await Service.get(idOrUsername, readFields, queryUrl, roles, false)
+
     silence = await ServicePenalty.create(req, user, 'silence')
     silence.populate('user').populate('author')
-    //user = await Service.get(req)
+
     req.data = { silence }
     return next()
   },
 
   //TODO check > < for permissions
   addRole: async (req, res, next) => {
-    user = await Service.get(req, false)
+    const idOrUsername = req.validRequest.params.id
+    const readFields = req.credentials.readFields
+    const queryUrl = req.validRequest.query
+    const roles = req.credentials.roles
+
+    user = await Service.get(idOrUsername, readFields, queryUrl, roles, false)
+
     await GetParams.checkRole(user, req.body.role, req)
     await Service.addRol(user, req.body.role)
 
@@ -124,7 +168,13 @@ module.exports = {
 
   //TODO check > < for permissions
   removeRole: async (req, res, next) => {
-    user = await Service.get(req, false)
+    const idOrUsername = req.validRequest.params.id
+    const readFields = req.credentials.readFields
+    const queryUrl = req.validRequest.query
+    const roles = req.credentials.roles
+
+    user = await Service.get(idOrUsername, readFields, queryUrl, roles, false)
+
     await GetParams.checkRole(user, req.body.role, req, true)
 
     await Service.removeRol(user, req.body.role)
@@ -134,7 +184,13 @@ module.exports = {
   },
 
   removeBan: async (req, res, next) => {
-    user = await Service.get(req, false)
+    const idOrUsername = req.validRequest.params.id
+    const readFields = req.credentials.readFields
+    const queryUrl = req.validRequest.query
+    const roles = req.credentials.roles
+
+    user = await Service.get(idOrUsername, readFields, queryUrl, roles, false)
+
     ban = await ServicePenalty.getBan(user, req.params.banId)
     await ServicePenalty.deletePenalty(ban)
     req.data = { user, message: 'ban removed' }
@@ -142,13 +198,18 @@ module.exports = {
   },
 
   removeSilence: async (req, res, next) => {
-    user = await Service.get(req, false)
+    const idOrUsername = req.validRequest.params.id
+    const readFields = req.credentials.readFields
+    const queryUrl = req.validRequest.query
+    const roles = req.credentials.roles
+
+    user = await Service.get(idOrUsername, readFields, queryUrl, roles, false)
+
     silence = await ServicePenalty.getSilence(user, req.params.silenceId)
     await ServicePenalty.deletePenalty(silence)
     req.data = { user, message: 'silence removed' }
     return next()
   }
-
 
 }
 
