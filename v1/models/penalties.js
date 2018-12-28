@@ -46,14 +46,5 @@ penaltySchema.plugin(mongoose_delete, { deletedAt: true, deletedBy: true, overri
 penaltySchema.virtual('timePenalty').set(function (v) {
   this.expiresAt = Date.now() + v
 });
-/*
-penaltySchema.virtual('links').get(function () {
-  //this.populate('user')
-  (this.kind == 'ban' ) ?
-    kind = 'bans' : kind = 'silences'
-  self = {type: 'GET', rel: 'self',
-          href: `/api/v1/users/${this.user}/penalties/${kind}/${this.id}`}
-  return [self]
-})
-*/
+
 module.exports = mongoose.model('Penalty', penaltySchema);

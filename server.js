@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-//app.use(logger('combined'))
+app.use(logger('combined'))
 
 //Passport
 app.use(passport.initialize());

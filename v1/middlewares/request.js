@@ -1,13 +1,9 @@
 const Joi = require('joi');
 const roles = require('../models/roles')
 
-
-
-//---------------------------------------------------------------
-//
-//  Field level schema validations
-//
-//---------------------------------------------------------------
+/*#################################################################
+#         Field level schema validations                          #
+#################################################################*/
 
 const mongooseIdSchema = Joi.string().regex(/^[0-9a-fA-F]{24}$/)
 
@@ -26,11 +22,9 @@ const expirePenaltySchema = Joi.date().min('now');
 const pageSchema = Joi.number().positive()
 const limitSchema = Joi.number().positive()
 
-//.with('username', 'password')
-//.without('body.expiresPenalty', 'body.timePenalty');
-
-//.with(params required together)
-//.withouth(params required exclusively)
+/*#################################################################
+#         Modular schema validations                              #
+#################################################################*/
 
 const noBodySchema = Joi.object().keys({
   body: {}
@@ -90,6 +84,10 @@ const baseGetPenaltySchema = Joi.object().keys({
   }
 }).xor('params.banId', 'params.silenceId')
 
+/*#################################################################
+#         Final Form schema validations                           #
+#################################################################*/
+
 const loginUserSchema = baseUserSchema.concat(noParamsSchema).concat(noQuerySchema)
 const createUserSchema = baseUserSchema.concat(noParamsSchema).concat(noQuerySchema)
 const getUsersSchema = paginationQuerySchema.concat(noParamsSchema).concat(noBodySchema)
@@ -98,6 +96,10 @@ const getPenaltiesSchema = baseGetUserSchema.concat(paginationQuerySchema).conca
 const createPenaltySchema = baseCreatePenaltySchema.concat(baseGetUserSchema).concat(noQuerySchema)
 const getPenaltySchema = baseGetPenaltySchema.concat(baseGetUserSchema).concat(noBodySchema).concat(noQuerySchema)
 const setRoleSchema = baseRoleSchema.concat(baseGetUserSchema).concat(noQuerySchema)
+
+/*#################################################################
+#         Route > method > schemaRequired                         #
+#################################################################*/
 
 const routes = {
   "/api/v1/": {
@@ -139,6 +141,9 @@ const routes = {
   },
 }
 
+/*#################################################################
+#         Finally the Middleware                                  #
+#################################################################*/
 module.exports = {
   reqValidator: async function (req, res, next) {
     schemaValidation = routes[req.baseUrl + req.route.path][req.method]

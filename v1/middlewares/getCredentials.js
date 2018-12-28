@@ -9,20 +9,14 @@ module.exports = {
     let credentials = {}
     credentials.roles = req.user.roles
     
-    await checkOwner(req)
-
-    // we add 'owner' to our roles in some cases
-    if (req.owner) req.user.roles.push('owner') //old
-    if (req.owner) credentials.roles.push('owner')
+    if (checkOwner(req)) credentials.roles.push('owner')
 
     // based on route and method we pick the best role, or die trying
-    usrRoles = req.user.roles
-
     requiredRoles = roles.routes[req.baseUrl + req.route.path][req.method]
 
-    let availableRoles = requiredRoles.filter(role => usrRoles.includes(role))
+    let availableRoles = requiredRoles.filter(role => credentials.roles.includes(role))
 
-    // i have no fucking idea what kind of array need this check for empty
+    // check if an array is empty takes more than equals []
     if (!Array.isArray(availableRoles) || !availableRoles.length) {
       throw newError('AUTH_INSUFFICIENT_PRIVILEGES')
     }
@@ -35,6 +29,7 @@ module.exports = {
     bestRole = Object.keys(rolesLevel).reduce((a, b) => rolesLevel[a] > rolesLevel[b] ? a : b)
     credentials.bestRole = bestRole
 
+    // fill up readFields based on bestRole
     credentials.readFields = {}
     credentials.readFields.user = roles.READ.user[bestRole]
     credentials.readFields.penalty = roles.READ.penalty[bestRole]
@@ -47,26 +42,30 @@ module.exports = {
   }
 }
 
-async function checkOwner(req) {
+function checkOwner(req) {
 
-  req.owner = false
+  // only works for api/v1/users/* routes
+  // add rules to cover threads and comments scenarios
+
+  owner = false
 
   if (req.params.id === req.user.id ||
     req.params.id === req.user.username) {
-
-    req.owner = true
-
+    owner = true
   }
+
   // users/me -> users/req.user.id (already auth)
   if (req.params.id === 'me') {
     if (!arraysEqual(req.user.roles, ['guest'])) {
+      console.log('meeee')
       req.params.id = req.user.id
-      req.owner = true
+      owner = true
     } else {
       throw newError('LOGIN_REQUIRED')
     }
 
   }
+  return owner
 }
 
 function arraysEqual(arr1, arr2) {

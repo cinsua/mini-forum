@@ -97,12 +97,7 @@ userSchema.pre('save', async function (next) {
 });
 
 userSchema.methods.comparePassword = async function (pw) {
-  let err, pass;
-  //if (!pw) throw newMongooseError('USER_CREATION_PW_SHORT')
-  //new UserError('No Password was provided', 'PW_NF');
-
-  pass = await bcrypt.compare(pw, this.password);
-  return pass
+  return await bcrypt.compare(pw, this.password);
 }
 
 userSchema.methods.getJWT = function () {
@@ -110,38 +105,5 @@ userSchema.methods.getJWT = function () {
   // let expiration_time = parseInt(CONFIG.jwt_expiration);
   return "Bearer " + jwt.sign({ user_id: this._id }, CONFIG.JWT.SECRET, { expiresIn: 10000 });
 };
-
-userSchema.methods.toWeb = async function (role = 'admin') {
-  role = 'admin'
-  //us = User.find({}).populate('penalties')
-
-  //this.populate('penalties')//.execPopulate()
-  let json = this.toJSON();
-  json.id = this._id;// this is for the front end
-  delete json.password; // i dont wanna send hash pwd
-  delete json._id; // already sent in id
-  delete json.__v // front dont need it
-  if (role === 'user' || role === 'guest') {
-    delete json.penalties
-    delete json.updatedAt
-  }
-  return json;
-};
-
-// Simple validations. TODO
-userSchema.path('password').validate(function (v) {
-  if (v.length < 4) {
-    throw newMongooseError('USER_CREATION_PW_SHORT')
-  }
-  return true;
-})
-
-userSchema.path('username').validate(function (v) {
-  if (v.length < 4) {
-    throw newMongooseError('USER_CREATION_UNAME_SHORT')
-  }
-  return true;
-})
-
 
 module.exports = mongoose.model('User', userSchema);

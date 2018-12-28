@@ -13,9 +13,12 @@ create standar response, including hateoas
 put a serious logger
 */
 
-
 const passport = require('passport');
 let passp = passport.authenticate(['bearer', 'guest'], { session: false })
+
+/*#################################################################
+#         All routes api/v1/users/*                               #
+#################################################################*/
 
 userRouter.use(passp)
 

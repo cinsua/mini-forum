@@ -1,5 +1,7 @@
 
-// provide links references
+/*#################################################################
+#         Fill the response with posible links                    #
+#################################################################*/
 
 module.exports = {
   createUser: async (user) => {

@@ -54,35 +54,6 @@ module.exports = {
       'DELETE': ['moderator', 'admin', 'superadmin'],
     },
   },
-  /*
-  GET: {
-    "/api/v1/users/": {
-      'guest': ['username', 'createdAt', 'banned', 'silenced'],
-      'user': ['username', 'createdAt', 'banned', 'silenced', 'penalties'],
-      'default': ['all']
-    },
-    "/api/v1/users/me": {
-      'owner': ['all']
-    },
-    "/api/v1/users/:id": {
-      'guest': ['username', 'createdAt', 'banned', 'silenced', '_id'],
-      'user': ['username', 'createdAt', 'banned', 'silenced', '_id'],
-      'default': ['all']
-    },
-    "/api/v1/users/:id/penalties": {
-      'default': ['all']
-    },
-    "/api/v1/users/:id/penalties/bans": {
-      'default': ['all']
-    },
-    "/api/v1/users/:id/penalties/silences": {
-      'default': ['all']
-    },
-    "/api/v1/users/:id/roles": {
-      'default': ['all']
-    },
-  },
-  */
 
   READ: {
     user:{
