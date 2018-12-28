@@ -22,7 +22,7 @@ module.exports = {
     }
      
   },
-  listOfUsers: async (users, pagination) => {
+  listOfUsers: (users, pagination) => {
     data = {}
     data.pages = pagination.pages
     data.page = pagination.page

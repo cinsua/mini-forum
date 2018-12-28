@@ -16,7 +16,7 @@ module.exports = {
     //TODO if filter in query in url remove the rest
     query = getPaginateUsersQuery({}, readFields, queryUrl)
 
-    usersAndMetaData = await query
+    usersAndPaginationInfo = await query
     // output
     // "docs":[user]
     // "total": 2,
@@ -24,28 +24,20 @@ module.exports = {
     // "page": 1,
     // "pages": 1
 
-    users = usersAndMetaData.docs
-    delete usersAndMetaData.docs
-    metaData = usersAndMetaData
+    users = usersAndPaginationInfo.docs
+    delete usersAndPaginationInfo.docs
+    paginationInfo = usersAndPaginationInfo
 
-    // TODO Services should not clean and hateoas
-    users = cleanUsers(users, readFields, queryUrl)
-    data = hateoas.listOfUsers(users, metaData)
-
-    return data
+    return {users, paginationInfo}
 
   },
 
   // TODO Services should not clean and hateoas
-  get: async (idOrUsername, readFields, queryUrl, roles, clean = true) => {
+  getByIdOrUsername: async (idOrUsername, readFields, queryUrl) => {
 
     query = getUserquery(idOrUsername, readFields, queryUrl)
     user = await query
     if (!user) throw newError('REQUEST_USER_NOT_FOUND');
-    if (clean) {
-      user = cleanUser(user, readFields, queryUrl)
-      user = hateoas.singleUser(user, readFields, roles, queryUrl)
-    }
 
     return user
   },
@@ -164,6 +156,7 @@ async function getPaginateUsersQuery(user, readFields, queryUrl) {
 
 }
 
+// both deprecated
 function cleanUser(user, readFields, query) {
 
   user = user.toObject()
