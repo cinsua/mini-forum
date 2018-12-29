@@ -1,5 +1,6 @@
 const { newError } = require('../utils/customErrors')
 const roles = require('../models/roles')
+const {routes} = require('../routes/registeredRoutes')
 
 module.exports = {
 
@@ -12,7 +13,7 @@ module.exports = {
     if (checkOwner(req)) credentials.roles.push('owner')
 
     // based on route and method we pick the best role, or die trying
-    requiredRoles = roles.routes[req.baseUrl + req.route.path][req.method]
+    requiredRoles = routes[req.baseUrl + req.route.path][req.method].roleRequired
 
     let availableRoles = requiredRoles.filter(role => credentials.roles.includes(role))
 
@@ -57,7 +58,6 @@ function checkOwner(req) {
   // users/me -> users/req.user.id (already auth)
   if (req.params.id === 'me') {
     if (!arraysEqual(req.user.roles, ['guest'])) {
-      console.log('meeee')
       req.params.id = req.user.id
       owner = true
     } else {

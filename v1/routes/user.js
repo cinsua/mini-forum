@@ -37,23 +37,20 @@ userRouter.route('/:id')
 userRouter.route('/login')
   .post(getCredentials, reqValidator, UserController.login)
 
-userRouter.route('/:id/penalties')
-  .get(getCredentials, reqValidator, PenaltyController.getPenalties)
-
-userRouter.route('/:id/penalties/bans')
+userRouter.route('/:id/bans')
   .post(getCredentials, reqValidator, PenaltyController.banUser)
   .get(getCredentials, reqValidator, PenaltyController.getBans)
 
 // TODO get
-userRouter.route('/:id/penalties/bans/:banId')
+userRouter.route('/:id/bans/:banId')
   .delete(getCredentials, reqValidator, PenaltyController.removeBan)
 
-userRouter.route('/:id/penalties/silences')
+userRouter.route('/:id/silences')
   .post(getCredentials, reqValidator, PenaltyController.silenceUser)
   .get(getCredentials, reqValidator, PenaltyController.getSilences)
 
 // TODO get
-userRouter.route('/:id/penalties/silences/:silenceId')
+userRouter.route('/:id/silences/:silenceId')
   .delete(getCredentials, reqValidator, PenaltyController.removeSilence)
 
 // TODO get route
