@@ -83,10 +83,15 @@ module.exports = {
       'POST': {
         roleRequired: ['admin', 'superadmin'],
         validator: v.setRoleSchema,
-        description: 'Delete Role'
+        description: 'Add Role'
       },
     },
     "/api/v1/users/:id/bans/:banId": {
+      'GET': {
+        roleRequired: ['owner', 'admin', 'superadmin'],
+        validator: v.getPenaltySchema,
+        description: 'Get Ban'
+      },
       'DELETE': {
         roleRequired: ['admin', 'superadmin'],
         validator: v.getPenaltySchema,
@@ -94,10 +99,15 @@ module.exports = {
       },
     },
     "/api/v1/users/:id/silences/:silenceId": {
+      'GET': {
+        roleRequired: ['moderator','owner', 'admin', 'superadmin'],
+        validator: v.getPenaltySchema,
+        description: 'Get Silence'
+      },
       'DELETE': {
         roleRequired: ['moderator', 'admin', 'superadmin'],
         validator: v.getPenaltySchema,
-        description: 'Delete Role'
+        description: 'Delete Silence'
       },
     },
   },

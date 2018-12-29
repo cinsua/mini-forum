@@ -90,4 +90,5 @@ module.exports = {
   createPenaltySchema: baseCreatePenaltySchema.concat(baseGetUserSchema).concat(noQuerySchema),
   getPenaltySchema : baseGetPenaltySchema.concat(baseGetUserSchema).concat(noBodySchema).concat(noQuerySchema),
   setRoleSchema : baseRoleSchema.concat(baseGetUserSchema).concat(noQuerySchema),
+  noReqSchema: noReqSchema
 }

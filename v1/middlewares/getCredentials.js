@@ -9,6 +9,8 @@ module.exports = {
     // we will fill this with roles and read/write/update/delete permissions
     let credentials = {}
     credentials.roles = req.user.roles
+    credentials.route = req.baseUrl + req.route.path
+    credentials.originalUrl = req.originalUrl
     
     if (checkOwner(req)) credentials.roles.push('owner')
 

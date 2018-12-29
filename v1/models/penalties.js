@@ -47,4 +47,18 @@ penaltySchema.virtual('timePenalty').set(function (v) {
   this.expiresAt = Date.now() + v
 });
 
+penaltySchema.virtual('links').get(function () {
+  (this.kind === 'ban') ?
+    kindRoute = 'bans' :
+    kindRoute = 'silences'
+  this.user.username?
+    userid = user.username:
+    userid = this.user
+  self = {
+    type: 'GET', rel: 'self',
+    href: `/api/v1/users/${userid}/${kindRoute}/${this.id}`
+  }
+  return [self]
+})
+
 module.exports = mongoose.model('Penalty', penaltySchema);

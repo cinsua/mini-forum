@@ -11,7 +11,9 @@ module.exports = {
     const { username, password } = req.validRequest.body
     user = await UserService.create({ username, password })
     req.status = 201
-    req.data = await hateoas.createUser(user)
+    //req.data = await hateoas.createUser(user)
+    user = cleanUser(user,req.credentials.readFields,req.validRequest.query)
+    req.data = hateoas.addLinks(user, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
     return next()
   },
 
@@ -23,7 +25,8 @@ module.exports = {
     let {users, paginationInfo} = await UserService.getAll(readFields, queryUrl)
     
     users = cleanUsers(users, readFields, queryUrl)
-    req.data = hateoas.listOfUsers(users, paginationInfo)
+    //req.data = hateoas.listOfUsers(users, paginationInfo, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
+    req.data = hateoas.addLinks(users, paginationInfo, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
 
     return next()
   },
@@ -38,12 +41,12 @@ module.exports = {
 
     if (user.banned) throw newError('LOGIN_USER_BANNED');
 
-    req.data = {
+    data = {
       token: user.getJWT(),
       message: `Welcome ${user.username}`,
-      links: { self: '/api/v1/users/me' }
+      link: {type: 'GET', rel:'self', href:'/api/v1/users/me'}
     }
-
+    req.data = hateoas.addLinks(data, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
     return next()
   },
 
@@ -72,9 +75,9 @@ module.exports = {
     user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
 
     user = cleanUser(user, readFields, queryUrl)
-    user = await hateoas.singleUser(user, readFields, roles, queryUrl)
+    //user = await hateoas.singleUser(user, readFields, roles, queryUrl)
 
-    req.data = { user }
+    req.data = hateoas.addLinks(user, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
 
     return next()
   },
@@ -95,9 +98,10 @@ module.exports = {
     if (rolesLevels[role] >= rolesLevels[req.credentials.bestRole])
       throw newError('AUTH_INSUFFICIENT_PRIVILEGES')
 
-    await UserService.addRol(user, req.body.role)
+    await UserService.addRol(user, role)
 
-    req.data = { user, message: 'role added' }
+    data = { message: `role [${role}] added to user [${user.username}]` }
+    req.data = hateoas.addLinks(data, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
     return next()
   },
 
@@ -117,8 +121,8 @@ module.exports = {
       throw newError('AUTH_INSUFFICIENT_PRIVILEGES')
 
     await UserService.removeRol(user, req.body.role)
-    req.data = { user, message: 'role removed' }
-
+    data = { message: `role [${role}] deleted from user [${user.username}]` }
+    req.data = hateoas.addLinks(data, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
     return next()
   },
 

@@ -4,6 +4,7 @@ const { newError } = require('../utils/customErrors')
 const hateoas = require('../services/hateoas')
 
 module.exports = {
+  /*
   // TODO FILTER
   getPenalties: async (req, res, next) => {
     const idOrUsername = req.validRequest.params.id
@@ -16,7 +17,7 @@ module.exports = {
     req.data = { penalties, message: 'penalties' }
 
     return next()
-  },
+  },*/
 
   // TODO FILTER
   getBans: async (req, res, next) => {
@@ -27,7 +28,8 @@ module.exports = {
     user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
 
     bans = await PenaltyService.getBans(user)
-    req.data = { bans, message: 'bans' }
+    //req.data = { bans, message: 'bans' }
+    req.data = hateoas.addLinks(bans, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
 
     return next()
   },
@@ -42,9 +44,10 @@ module.exports = {
     let pen = { reason, timePenalty, expirePenalty, user, author: req.user }
     
     ban = await PenaltyService.create(pen, 'ban')
-    ban.populate('user').populate('author')
+    //ban.populate('user').populate('author')
     //user = await Service.get(req)
-    req.data = { ban }
+    //req.data = { ban }
+    req.data = hateoas.addLinks(ban, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
     return next()
   },
 
@@ -56,8 +59,9 @@ module.exports = {
 
     user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
 
-    bans = await PenaltyService.getSilences(user)
-    req.data = { bans, message: 'silences' }
+    silences = await PenaltyService.getSilences(user)
+    //req.data = { bans, message: 'silences' }
+    req.data = hateoas.addLinks(silences, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
 
     return next()
   },
@@ -72,9 +76,9 @@ module.exports = {
     let pen = { reason, timePenalty, expirePenalty, user, author: req.user }
 
     silence = await PenaltyService.create(pen, 'silence')
-    silence.populate('user').populate('author')
+    //silence.populate('user').populate('author')
 
-    req.data = { silence }
+    req.data = hateoas.addLinks(silence, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
     return next()
   },
 
@@ -87,7 +91,8 @@ module.exports = {
 
     ban = await PenaltyService.getBan(user, req.params.banId)
     await PenaltyService.deletePenalty(ban)
-    req.data = { user, message: 'ban removed' }
+    data = { message: `ban removed from [${user.username}]` }
+    req.data = hateoas.addLinks(data, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
     return next()
   },
 
@@ -100,7 +105,8 @@ module.exports = {
 
     silence = await PenaltyService.getSilence(user, req.params.silenceId)
     await PenaltyService.deletePenalty(silence)
-    req.data = { user, message: 'silence removed' }
+    data = { message: `silence removed from [${user.username}]` }
+    req.data = hateoas.addLinks(data, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
     return next()
   }
 }
