@@ -1,6 +1,7 @@
 const { errors } = require('./detailErrors')
 
 /*
+// deprecated!! joi req validation avoid this
 Mongoose caught every error in validation, drop him, and keep only the message.
 Therefore generate another ValidationError and join text explaining which field was afected alongside original message.
 

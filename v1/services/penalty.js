@@ -4,7 +4,7 @@ const { newError } = require('../utils/customErrors')
 module.exports = {
 
   create: async ({ reason, timePenalty, expirePenalty, user, author }, kind) => {
-    //const { reason, timePenalty, expirePenalty } = req.body
+    
     let penalty = new Penalty({ reason, kind, author, user })
     if (timePenalty) penalty.timePenalty = timePenalty
     if (expirePenalty) penalty.expiresAt = expirePenalty
@@ -36,12 +36,6 @@ module.exports = {
     if (!silence) throw newError('REQUEST_PENALTY_NOT_FOUND')
 
     return silence
-  },
-
-  getPenalties: async (user) => {
-    penalties = await Penalty.find({ user: user.id }).populate('author')
-
-    return penalties
   },
 
   deletePenalty: async (penalty) => {

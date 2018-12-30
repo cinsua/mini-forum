@@ -17,22 +17,25 @@ module.exports = {
     query = getPaginateUsersQuery({}, readFields, queryUrl)
 
     usersAndPaginationInfo = await query
-    // output
-    // "docs":[user]
-    // "total": 2,
-    // "limit": 12,
-    // "page": 1,
-    // "pages": 1
+    /*
+    usersAndPaginationInfo is: 
+    Object = {
+      "docs": [user],
+      "total": 2,
+      "limit": 12,
+      "page": 1,
+      "pages": 1
+    }
+    */
 
     users = usersAndPaginationInfo.docs
     delete usersAndPaginationInfo.docs
     paginationInfo = usersAndPaginationInfo
 
-    return {users, paginationInfo}
+    return { users, paginationInfo }
 
   },
 
-  // TODO Services should not clean and hateoas
   getByIdOrUsername: async (idOrUsername, readFields, queryUrl) => {
 
     query = getUserquery(idOrUsername, readFields, queryUrl)
@@ -45,17 +48,19 @@ module.exports = {
   // only for login
   getByUsername: async (username) => {
 
-    query = getUserquery(username, {user: ['all'], penalty:['all']})
+    query = getUserquery(username, { user: ['all'], penalty: ['all'] })
     let user = await query
     return user
   },
 
+  // never used ? maybe deprecated
   deleteMe: async (req) => {
     const { user } = req
     await user.delete()
     return
   },
 
+  // never used ? maybe deprecated
   updateMe: async (req) => {
     let user, data
     user = req.user;
@@ -64,7 +69,6 @@ module.exports = {
     user = await user.save();
     return user
   },
-  //*******
 
   update: async (user, updObj) => {
     user.set(updObj)
@@ -88,12 +92,6 @@ module.exports = {
 
     user.save()
   },
-  removePenalty: async (user, penalty) => {
-    user.roles = user.penalties.filter(p => p._id !== penalty.id)
-    //const filteredItems = items.filter(item => item !== valueToRemove)
-
-    user.save()
-  }
 
 }
 
@@ -154,24 +152,4 @@ async function getPaginateUsersQuery(user, readFields, queryUrl) {
 
   return User.paginate(user, pagination)
 
-}
-
-// both deprecated
-function cleanUser(user, readFields, query) {
-
-  user = user.toObject()
-  if (!readFields.user.includes('penalties') && !readFields.user.includes('all')) delete user.penalties
-
-  return user
-}
-
-function cleanUsers(users, readFields, query) {
-  // can be map of cleanUser
-
-  users = users.map((us) => (us.toObject()))
-
-  if (!readFields.user.includes('penalties') && !readFields.user.includes('all')) {
-    users = users.map(({ penalties, ...restOfUser }) => restOfUser)
-  }
-  return users
 }

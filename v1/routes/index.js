@@ -6,7 +6,7 @@ const passport = require('passport');
 const userRouter = require('./user');
 const response = require('../middlewares/response')
 
-const {reqValidator}= require('../middlewares/request')
+const { reqValidator } = require('../middlewares/request')
 
 // Setup Passport Strategies for api/v1
 require('../strategies/guest')();
@@ -18,8 +18,7 @@ const apiV1 = express.Router();
 #         Im Alive Checker                                        #
 #################################################################*/
 apiV1.route('/')
-  .get(passport.authenticate(['bearer', 'guest'], { session: false }),reqValidator, (req, res, next) => {
-    //throw newError('TEST_CODE')
+  .get(passport.authenticate(['bearer', 'guest'], { session: false }), reqValidator, (req, res, next) => {
     req.data = { message: 'Server running', user: user.username, version: CONFIG.VERSION, commit: CONFIG.COMMIT }
     next()
 

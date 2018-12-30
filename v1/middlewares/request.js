@@ -1,18 +1,25 @@
 const Joi = require('joi');
-const {routes} = require('../routes/registeredRoutes')
+const { routes } = require('../routes/registeredRoutes')
 
 module.exports = {
   reqValidator: async function (req, res, next) {
+
+    // we take the validator for the route and method
     schemaValidation = routes[req.baseUrl + req.route.path][req.method].validator
+
+    // simplified version of req, takes only the client inputs
     request = {
       body: req.body,
       params: req.params,
       query: req.query
     }
+
     const result = Joi.validate(request, schemaValidation, { abortEarly: false });
     if (result.error) {
       next(result.error)
     }
+
+    // req.validRequest is the simplified version validated. we will use only this in the req treatment
     req.validRequest = result.value
     next()
   }

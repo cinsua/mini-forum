@@ -3,15 +3,15 @@ const userRouter = express.Router();
 
 const UserController = require('../controllers/user');
 const PenaltyController = require('../controllers/penalty');
-const {getCredentials} = require('../middlewares/getCredentials')
-const {reqValidator } = require('../middlewares/request')
+const { getCredentials } = require('../middlewares/getCredentials')
+const { reqValidator } = require('../middlewares/request')
 
 /*
 TODO LIST
-remove req dependecy of all services
-create penalty controller?
-create standar response, including hateoas
 put a serious logger
+get routes for bans/silences/roles
+delete user
+remove update user. view the change password token
 */
 
 const passport = require('passport');
@@ -25,12 +25,12 @@ userRouter.use(passp)
 
 userRouter.route('/')
   .get(getCredentials, reqValidator, UserController.getAll)
-  .post(getCredentials,reqValidator, UserController.createUser)
+  .post(getCredentials, reqValidator, UserController.createUser)
 
 //works users/:id users/username users/me
 userRouter.route('/:id')
   .get(getCredentials, reqValidator, UserController.getById)
-  .delete(getCredentials,reqValidator,  UserController.deleteMe)
+  .delete(getCredentials, reqValidator, UserController.deleteMe)
   // patch should be redone
   .patch(getCredentials, UserController.updateMe)
 
@@ -55,7 +55,7 @@ userRouter.route('/:id/silences/:silenceId')
 
 // TODO get route
 userRouter.route('/:id/roles')
-  .post(getCredentials,reqValidator, UserController.addRole)
-  .delete(getCredentials,reqValidator, UserController.removeRole)
+  .post(getCredentials, reqValidator, UserController.addRole)
+  .delete(getCredentials, reqValidator, UserController.removeRole)
 
 module.exports = userRouter;

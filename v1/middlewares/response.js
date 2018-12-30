@@ -32,6 +32,8 @@ module.exports = {
   },
 
   /*
+  // MONGOOSE ERRORS DEPRECATED after the implement of JOI request validation
+  // keep for sanity for now
   Mongoose intercepts every error in validation, drop him, and keep the message.
   Therefore generate another ValidationError and boilerplate the message inside other
   comments.
@@ -45,7 +47,7 @@ module.exports = {
     //res.setHeader('Content-Type', 'application/json');
     let errors = []
 
-    // MONGOOSE VALIDATION ERRORS HANDLER
+    // MONGOOSE VALIDATION ERRORS HANDLER -- deprecated
     if (err.message.includes('CUT_TAG')) {
       // mongoose package all the validation errors, so we can have
       // more than 1 error
@@ -65,11 +67,11 @@ module.exports = {
       // if it is a custom error has getError() defined
       errors.push(err.getError())
 
-    } else if (err.isJoi){
+    } else if (err.isJoi) {
       // is a request Joi validation
-      errors = err.details.map((detail) => ({code:'REQUEST_VALIDATION',name:err.name, message:detail.message}))
+      errors = err.details.map((detail) => ({ code: 'REQUEST_VALIDATION', name: err.name, message: detail.message }))
 
-    }else{
+    } else {
       // if this error is a generic one, we generate the error obj. Remember: message is a property
       // we should intercept mongo errors (11000 for example), it gives dbname/model/field
       errors.push({ name: err.name, message: err.message, code: err.code })

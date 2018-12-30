@@ -68,12 +68,12 @@ const baseRoleSchema = Joi.object().keys({
 })
 const baseGetUserSchema = Joi.object().keys({
   params: {
-    id: Joi.alternatives().try(usernameSchema, mongooseIdSchema)//Joi.valid(usernameSchema, mongooseIdSchema).required()
+    id: Joi.alternatives().try(usernameSchema, mongooseIdSchema)
   }
 })
 const baseGetPenaltySchema = Joi.object().keys({
   params: {
-    banId: mongooseIdSchema,//Joi.valid(usernameSchema, mongooseIdSchema).required()
+    banId: mongooseIdSchema,
     silenceId: mongooseIdSchema
   }
 }).xor('params.banId', 'params.silenceId')
@@ -82,13 +82,39 @@ const baseGetPenaltySchema = Joi.object().keys({
 #         Final Form schema validations                           #
 #################################################################*/
 module.exports = {
-  loginUserSchema: baseUserSchema.concat(noParamsSchema).concat(noQuerySchema),
-  createUserSchema: baseUserSchema.concat(noParamsSchema).concat(noQuerySchema),
-  getUsersSchema :paginationQuerySchema.concat(noParamsSchema).concat(noBodySchema),
-  getUserSchema :baseGetUserSchema.concat(noBodySchema).concat(noQuerySchema),
-  getPenaltiesSchema: baseGetUserSchema.concat(paginationQuerySchema).concat(noBodySchema),
-  createPenaltySchema: baseCreatePenaltySchema.concat(baseGetUserSchema).concat(noQuerySchema),
-  getPenaltySchema : baseGetPenaltySchema.concat(baseGetUserSchema).concat(noBodySchema).concat(noQuerySchema),
-  setRoleSchema : baseRoleSchema.concat(baseGetUserSchema).concat(noQuerySchema),
+
+  loginUserSchema: baseUserSchema
+    .concat(noParamsSchema)
+    .concat(noQuerySchema),
+  
+  createUserSchema: baseUserSchema
+    .concat(noParamsSchema)
+    .concat(noQuerySchema),
+
+  getUsersSchema: paginationQuerySchema
+    .concat(noParamsSchema)
+    .concat(noBodySchema),
+  
+  getUserSchema: baseGetUserSchema
+    .concat(noBodySchema)
+    .concat(noQuerySchema),
+
+  getPenaltiesSchema: baseGetUserSchema
+    .concat(paginationQuerySchema)
+    .concat(noBodySchema),
+
+  createPenaltySchema: baseCreatePenaltySchema
+    .concat(baseGetUserSchema)
+    .concat(noQuerySchema),
+
+  getPenaltySchema: baseGetPenaltySchema
+    .concat(baseGetUserSchema)
+    .concat(noBodySchema)
+    .concat(noQuerySchema),
+
+  setRoleSchema: baseRoleSchema
+    .concat(baseGetUserSchema)
+    .concat(noQuerySchema),
+ 
   noReqSchema: noReqSchema
 }

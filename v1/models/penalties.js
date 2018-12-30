@@ -39,7 +39,7 @@ const penaltySchema = new Schema({
     runSettersOnQuery: true
   });
 
-penaltySchema.plugin(mongooseHidden)//, { hidden: { _id: false } })
+penaltySchema.plugin(mongooseHidden)
 penaltySchema.plugin(mongoosePaginate);
 penaltySchema.plugin(mongoose_delete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' });
 
@@ -48,13 +48,17 @@ penaltySchema.virtual('timePenalty').set(function (v) {
 });
 
 penaltySchema.virtual('links').get(function () {
+  
   (this.kind === 'ban') ?
     kindRoute = 'bans' :
     kindRoute = 'silences'
-  this.user.username?
-    userid = user.username:
+  
+    // if the penalty is populated, we take username, else we link the ugly id
+    this.user.username ?
+    userid = user.username :
     userid = this.user
-  self = {
+  
+    self = {
     type: 'GET', rel: 'self',
     href: `/api/v1/users/${userid}/${kindRoute}/${this.id}`
   }

@@ -35,14 +35,14 @@ const userSchema = new Schema({
     runSettersOnQuery: true
   });
 
-userSchema.plugin(mongooseHidden)//,{ virtuals: { penalties: 'hide' }})
+userSchema.plugin(mongooseHidden)
 userSchema.plugin(mongoosePaginate);
 userSchema.plugin(mongoose_delete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' });
 
 userSchema.virtual('penalties', {
   ref: 'Penalty', // The model to use
-  localField: '_id', //'_id', // Find Penalties where `localField`
-  foreignField: 'user', //'user', // is equal to `foreignField`
+  localField: '_id',  // Find Penalties where `localField`
+  foreignField: 'user', // is equal to `foreignField`
   justOne: false, // gives us an array
 });
 
@@ -77,10 +77,13 @@ userSchema.virtual('silenced').get(function () {
   // can be omitted, keep for sanity
   return undefined
 });
+
 userSchema.virtual('links').get(function () {
 
-  self = {type: 'GET', rel: 'self',
-          href: `/api/v1/users/${this.username}`}
+  self = {
+    type: 'GET', rel: 'self',
+    href: `/api/v1/users/${this.username}`
+  }
   return [self]
 })
 

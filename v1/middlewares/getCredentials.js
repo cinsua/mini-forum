@@ -1,6 +1,6 @@
 const { newError } = require('../utils/customErrors')
 const roles = require('../models/roles')
-const {routes} = require('../routes/registeredRoutes')
+const { routes } = require('../routes/registeredRoutes')
 
 module.exports = {
 
@@ -11,7 +11,7 @@ module.exports = {
     credentials.roles = req.user.roles
     credentials.route = req.baseUrl + req.route.path
     credentials.originalUrl = req.originalUrl
-    
+
     if (checkOwner(req)) credentials.roles.push('owner')
 
     // based on route and method we pick the best role, or die trying
@@ -49,6 +49,8 @@ function checkOwner(req) {
 
   // only works for api/v1/users/* routes
   // add rules to cover threads and comments scenarios
+  // something like check route includes '/:id/'
+  // in threads case, we should look after retrieving the thread, so, maybe this cant handle it
 
   owner = false
 

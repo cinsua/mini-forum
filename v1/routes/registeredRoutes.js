@@ -1,5 +1,10 @@
 const v = require('../routes/validators')
 
+/*#################################################################
+#         This file register the relation between                 #               
+#         routes with roleRequired/validator/description          #
+#################################################################*/
+
 module.exports = {
   routes: {
     "/api/v1/": {
@@ -12,7 +17,7 @@ module.exports = {
     "/api/v1/users/": {
       'GET': {
         roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
-        validator: v.getUsersSchema, 
+        validator: v.getUsersSchema,
         description: 'Get all users'
       },
       'POST': {
@@ -100,7 +105,7 @@ module.exports = {
     },
     "/api/v1/users/:id/silences/:silenceId": {
       'GET': {
-        roleRequired: ['moderator','owner', 'admin', 'superadmin'],
+        roleRequired: ['moderator', 'owner', 'admin', 'superadmin'],
         validator: v.getPenaltySchema,
         description: 'Get Silence'
       },

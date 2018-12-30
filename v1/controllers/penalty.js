@@ -4,31 +4,16 @@ const { newError } = require('../utils/customErrors')
 const hateoas = require('../services/hateoas')
 
 module.exports = {
-  /*
-  // TODO FILTER
-  getPenalties: async (req, res, next) => {
-    const idOrUsername = req.validRequest.params.id
-    const readFields = req.credentials.readFields
-    const queryUrl = req.validRequest.query
 
-    user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
-
-    penalties = await PenaltyService.getPenalties(user)
-    req.data = { penalties, message: 'penalties' }
-
-    return next()
-  },*/
-
-  // TODO FILTER
+  // TODO FILTER / PAGINATION
   getBans: async (req, res, next) => {
     const idOrUsername = req.validRequest.params.id
     const readFields = req.credentials.readFields
     const queryUrl = req.validRequest.query
 
     user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
-
     bans = await PenaltyService.getBans(user)
-    //req.data = { bans, message: 'bans' }
+
     req.data = hateoas.addLinks(bans, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
 
     return next()
@@ -40,27 +25,24 @@ module.exports = {
     const queryUrl = req.validRequest.query
 
     user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
-    const {timePenalty, expirePenalty, reason} = req.validRequest.body
+    const { timePenalty, expirePenalty, reason } = req.validRequest.body
     let pen = { reason, timePenalty, expirePenalty, user, author: req.user }
-    
     ban = await PenaltyService.create(pen, 'ban')
-    //ban.populate('user').populate('author')
-    //user = await Service.get(req)
-    //req.data = { ban }
+
     req.data = hateoas.addLinks(ban, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
+
     return next()
   },
 
-  // TODO FILTER
+  // TODO FILTER / PAGINATION
   getSilences: async (req, res, next) => {
     const idOrUsername = req.validRequest.params.id
     const readFields = req.credentials.readFields
     const queryUrl = req.validRequest.query
 
     user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
-
     silences = await PenaltyService.getSilences(user)
-    //req.data = { bans, message: 'silences' }
+
     req.data = hateoas.addLinks(silences, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
 
     return next()
@@ -72,11 +54,9 @@ module.exports = {
     const queryUrl = req.validRequest.query
 
     user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
-    const {timePenalty, expirePenalty, reason} = req.validRequest.body
+    const { timePenalty, expirePenalty, reason } = req.validRequest.body
     let pen = { reason, timePenalty, expirePenalty, user, author: req.user }
-
     silence = await PenaltyService.create(pen, 'silence')
-    //silence.populate('user').populate('author')
 
     req.data = hateoas.addLinks(silence, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
     return next()
@@ -88,11 +68,12 @@ module.exports = {
     const queryUrl = req.validRequest.query
 
     user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
-
     ban = await PenaltyService.getBan(user, req.params.banId)
     await PenaltyService.deletePenalty(ban)
+
     data = { message: `ban removed from [${user.username}]` }
     req.data = hateoas.addLinks(data, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
+
     return next()
   },
 
@@ -102,11 +83,12 @@ module.exports = {
     const queryUrl = req.validRequest.query
 
     user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
-
     silence = await PenaltyService.getSilence(user, req.params.silenceId)
     await PenaltyService.deletePenalty(silence)
+
     data = { message: `silence removed from [${user.username}]` }
     req.data = hateoas.addLinks(data, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
+
     return next()
   }
 }
