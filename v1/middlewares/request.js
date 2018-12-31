@@ -1,11 +1,10 @@
 const Joi = require('joi');
-const { routes } = require('../routes/registeredRoutes')
+//const routes = require('../routes/registeredRoutes')
 
 module.exports = {
-  reqValidator: async function (req, res, next) {
+  reqValidator: function (req, res, next) {
 
-    // we take the validator for the route and method
-    schemaValidation = routes[req.baseUrl + req.route.path][req.method].validator
+    schemaValidation = req.app.routes[req.baseUrl + req.route.path][req.method].validator
 
     // simplified version of req, takes only the client inputs
     request = {
@@ -23,4 +22,5 @@ module.exports = {
     req.validRequest = result.value
     next()
   }
+
 }

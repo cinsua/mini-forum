@@ -1,5 +1,5 @@
 
-const { routes } = require('../routes/registeredRoutes')
+//const { routes } = require('../routes/registeredRoutes')
 
 /*#################################################################
 #         Fill the response with posible links                    #
@@ -7,15 +7,50 @@ const { routes } = require('../routes/registeredRoutes')
 
 module.exports = {
 
-  addLinks: (result, pagination, role, route, originalUrl) => {
+  addLinks: (result, paginationInfo, role, route, originalUrl, routes) => {
+    let pagination = undefined
+    // should keep others query params
+    urlWithoutQuery = originalUrl.split('?')[0]
+
+    console.log(route)
+    if (paginationInfo) {
+      pagination = {
+        pages: paginationInfo.pages,
+        page: paginationInfo.page,
+        total: paginationInfo.total,
+        limit: paginationInfo.limit
+      }
+      pagination.links = [{
+        type: 'GET', rel: 'first',
+        href: `${urlWithoutQuery}?page=1&limit=${paginationInfo.limit}`
+      },]
+
+      if (paginationInfo.page > 1)
+        pagination.links.push({
+          type: 'GET', rel: 'prev',
+          href: `${urlWithoutQuery}?page=${paginationInfo.page - 1}&limit=${paginationInfo.limit}`
+        })
+      if (paginationInfo.page < paginationInfo.pages)
+        pagination.links.push({
+          type: 'GET', rel: 'next',
+          href: `${urlWithoutQuery}?page=${paginationInfo.page + 1}&limit=${paginationInfo.limit}`
+        })
+      
+      if (paginationInfo.pages > 1)
+        pagination.links.push({
+          type: 'GET', rel: 'last',
+          href: `${urlWithoutQuery}?page=${paginationInfo.pages}&limit=${paginationInfo.limit}`
+        })
+    }
+
     data = { pagination, result }
-    links = getChilds(role, route, originalUrl)
+    links = getChilds(role, route, originalUrl, routes)
     if (Array.isArray(links) && links.length) data.links = links
     return data
   }
 }
 
-function getChilds(role, route, originalUrl) {
+function getChilds(role, route, originalUrl, routes) {
   // map all child routes that not have ':' after the route provided:
   // not having ':' means that is not a specific resourse
 

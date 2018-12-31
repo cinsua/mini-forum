@@ -14,7 +14,7 @@ module.exports = {
     user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
     bans = await PenaltyService.getBans(user)
 
-    req.data = hateoas.addLinks(bans, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
+    req.data = hateoas.addLinks(bans, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl, req.app.routes)
 
     return next()
   },
@@ -29,7 +29,7 @@ module.exports = {
     let pen = { reason, timePenalty, expirePenalty, user, author: req.user }
     ban = await PenaltyService.create(pen, 'ban')
 
-    req.data = hateoas.addLinks(ban, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
+    req.data = hateoas.addLinks(ban, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl, req.app.routes)
 
     return next()
   },
@@ -43,7 +43,7 @@ module.exports = {
     user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
     silences = await PenaltyService.getSilences(user)
 
-    req.data = hateoas.addLinks(silences, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
+    req.data = hateoas.addLinks(silences, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl, req.app.routes)
 
     return next()
   },
@@ -58,7 +58,7 @@ module.exports = {
     let pen = { reason, timePenalty, expirePenalty, user, author: req.user }
     silence = await PenaltyService.create(pen, 'silence')
 
-    req.data = hateoas.addLinks(silence, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
+    req.data = hateoas.addLinks(silence, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl, req.app.routes)
     return next()
   },
 
@@ -72,7 +72,7 @@ module.exports = {
     await PenaltyService.deletePenalty(ban)
 
     data = { message: `ban removed from [${user.username}]` }
-    req.data = hateoas.addLinks(data, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
+    req.data = hateoas.addLinks(data, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl, req.app.routes)
 
     return next()
   },
@@ -87,7 +87,7 @@ module.exports = {
     await PenaltyService.deletePenalty(silence)
 
     data = { message: `silence removed from [${user.username}]` }
-    req.data = hateoas.addLinks(data, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl)
+    req.data = hateoas.addLinks(data, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl, req.app.routes)
 
     return next()
   }

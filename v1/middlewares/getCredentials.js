@@ -1,6 +1,6 @@
 const { newError } = require('../utils/customErrors')
 const roles = require('../models/roles')
-const { routes } = require('../routes/registeredRoutes')
+//const { routes } = require('../routes/registeredRoutes')
 
 module.exports = {
 
@@ -11,6 +11,8 @@ module.exports = {
     credentials.roles = req.user.roles
     credentials.route = req.baseUrl + req.route.path
     credentials.originalUrl = req.originalUrl
+
+    routes = req.app.routes
 
     if (checkOwner(req)) credentials.roles.push('owner')
 

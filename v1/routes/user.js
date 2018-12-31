@@ -1,3 +1,4 @@
+/*
 var express = require('express')
 const userRouter = express.Router();
 
@@ -5,7 +6,7 @@ const UserController = require('../controllers/user');
 const PenaltyController = require('../controllers/penalty');
 const { getCredentials } = require('../middlewares/getCredentials')
 const { reqValidator } = require('../middlewares/request')
-
+*/
 /*
 TODO LIST
 put a serious logger
@@ -13,14 +14,14 @@ get routes for bans/silences/roles
 delete user
 remove update user. view the change password token
 */
-
+/*
 const passport = require('passport');
 let passp = passport.authenticate(['bearer', 'guest'], { session: false })
-
+*/
 /*#################################################################
 #         All routes api/v1/users/*                               #
 #################################################################*/
-
+/*
 userRouter.use(passp)
 
 userRouter.route('/')
@@ -58,4 +59,4 @@ userRouter.route('/:id/roles')
   .post(getCredentials, reqValidator, UserController.addRole)
   .delete(getCredentials, reqValidator, UserController.removeRole)
 
-module.exports = userRouter;
+module.exports = userRouter;*/

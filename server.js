@@ -10,11 +10,12 @@ const passport = require('passport');
 const cors = require('cors');
 const db = require('./config/DB')
 
+const {routes} = require('./v1/routes/registeredRoutes')
+
 var app = express();
 
 // config server variables
 const CONFIG = require('./config/config.js');
-
 var server = require('./tools/serverTools')
 
 app.use(bodyParser.json());
@@ -23,6 +24,10 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(logger('combined'))
+
+//console.log(app.routes)
+// reference to routes registered
+app.routes = routes
 
 //Passport
 app.use(passport.initialize());
@@ -35,7 +40,8 @@ db.connectDB();
 
 //Routes
 const apiV1 = require('./v1/routes/index.js');
-app.use('/api/v1/', apiV1);
+//app.use('/api/v1/', apiV1);
+apiV1.setupRoutes(app)
 
 app.listen(`${CONFIG.PORT}`, () => {
   console.log(`${server.tagGreen} ${CONFIG.APP_NAME} started at ${Date().toString().slice(0, 24)}\n${server.tagCyan} Listening on Port${CONFIG.PORT}`);
