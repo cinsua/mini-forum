@@ -1,18 +1,17 @@
 
-//const { routes } = require('../routes/registeredRoutes')
-
 /*#################################################################
 #         Fill the response with posible links                    #
 #################################################################*/
 
 module.exports = {
 
-  addLinks: (result, paginationInfo, role, route, originalUrl, routes) => {
+  addLinks: (result, paginationInfo, credentials , routes) => {
+    let {bestRole, route, originalUrl} = credentials
+    role = bestRole
     let pagination = undefined
     // should keep others query params
     urlWithoutQuery = originalUrl.split('?')[0]
 
-    console.log(route)
     if (paginationInfo) {
       pagination = {
         pages: paginationInfo.pages,
@@ -51,13 +50,19 @@ module.exports = {
 }
 
 function getChilds(role, route, originalUrl, routes) {
+  
+  // we standarize with / at the end of urls. and delete query params
+  if (originalUrl.includes('?')) originalUrl = originalUrl.split('?')[0]
+  if (!originalUrl.endsWith('/')) originalUrl += '/'
+  if (!route.endsWith('/')) route += '/'
+
   // map all child routes that not have ':' after the route provided:
   // not having ':' means that is not a specific resourse
-
   childRoutes = Object.keys(routes)
     .filter((r) => (r !== route && r.startsWith(route) && !r.split(route)[1].includes(':')))
     .map((r) => (r.split(route)[1]))
-  console.log('childRoutes :', childRoutes);
+
+  console.log('childs', childRoutes)
 
   links = []
 

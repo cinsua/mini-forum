@@ -12,7 +12,7 @@ module.exports = {
 
     req.status = 201
     user = cleanUser(user, req.credentials.readFields, req.validRequest.query)
-    req.data = hateoas.addLinks(user, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl, req.app.routes)
+    req.data = hateoas.addLinks(user, undefined, req.credentials, req.app.routes)
 
     return next()
   },
@@ -25,7 +25,7 @@ module.exports = {
     let { users, paginationInfo } = await UserService.getAll(readFields, queryUrl)
 
     users = cleanUsers(users, readFields, queryUrl)
-    req.data = hateoas.addLinks(users, paginationInfo, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl, req.app.routes)
+    req.data = hateoas.addLinks(users, paginationInfo, req.credentials, req.app.routes)
 
     return next()
   },
@@ -46,7 +46,7 @@ module.exports = {
       message: `Welcome ${user.username}`,
       link: { type: 'GET', rel: 'self', href: '/api/v1/users/me' }
     }
-    req.data = hateoas.addLinks(data, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl, req.app.routes)
+    req.data = hateoas.addLinks(data, undefined, req.credentials, req.app.routes)
 
     return next()
   },
@@ -75,7 +75,7 @@ module.exports = {
     user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
 
     user = cleanUser(user, readFields, queryUrl)
-    req.data = hateoas.addLinks(user, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl, req.app.routes)
+    req.data = hateoas.addLinks(user, undefined, req.credentials, req.app.routes)
 
     return next()
   },
@@ -97,7 +97,7 @@ module.exports = {
     await UserService.addRol(user, role)
 
     data = { message: `role [${role}] added to user [${user.username}]` }
-    req.data = hateoas.addLinks(data, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl, req.app.routes)
+    req.data = hateoas.addLinks(data, undefined, req.credentials, req.app.routes)
 
     return next()
   },
@@ -119,7 +119,7 @@ module.exports = {
     await UserService.removeRol(user, req.body.role)
 
     data = { message: `role [${role}] deleted from user [${user.username}]` }
-    req.data = hateoas.addLinks(data, undefined, req.credentials.bestRole, req.credentials.route, req.credentials.originalUrl, req.app.routes)
+    req.data = hateoas.addLinks(data, undefined, req.credentials, req.app.routes)
 
     return next()
   },

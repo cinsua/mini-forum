@@ -1,5 +1,4 @@
 const Joi = require('joi');
-//const routes = require('../routes/registeredRoutes')
 
 module.exports = {
   reqValidator: function (req, res, next) {

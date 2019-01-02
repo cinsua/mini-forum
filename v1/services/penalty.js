@@ -1,4 +1,4 @@
-const Penalty = require('../models/penalties');
+const Penalty = require('../models/penalty');
 const { newError } = require('../utils/customErrors')
 // TODO delete req dependency
 module.exports = {

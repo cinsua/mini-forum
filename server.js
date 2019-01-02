@@ -4,13 +4,15 @@ var express = require('express')
 // eliminate the boilerplate from try/catch and wrappers
 // express 5.0 should bring this in vanilla
 require('express-async-errors');
-const logger = require('morgan'); //we should use this instead my own logger mechanism
+const logger = require('morgan');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const cors = require('cors');
 const db = require('./config/DB')
 
-const {routes} = require('./v1/routes/registeredRoutes')
+//Routes
+const userRoutes = require('./v1/routes/user')
+const apiV1 = require('./v1/routes/index.js');
 
 var app = express();
 
@@ -25,9 +27,8 @@ app.use(bodyParser.urlencoded({
 
 app.use(logger('combined'))
 
-//console.log(app.routes)
 // reference to routes registered
-app.routes = routes
+app.routes = userRoutes.routes
 
 //Passport
 app.use(passport.initialize());
@@ -38,9 +39,7 @@ app.use(cors());
 //inicialize DB:
 db.connectDB();
 
-//Routes
-const apiV1 = require('./v1/routes/index.js');
-//app.use('/api/v1/', apiV1);
+// Register all routes defined in app.routes
 apiV1.setupRoutes(app)
 
 app.listen(`${CONFIG.PORT}`, () => {

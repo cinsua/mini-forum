@@ -16,8 +16,8 @@ module.exports = {
     user: {
       guest: ['username', 'createdAt', 'banned', 'silenced'],
       user: ['username', 'createdAt', 'banned', 'silenced'],
-      moderator: ['username', 'createdAt', 'updatedAt', 'banned', 'silenced', 'penalties'],
-      owner: ['username', 'createdAt', 'updatedAt', 'banned', 'silenced', 'penalties'],
+      moderator: ['username', 'createdAt', 'updatedAt', 'banned', 'silenced'],
+      owner: ['username', 'createdAt', 'updatedAt', 'banned', 'silenced'],
       admin: ['all'],
       superadmin: ['all']
     },

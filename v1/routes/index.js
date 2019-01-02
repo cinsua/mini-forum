@@ -1,3 +1,31 @@
+/*#################################################################
+#         Generate routes defined in app.routes (routes/*)        #
+#################################################################*/
+
+require('../strategies/guest')();
+require('../strategies/jwt')();
+module.exports = {
+  setupRoutes: function(app){
+    //starts middlewares
+    for (middle of app.routes['startMiddlewares'])
+      app.use(middle)
+    
+    // register every route
+    for (route of Object.keys(app.routes)){
+      if (route !== 'startMiddlewares' && route !== 'finishMiddlewares'){
+        for (method of Object.keys(app.routes[route])){
+          app.route(route)[method.toLowerCase()](app.routes[route][method].middlewares)
+        }
+      }
+    }
+    
+    // finish middlewares
+    for (middle of app.routes['finishMiddlewares'])
+      app.use(middle)
+  }
+}
+
+// old way
 /*
 const express = require('express')
 const CONFIG = require('../../config/config')
@@ -56,26 +84,3 @@ for (method of Object.keys(routes['/api/v1/'])){
 //apiV1.use(response.sendError);
 
 //module.exports = apiV1;
-
-require('../strategies/guest')();
-require('../strategies/jwt')();
-module.exports = {
-  setupRoutes: function(app){
-    //starts middlewares
-    for (middle of app.routes['startMiddlewares'])
-      app.use(middle)
-    
-    // register every route
-    for (route of Object.keys(app.routes)){
-      if (route !== 'startMiddlewares' && route !== 'finishMiddlewares'){
-        for (method of Object.keys(app.routes[route])){
-          app.route(route)[method.toLowerCase()](app.routes[route][method].middlewares)
-        }
-      }
-    }
-    
-    // finish middlewares
-    for (middle of app.routes['finishMiddlewares'])
-      app.use(middle)
-  }
-}

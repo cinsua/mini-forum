@@ -1,6 +1,5 @@
 const { newError } = require('../utils/customErrors')
 const roles = require('../models/roles')
-//const { routes } = require('../routes/registeredRoutes')
 
 module.exports = {
 
