@@ -8,7 +8,7 @@ module.exports = {
     let penalty = new Penalty({ reason, kind, author, user })
     if (timePenalty) penalty.timePenalty = timePenalty
     if (expirePenalty) penalty.expiresAt = expirePenalty
-    penalty.save()
+    await penalty.save()
 
     return penalty
   },

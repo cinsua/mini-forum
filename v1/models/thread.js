@@ -21,11 +21,11 @@ const threadSchema = new Schema({
     required: true
   },
   private: {
-    type: boolean,
+    type: Boolean,
     default: false,
   },
   pinned: {
-    type: boolean,
+    type: Boolean,
     default: false,
   },
   content: {
@@ -56,7 +56,8 @@ threadSchema.virtual('comments', {
 });
 
 threadSchema.virtual('likesCounter').get(function () {
-  return this.likes.lenght
+  if (this.likes) return this.likes.lenght
+  return 0
 })
 
 threadSchema.virtual('links').get(function () {

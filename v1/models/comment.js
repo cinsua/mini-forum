@@ -15,7 +15,7 @@ const commentSchema = new Schema({
     ref: 'User',
     required: true
   },
-  thread:{
+  thread: {
     type: Schema.Types.ObjectId,
     ref: 'Thread',
   },

@@ -12,6 +12,7 @@ const db = require('./config/DB')
 
 //Routes
 const userRoutes = require('./v1/routes/user')
+const threadRoutes = require('./v1/routes/thread')
 const apiV1 = require('./v1/routes/index.js');
 
 var app = express();
@@ -29,6 +30,7 @@ app.use(logger('combined'))
 
 // reference to routes registered
 app.routes = userRoutes.routes
+app.routes = Object.assign(app.routes, threadRoutes.routes)
 
 //Passport
 app.use(passport.initialize());

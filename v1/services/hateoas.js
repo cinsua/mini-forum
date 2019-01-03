@@ -3,10 +3,12 @@
 #         Fill the response with posible links                    #
 #################################################################*/
 
+const utils = require('../utils/utils')
+
 module.exports = {
 
-  addLinks: (result, paginationInfo, credentials , routes) => {
-    let {bestRole, route, originalUrl} = credentials
+  addLinks: (result, paginationInfo, credentials, routes) => {
+    let { bestRole, route, originalUrl } = credentials
     role = bestRole
     let pagination = undefined
     // should keep others query params
@@ -34,13 +36,15 @@ module.exports = {
           type: 'GET', rel: 'next',
           href: `${urlWithoutQuery}?page=${paginationInfo.page + 1}&limit=${paginationInfo.limit}`
         })
-      
+
       if (paginationInfo.pages > 1)
         pagination.links.push({
           type: 'GET', rel: 'last',
           href: `${urlWithoutQuery}?page=${paginationInfo.pages}&limit=${paginationInfo.limit}`
         })
     }
+
+
 
     data = { pagination, result }
     links = getChilds(role, route, originalUrl, routes)
@@ -50,7 +54,7 @@ module.exports = {
 }
 
 function getChilds(role, route, originalUrl, routes) {
-  
+
   // we standarize with / at the end of urls. and delete query params
   if (originalUrl.includes('?')) originalUrl = originalUrl.split('?')[0]
   if (!originalUrl.endsWith('/')) originalUrl += '/'

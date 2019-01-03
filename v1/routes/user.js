@@ -147,7 +147,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, PenaltyController.removeSilence]
       },
     },
-    "finishMiddlewares": [response.sendSuccess,response.sendError],
+    "finishMiddlewares": [response.sendSuccess, response.sendError],
   },
 
 
