@@ -8,7 +8,7 @@ module.exports = {
 
   createThread: async (req, res, next) => {
     const { title, content, private } = req.validRequest.body
-
+    console.log('private ', private)
     thread = await ThreadService.create({ title, content, author: req.user.id, private })
     thread = utils.cleanResult(thread)
 
@@ -29,6 +29,21 @@ module.exports = {
 
     //users = cleanUsers(users, readFields, queryUrl)
     req.data = hateoas.addLinks(threads, paginationInfo, req.credentials, req.app.routes)
+
+    return next()
+  },
+  getById: async (req, res, next) => {
+    const threadId = req.validRequest.params.threadId
+    const queryUrl = req.validRequest.query
+
+    thread = await ThreadService.getById(threadId, queryUrl)
+
+    if (thread.private && req.credentials.bestRole == 'guest')
+      throw newError('REQUEST_THREAD_IS_PRIVATED');
+
+    thread = utils.cleanResult(thread)
+
+    req.data = hateoas.addLinks(thread, undefined, req.credentials, req.app.routes)
 
     return next()
   },

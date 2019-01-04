@@ -61,6 +61,16 @@ errors = {
     message: 'The user doesnt have the role requested'
   },
 
+  REQUEST_THREAD_NOT_FOUND: {
+    name: 'RequestThread',
+    message: 'Requested Thread not found'
+  },
+
+  REQUEST_THREAD_IS_PRIVATED: {
+    name: 'RequestThread',
+    message: 'Requested Thread is privated. Please log in or register'
+  },
+
   // PRIVILEGES
   AUTH_INSUFFICIENT_PRIVILEGES: {
     name: 'AuthorizationError',

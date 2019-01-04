@@ -53,6 +53,12 @@ const baseThreadSchema = Joi.object().keys({
   },
 })
 
+const baseGetThreadSchema = Joi.object().keys({
+  params: {
+    threadId: mongooseIdSchema.required()
+  }
+})
+
 
 module.exports = {
   
@@ -63,4 +69,8 @@ module.exports = {
   getThreadsSchema: paginationQuerySchema
     .concat(noParamsSchema)
     .concat(noBodySchema),
+  
+  getThreadSchema: baseGetThreadSchema
+    .concat(noBodySchema)
+    .concat(noQuerySchema),
 }

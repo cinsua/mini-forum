@@ -33,6 +33,14 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, ThreadController.createThread] //getCredentials,
       },
     },
+    "/api/v1/threads/:threadId/": {
+      'GET': {
+        roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
+        validator: v.getThreadSchema,
+        description: 'Get Thread',
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.getById] //getCredentials,
+      },//
+    },
 
 
 

@@ -1,11 +1,12 @@
 const Thread = require('../models/thread');
+const Comment = require('../models/comment');
 const { newError } = require('../utils/customErrors')
 // TODO delete req dependency
 module.exports = {
 
   create: async ({ title, content, author, private = false }) => {
-
-    let thread = new Thread({ title, content, author, private: false })
+    console.log('private srv', private)
+    let thread = new Thread({ title, content, author, private})
     await thread.save()
 
     return thread
@@ -34,35 +35,38 @@ module.exports = {
     return { threads, paginationInfo }
 
   },
+  getById: async (threadId, queryUrl) => {
+
+    query = getThreadQuery(threadId, queryUrl)
+    thread = await query
+    if (!thread) throw newError('REQUEST_THREAD_NOT_FOUND');
+
+    return thread
+  },
+
+  update: async (threadId, updateInfo) => {
+
+  }
 
 }
 
 //TODO query url filter
-async function getUserquery(userId, readFields, queryUrl) {
+async function getThreadQuery(threadId, queryUrl) {
 
-  userFields = readFields.user.join(' ')
-  if (userFields == 'all') userFields = undefined
-
+  // see fields
+  threadFields = undefined
+  /*
   penaltyFields = readFields.penalty.join(' ')
   population = { path: 'penalties' }
   if (!readFields.penalty.includes('none') &&
     !readFields.penalty.includes('all'))
     population.select = penaltyFields
+  */
+  threadQuery = Thread.findById(threadId)
 
-  // check if req.params.id is an id or username
-  try {
-    idValid = new ObjectId(userId)
-  } catch (e) {
-    idValid = undefined
-  }
+  threadQuery.select(threadFields).populate([{ path: 'author', select: 'username' },{ path: 'comments', select: 'author.username content likes thread' }])
 
-  (userId != idValid) ?
-    userQuery = User.findOne({ username: userId }) :
-    userQuery = User.findById(userId)
-
-  userQuery.select(userFields).populate(population)
-
-  return userQuery
+  return threadQuery
 
 }
 
@@ -70,7 +74,8 @@ async function getUserquery(userId, readFields, queryUrl) {
 async function getPaginateThreadQuery(thread, readFields, queryUrl) {
 
   //threadFields = readFields.user.join(' ')
-  threadFields = 'title author content comments likes'
+  // TODO define read fields in roles
+  threadFields = 'title author likes private'
 
   if (threadFields == 'all') threadFields = undefined
   /*
