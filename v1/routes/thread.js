@@ -8,6 +8,8 @@ const response = require('../middlewares/response')
 
 const ThreadController = require('../controllers/thread');
 
+const ServiceCheckOwner = require('../services/ownerCheckers')
+
 /*#################################################################
 #         This file register the relation between                 #               
 #         routes with roleRequired/validator/description          #
@@ -43,12 +45,14 @@ module.exports = {
       'PATCH': {
         roleRequired: ['user', 'owner', 'admin', 'superadmin'],
         validator: v.updateThreadSchema,
+        checkOwner: ServiceCheckOwner.thread,
         description: 'Update Thread',
         middlewares: [authenticate, getCredentials, reqValidator, ThreadController.update]
       },//
       'DELETE': {
         roleRequired: ['user', 'owner', 'admin', 'superadmin'],
         validator: v.getThreadSchema,
+        checkOwner: ServiceCheckOwner.thread,
         description: 'Delete Thread',
         middlewares: [authenticate, getCredentials, reqValidator, ThreadController.delete]
       },//

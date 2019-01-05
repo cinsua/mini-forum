@@ -11,6 +11,8 @@ const PenaltyController = require('../controllers/penalty');
 
 const hateoas = require('../services/hateoas')
 
+const ServiceCheckOwner = require('../services/ownerCheckers')
+
 /*#################################################################
 #         This file register the relation between                 #               
 #         routes with roleRequired/validator/description          #
@@ -55,18 +57,21 @@ module.exports = {
       'GET': {
         roleRequired: ['guest', 'user', 'moderator', 'admin', 'owner', 'superadmin'],
         validator: v.getUserSchema,
+        checkOwner: ServiceCheckOwner.user,
         description: 'Get user',
         middlewares: [authenticate, getCredentials, reqValidator, UserController.getById]
       },
       'DELETE': {
         roleRequired: ['admin', 'owner', 'superadmin'],
         validator: v.getUserSchema,
+        checkOwner: ServiceCheckOwner.user,
         description: 'Delete User',
         middlewares: [authenticate, getCredentials, reqValidator, UserController.deleteMe]
       },
       'PATCH': {
         roleRequired: ['admin', 'owner', 'superadmin'],
         validator: '',
+        checkOwner: ServiceCheckOwner.user,
         description: 'Update User',
         middlewares: [authenticate, getCredentials, reqValidator, UserController.updateMe]
       },
@@ -81,6 +86,7 @@ module.exports = {
       'GET': {
         roleRequired: ['owner', 'moderator', 'admin', 'superadmin'],
         validator: v.getPenaltiesSchema,
+        checkOwner: ServiceCheckOwner.user,
         description: 'Get Bans',
         middlewares: [authenticate, getCredentials, reqValidator, PenaltyController.getBans]
       },
@@ -95,6 +101,7 @@ module.exports = {
       'GET': {
         roleRequired: ['owner', 'moderator', 'admin', 'superadmin'],
         validator: v.getPenaltiesSchema,
+        checkOwner: ServiceCheckOwner.user,
         description: 'Get Silences',
         middlewares: [authenticate, getCredentials, reqValidator, PenaltyController.getSilences]
       },
@@ -103,6 +110,7 @@ module.exports = {
       'GET': {
         roleRequired: ['user', 'moderator', 'admin', 'owner', 'superadmin'],
         validator: v.getUserSchema,
+        checkOwner: ServiceCheckOwner.user,
         description: 'Get Roles',
         middlewares: [authenticate, getCredentials, reqValidator, hello]
       },
@@ -123,6 +131,7 @@ module.exports = {
       'GET': {
         roleRequired: ['owner', 'admin', 'superadmin'],
         validator: v.getPenaltySchema,
+        checkOwner: ServiceCheckOwner.user,
         description: 'Get Ban',
         middlewares: [authenticate, getCredentials, reqValidator, hello]
       },
@@ -137,6 +146,7 @@ module.exports = {
       'GET': {
         roleRequired: ['moderator', 'owner', 'admin', 'superadmin'],
         validator: v.getPenaltySchema,
+        checkOwner: ServiceCheckOwner.user,
         description: 'Get Silence',
         middlewares: [authenticate, getCredentials, reqValidator, hello]
       },

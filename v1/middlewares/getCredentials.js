@@ -1,6 +1,7 @@
 const { newError } = require('../utils/customErrors')
 const roles = require('../models/roles')
 
+
 module.exports = {
 
   getCredentials: async function (req, res, next) {
@@ -13,7 +14,8 @@ module.exports = {
 
     routes = req.app.routes
 
-    if (checkOwner(req)) credentials.roles.push('owner')
+    if (await checkOwner(req)) credentials.roles.push('owner')
+    console.log(credentials.roles)
 
     // based on route and method we pick the best role, or die trying
     requiredRoles = routes[req.baseUrl + req.route.path][req.method].roleRequired
@@ -46,40 +48,12 @@ module.exports = {
   }
 }
 
-function checkOwner(req) {
+async function checkOwner(req) {
 
-  // only works for api/v1/users/* routes
-  // add rules to cover threads and comments scenarios
-  // something like check route includes '/:id/'
-  // in threads case, we should look after retrieving the thread, so, maybe this cant handle it
-
+  const route = req.app.routes[req.baseUrl + req.route.path][req.method]
   owner = false
-
-  if (req.params.id === req.user.id ||
-    req.params.id === req.user.username) {
-    owner = true
-  }
-
-  // users/me -> users/req.user.id (already auth)
-  if (req.params.id === 'me') {
-    if (!arraysEqual(req.user.roles, ['guest'])) {
-      req.params.id = req.user.id
-      owner = true
-    } else {
-      throw newError('LOGIN_REQUIRED')
-    }
-
+  if (route.checkOwner) {
+    if (await route.checkOwner(req) > 0) owner = true
   }
   return owner
-}
-
-function arraysEqual(arr1, arr2) {
-  if (arr1.length !== arr2.length)
-    return false;
-  for (var i = arr1.length; i--;) {
-    if (arr1[i] !== arr2[i])
-      return false;
-  }
-
-  return true;
 }
