@@ -6,7 +6,7 @@ module.exports = {
 
   create: async ({ title, content, author, private = false }) => {
     console.log('private srv', private)
-    let thread = new Thread({ title, content, author, private})
+    let thread = new Thread({ title, content, author, private })
     await thread.save()
 
     return thread
@@ -44,9 +44,41 @@ module.exports = {
     return thread
   },
 
-  update: async (threadId, updateInfo) => {
+  update: async (thread, updateInfo) => {
+    thread.set(updateInfo)
+    thread = await thread.save();
+    return thread
+  },
 
-  }
+  delete: async (thread) => {
+    await thread.delete()
+    return
+  },
+
+  pinned: async (thread, pin) => {
+    thread.pinned = pin
+    thread = await thread.save();
+    return thread
+  },
+
+  like: async (thread, user) => {
+    if (thread.likes.indexOf(user.id) > -1)
+      throw newError('THREAD_ALREADY_LIKED');
+
+    thread.likes.push(user.id)
+    await thread.save()
+    return thread
+
+  },
+
+  unlike: async (thread, user) => {
+    if (thread.likes.indexOf(user.id) < 0)
+      throw newError('THREAD_NOT_LIKED');
+
+    thread.likes.remove(user.id)
+    await thread.save()
+    return thread
+  },
 
 }
 
@@ -64,7 +96,7 @@ async function getThreadQuery(threadId, queryUrl) {
   */
   threadQuery = Thread.findById(threadId)
 
-  threadQuery.select(threadFields).populate([{ path: 'author', select: 'username' },{ path: 'comments', select: 'author.username content likes thread' }])
+  threadQuery.select(threadFields).populate([{ path: 'author', select: 'username' }, { path: 'comments', select: 'author.username content likes thread' }])
 
   return threadQuery
 
@@ -72,21 +104,14 @@ async function getThreadQuery(threadId, queryUrl) {
 
 //TODO query url filter
 async function getPaginateThreadQuery(thread, readFields, queryUrl) {
+  // for now, response is fixed
 
   //threadFields = readFields.user.join(' ')
   // TODO define read fields in roles
-  threadFields = 'title author likes private'
+  threadFields = 'title author likes private pinned'
 
   if (threadFields == 'all') threadFields = undefined
-  /*
-  penaltyFields = threadFields.penalty.join(' ')
- 
-  population = { path: 'penalties' }
-  if (!threadFields.penalty.includes('none') &&
-    !threadFields.penalty.includes('all'))
-    population.select = penaltyFields
-  */
-  // TODO this should be extract from config
+
   let { page = 1, limit = 20 } = queryUrl
 
   let pagination = {

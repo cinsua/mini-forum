@@ -25,13 +25,13 @@ module.exports = {
     const readFields = req.credentials.readFields
 
     let { threads, paginationInfo } = await ThreadService.getAll(readFields, queryUrl)
+    
     threads = utils.cleanResult(threads)
-
-    //users = cleanUsers(users, readFields, queryUrl)
     req.data = hateoas.addLinks(threads, paginationInfo, req.credentials, req.app.routes)
 
     return next()
   },
+
   getById: async (req, res, next) => {
     const threadId = req.validRequest.params.threadId
     const queryUrl = req.validRequest.query
@@ -42,9 +42,99 @@ module.exports = {
       throw newError('REQUEST_THREAD_IS_PRIVATED');
 
     thread = utils.cleanResult(thread)
-
     req.data = hateoas.addLinks(thread, undefined, req.credentials, req.app.routes)
 
     return next()
   },
+
+  update: async (req, res, next) => {
+    const threadId = req.validRequest.params.threadId
+    thread = await ThreadService.getById(threadId)
+    checkThreadOwner(thread, req.user, req.credentials)
+
+    //console.log(req.credentials.bestRole)
+    if (req.credentials.bestRole == 'user')
+      throw newError('AUTH_INSUFFICIENT_PRIVILEGES');
+    
+    const updThread = req.validRequest.body
+
+    thread = await ThreadService.update(thread, updThread)
+    
+    thread = utils.cleanResult(thread)
+    req.data = hateoas.addLinks(thread, undefined, req.credentials, req.app.routes)
+
+    return next()
+  },
+
+  delete:async  (req, res, next) => {
+    
+    const threadId = req.validRequest.params.threadId
+    thread = await ThreadService.getById(threadId)
+    checkThreadOwner(thread, req.user, req.credentials)
+
+    //console.log(req.credentials.bestRole)
+    if (req.credentials.bestRole == 'user')
+      throw newError('AUTH_INSUFFICIENT_PRIVILEGES');
+
+    thread = await ThreadService.delete(thread)
+    
+    req.data = ({message: 'Thread deleted'})
+
+    return next()
+  },
+
+  // TODO check if pinned
+  pin: async (req, res, next) => {
+    const threadId = req.validRequest.params.threadId
+    thread = await ThreadService.getById(threadId)
+
+    thread = await ThreadService.pinned(thread, true)
+    
+    thread = utils.cleanResult(thread)
+    req.data = hateoas.addLinks(thread, undefined, req.credentials, req.app.routes)
+
+    return next()
+  },
+
+  // TODO check if pinned
+  unpin:async  (req, res, next) => {
+    const threadId = req.validRequest.params.threadId
+    thread = await ThreadService.getById(threadId)
+
+    thread = await ThreadService.pinned(thread, false)
+    
+    thread = utils.cleanResult(thread)
+    req.data = hateoas.addLinks(thread, undefined, req.credentials, req.app.routes)
+
+    return next()
+  },
+
+  like:async  (req, res, next) => {
+    const threadId = req.validRequest.params.threadId
+    thread = await ThreadService.getById(threadId)
+
+    thread = await ThreadService.like(thread, req.user)
+
+    thread = utils.cleanResult(thread)
+    req.data = hateoas.addLinks(thread, undefined, req.credentials, req.app.routes)
+    return next()
+  },
+
+  unlike: async (req, res, next) => {
+    const threadId = req.validRequest.params.threadId
+    thread = await ThreadService.getById(threadId)
+
+    thread = await ThreadService.unlike(thread, req.user)
+    
+    thread = utils.cleanResult(thread)
+    req.data = hateoas.addLinks(thread, undefined, req.credentials, req.app.routes)
+    
+    return next()
+  },
+}
+
+function checkThreadOwner(thread, reqUser, credentials){
+  if (thread.author.id === reqUser.id){
+    credentials.bestRole = 'owner'
+  }
 }

@@ -77,6 +77,15 @@ errors = {
     message: 'You do not have sufficient privileges'
   },
 
+  THREAD_ALREADY_LIKED: {
+    name: 'ThreadError',
+    message: 'You already like this thread'
+  },
+  THREAD_NOT_LIKED: {
+    name: 'ThreadError',
+    message: 'You already do not like this thread'
+  },
+
 }
 
 module.exports.errors = errors

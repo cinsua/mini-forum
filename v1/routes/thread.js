@@ -24,13 +24,13 @@ module.exports = {
         roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
         validator: v.getThreadsSchema,
         description: 'Get All Threads',
-        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.getAll] //getCredentials,
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.getAll]
       },// 
       'POST': {
         roleRequired: ['user', 'moderator', 'admin', 'superadmin'],
         validator: v.createThreadSchema,
         description: 'Create Thread',
-        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.createThread] //getCredentials,
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.createThread]
       },
     },
     "/api/v1/threads/:threadId/": {
@@ -38,7 +38,47 @@ module.exports = {
         roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
         validator: v.getThreadSchema,
         description: 'Get Thread',
-        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.getById] //getCredentials,
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.getById]
+      },//
+      'PATCH': {
+        roleRequired: ['user', 'owner', 'admin', 'superadmin'],
+        validator: v.updateThreadSchema,
+        description: 'Update Thread',
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.update]
+      },//
+      'DELETE': {
+        roleRequired: ['user', 'owner', 'admin', 'superadmin'],
+        validator: v.getThreadSchema,
+        description: 'Delete Thread',
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.delete]
+      },//
+    },
+    "/api/v1/threads/:threadId/pin/": {
+      'POST': {
+        roleRequired: ['admin', 'superadmin'],
+        validator: v.pinThreadSchema,
+        description: 'Pin Thread',
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.pin]
+      },//
+      'DELETE': {
+        roleRequired: ['admin', 'superadmin'],
+        validator: v.pinThreadSchema,
+        description: 'Unpin Thread',
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.unpin]
+      },//
+    },
+    "/api/v1/threads/:threadId/like/": {
+      'POST': {
+        roleRequired: ['user', 'moderator', 'admin', 'superadmin'],
+        validator: v.pinThreadSchema,
+        description: 'Like Thread',
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.like]
+      },//
+      'DELETE': {
+        roleRequired: ['user', 'moderator', 'admin', 'superadmin'],
+        validator: v.pinThreadSchema,
+        description: 'Unlike Thread',
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.unlike]
       },//
     },
 
