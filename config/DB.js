@@ -54,6 +54,7 @@ async function dropDB(){
 async function createAdmin() {
   //temporary patch to nasty MS Windows ctrl+c 
   //mongoose.connection.dropDatabase();
+  console.log(`${server.tagMagenta} Filling DB`);
   superadmin = await User.findOne({ username: 'superadmin' })
   if (!superadmin) {
     superadmin = new User
@@ -61,13 +62,14 @@ async function createAdmin() {
     superadmin.password = CONFIG.MONGO.SUPERADMIN_PASS
     superadmin.roles = ['moderator', 'admin', 'superadmin']
     superadmin.save()
-    console.log('Superadmin created')
+    console.log(`${server.tagMagenta} Superadmin created`);
   }
   user1 = await User.findOne({ username: 'user1' })
   if (!user1) {
     user1 = new User({ username: 'user1', password: 'user1', roles: ['user'] })
     user1.save()
-    console.log('user1 created')
+    console.log(`${server.tagMagenta} User1 created`);
+    //console.log('user1 created')
   }
 
 }
