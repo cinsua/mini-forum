@@ -43,8 +43,9 @@ module.exports = {
 
     data = {
       token: user.getJWT(),
+      id: user.id,
       message: `Welcome ${user.username}`,
-      link: { type: 'GET', rel: 'self', href: '/api/v1/users/me' }
+      links: { type: 'GET', rel: 'self', href: '/api/v1/users/me' }
     }
     req.data = hateoas.addLinks(data, undefined, req.credentials, req.app.routes)
 

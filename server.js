@@ -25,7 +25,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-
+if (process.env.NODE_ENV !== 'test')
 app.use(logger('combined'))
 
 // reference to routes registered
@@ -39,7 +39,7 @@ app.use(passport.initialize());
 app.use(cors());
 
 //inicialize DB:
-db.connectDB();
+db.connectDB(app);
 
 // Register all routes defined in app.routes
 apiV1.setupRoutes(app)
@@ -49,4 +49,5 @@ app.listen(`${CONFIG.PORT}`, () => {
   console.log(`${server.tagWhite} Version: ${CONFIG.VERSION} Commit:${CONFIG.COMMIT} Environment: ${process.env.NODE_ENV} `)
 });
 
+module.exports = app
 //npm run dev

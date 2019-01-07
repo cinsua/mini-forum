@@ -28,7 +28,7 @@ module.exports = {
         roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
         validator: v.noReqSchema,
         description: 'Get Server Status',
-        middlewares: [authenticate, getCredentials, reqValidator, hello] //getCredentials,
+        middlewares: [authenticate, getCredentials, reqValidator, hello]
       },// 
     },
     "/api/v1/users/": {

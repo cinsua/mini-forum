@@ -66,8 +66,6 @@ function getChilds(role, route, originalUrl, routes) {
     .filter((r) => (r !== route && r.startsWith(route) && !r.split(route)[1].includes(':')))
     .map((r) => (r.split(route)[1]))
 
-  console.log('childs', childRoutes)
-
   links = []
 
   // nested sh*t ... we should refactor

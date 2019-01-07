@@ -10,12 +10,14 @@ const uriDB = `${CONFIG.MONGO.CONN_URL}:${CONFIG.MONGO.CONN_PORT}/${CONFIG.MONGO
 //export this function and imported by app.js
 module.exports = {
 
-  connectDB: function () {
+  connectDB: async function (app) {
     mongoose.Promise = global.Promise
     mongoose.connect(uriDB, options);
-    mongoose.connection.on('connected', function () {
+    mongoose.connection.on('connected', async function () {
       console.log(`${server.tagCyan} Succefully connected to ${uriDB}`);
-      createAdmin()
+      await dropDB()
+      await createAdmin()
+      app.emit("MongooseReady");
     });
 
     mongoose.connection.on('error', function (err) {
@@ -30,7 +32,7 @@ module.exports = {
     process.on('SIGINT', () => {
       if (CONFIG.MONGO.DROP_DATABASE_AT_EXIT) {
         console.log(`${server.tagMagenta} Deleting DB`);
-        //mongoose.connection.dropDatabase();
+        mongoose.connection.dropDatabase();
       }
       console.log(`${server.tagRed} Closing DB connection`);
       mongoose.connection.close()
@@ -40,6 +42,13 @@ module.exports = {
 
   }
 
+}
+
+async function dropDB(){
+  if (CONFIG.MONGO.DROP_DATABASE_AT_START) {
+    console.log(`${server.tagMagenta} Deleting DB`);
+    mongoose.connection.dropDatabase();
+  }
 }
 
 async function createAdmin() {

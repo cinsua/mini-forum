@@ -15,7 +15,6 @@ module.exports = {
     routes = req.app.routes
 
     if (await checkOwner(req)) credentials.roles.push('owner')
-    console.log(credentials.roles)
 
     // based on route and method we pick the best role, or die trying
     requiredRoles = routes[req.baseUrl + req.route.path][req.method].roleRequired

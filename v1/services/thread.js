@@ -5,7 +5,6 @@ const { newError } = require('../utils/customErrors')
 module.exports = {
 
   create: async ({ title, content, author, private = false }) => {
-    console.log('private srv', private)
     let thread = new Thread({ title, content, author, private })
     await thread.save()
 

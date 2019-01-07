@@ -8,7 +8,6 @@ module.exports = {
 
   createThread: async (req, res, next) => {
     const { title, content, private } = req.validRequest.body
-    console.log('private ', private)
     thread = await ThreadService.create({ title, content, author: req.user.id, private })
     thread = utils.cleanResult(thread)
 
