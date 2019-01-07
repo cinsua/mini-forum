@@ -4,9 +4,7 @@
   "description": "NetPrinter for private use",
   "main": "app.js",
   "scripts": {
-    "test": "mocha './v1/test/integration.user.js' --timeout 3000 --exit",
-    "testwin": "mocha v1/test/integration.user.js --timeout 3000 --exit --no-deprecation",
-    "testwinp": "mocha-parallel-tests v1/test/ --timeout 3000 --exit --no-deprecation ",
+    "test": "mocha v1/test/allTest.js --timeout 3000 --exit --no-deprecation",
     "dev": "SET NODE_ENV=development&& nodemon server.js",
     "devlinux": "NODE_ENV=development&& nodemon server.js"
   },
