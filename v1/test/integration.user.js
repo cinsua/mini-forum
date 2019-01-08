@@ -1,8 +1,8 @@
-//process.env.NODE_ENV = 'test';
 //Require the dev-dependencies
 let chai = require('chai');
 let chaiHttp = require('chai-http');
-//let server = require('../../server');
+
+var chalk = require('chalk');
 
 var expect = chai.expect;
 
@@ -11,17 +11,9 @@ var server
 function execute(serv) {
   server = serv
   chai.use(chaiHttp);
-  /*
-  before(function (done) {
-    console.log('waiting for Mongoose connection')
-    server.on("MongooseReady", function () {
-      console.log('Mongoose is ready, starting Tests')
-      done();
-    });
-  });
-  */
+
   //Our parent block
-  describe('TESTING /api/v1/users/*', async () => {
+  describe(`\n    ${chalk.bold.green('✱ Route /api/v1/users/*')}\n`, async () => {
 
     // for use in test
     let tokenUserTest
@@ -39,10 +31,7 @@ function execute(serv) {
       });
     });
     */
-    beforeEach((done) => { //Before each test we empty the database  
-      done()
-    });
-    describe('/GET /api/v1/ as guest', function () {
+    describe(`[GET]\t/api/v1/ as guest`, function () {
 
       it('it should GET server alive checker', async function () {
         res = await chai.request(server).get('/api/v1/')
@@ -62,7 +51,7 @@ function execute(serv) {
       });
     });
 
-    describe('/GET /api/v1/users/ as guest', function () {
+    describe(`[GET]\t/api/v1/users/ as guest`, function () {
 
       it('it should GET all users', async function () {
         res = await chai.request(server).get('/api/v1/users')
@@ -81,7 +70,7 @@ function execute(serv) {
       });
     });
 
-    describe('/POST /api/v1/users/ as guest', function () {
+    describe(`[POST]\t/api/v1/users/ as guest`, function () {
 
       it('it should not create users if junk passed in body/params', async function () {
         res = await chai.request(server).post('/api/v1/users/?asd=1')
@@ -110,7 +99,7 @@ function execute(serv) {
 
     });
 
-    describe('/POST /api/v1/users/login as guest', function () {
+    describe(`[POST]\t/api/v1/users/login as guest`, function () {
 
       it('it should not login with junk', async function () {
         res = await chai.request(server).post('/api/v1/users/login/?asd=1')
@@ -146,10 +135,10 @@ function execute(serv) {
       });
 
     });
-    describe('GET Tokens', function () {
+    describe('Get Tokens for next Tests', function () {
       it('from testUser and superadmin for next tests', async function () {
 
-        //get token for all request as user / superadmin
+        //GET  token for all request as user / superadmin
         res = await chai.request(server).post('/api/v1/users/login/')
           .send({ username: 'userTest', password: 'userTest' })
         idUserTest = res.body.data.result.id
@@ -165,7 +154,7 @@ function execute(serv) {
       });
     });
 
-    describe('/GET /api/v1/users/:id', function () {
+    describe(`[GET]\t/api/v1/users/:id`, function () {
 
       it('it should GET a user by username/id and /me if logged', async function () {
 
@@ -209,7 +198,7 @@ function execute(serv) {
 
     // TODO roles
 
-    describe('/GET /api/v1/users/:id/roles NOT IMPLEMENTED', function () {
+    describe(`[GET]\t/api/v1/users/:id/roles NOT IMPLEMENTED`, function () {
 
       it('it should GET moderatorTest roles', async function () {
         res = await chai.request(server).get(`/api/v1/users/moderatortest/roles`)
@@ -218,7 +207,7 @@ function execute(serv) {
       });
     });
 
-    describe('/POST /api/v1/users/:id/roles', function () {
+    describe(`[POST]\t/api/v1/users/:id/roles`, function () {
 
       it('it shouldnt add roles without admin or bad role info', async function () {
         res = await chai.request(server).post(`/api/v1/users/moderatortest/roles`)
@@ -248,7 +237,7 @@ function execute(serv) {
         expectSuccess(res)
       });
     });
-    describe('/DELETE /api/v1/users/:id/roles', function () {
+    describe(`[DELETE]\t/api/v1/users/:id/roles`, function () {
 
       it('it shouldnt delete roles without admin or bad role info', async function () {
         res = await chai.request(server).delete(`/api/v1/users/moderatortest/roles`)
@@ -276,7 +265,7 @@ function execute(serv) {
       });
     });
 
-    describe('/POST /api/v1/users/:id/bans/', function () {
+    describe(`[POST]\t/api/v1/users/:id/bans/`, function () {
 
       it('it should not create a Ban with junk or not admin', async function () {
         // not admin
@@ -313,7 +302,7 @@ function execute(serv) {
       });
     });
 
-    describe('/GET /api/v1/users/:id/bans/', function () {
+    describe(`[GET]\t/api/v1/users/:id/bans/`, function () {
 
       it('it should get the ban of userTest', async function () {
         res = await chai.request(server).get(`/api/v1/users/usertest/bans/`)
@@ -326,7 +315,7 @@ function execute(serv) {
       });
     });
 
-    describe('/DELETE /api/v1/users/:id/bans/:banId', function () {
+    describe(`[DELETE]\t/api/v1/users/:id/bans/:banId`, function () {
 
       it('it should DELETE the ban of userTest', async function () {
         res = await chai.request(server).delete(`/api/v1/users/usertest/bans/${idBanTestUser}`)
@@ -344,7 +333,7 @@ function execute(serv) {
     });
 
     // TODO add moderator
-    describe('/POST /api/v1/users/:id/silences/', function () {
+    describe(`[POST]\t/api/v1/users/:id/silences/`, function () {
 
       it('it should not create a Silence with junk or not moderator at least', async function () {
         // not admin
@@ -377,7 +366,7 @@ function execute(serv) {
       });
     });
 
-    describe('/GET /api/v1/users/:id/silences/', function () {
+    describe(`[GET]\t/api/v1/users/:id/silences/`, function () {
 
       it('it should get the silence of userTest', async function () {
         res = await chai.request(server).get(`/api/v1/users/usertest/silences/`)
@@ -390,7 +379,7 @@ function execute(serv) {
       });
     });
 
-    describe('/DELETE /api/v1/users/:id/silences/:silenceId', function () {
+    describe(`[DELETE]\t/api/v1/users/:id/silences/:silenceId`, function () {
 
       it('it should DELETE the silence of userTest', async function () {
         res = await chai.request(server).delete(`/api/v1/users/usertest/silences/${idSilenceTestUser}`)
@@ -431,7 +420,7 @@ function expectErrors(res) {
 }
 
 /*
-describe('/GET /api/v1/users/', function () {
+describe('[GET ] /api/v1/users/', function () {
 
   it('it should GET all users', async function () {
 
