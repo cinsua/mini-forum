@@ -13,7 +13,7 @@ function execute(serv) {
   chai.use(chaiHttp);
 
   //Our parent block
-  describe(`\n    ${chalk.bold.green('✱ Route /api/v1/users/*')}\n`, async () => {
+  describe(`\n    ${chalk.bold.green('✱ Routes /api/v1/users/*')}\n`, async () => {
 
     // for use in test
     let tokenUserTest

@@ -10,7 +10,7 @@ function execute(serv) {
   server = serv
   chai.use(chaiHttp);
 
-  describe(`\n    ${chalk.bold.green('✱ Route /api/v1/threads/*')}\n`, function () {
+  describe(`\n    ${chalk.bold.green('✱ Routes /api/v1/threads/*')}\n`, function () {
     let tokenUserTest
     let tokenSuperAdmin
     let tokenModeratorTest
