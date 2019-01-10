@@ -7,7 +7,7 @@ const { newMongooseError } = require('../utils/customErrors')
 
 // plugins
 const mongoose_delete = require('mongoose-delete');
-var mongoosePaginate = require('mongoose-paginate');
+var mongoosePaginate = require('mongoose-paginate-v2');
 let mongooseHidden = require('mongoose-hidden')()
 
 const Schema = mongoose.Schema;

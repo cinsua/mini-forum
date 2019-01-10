@@ -264,6 +264,67 @@ function execute(serv) {
         expectSuccess(res)
       });
     });
+    // TODO add moderator
+    describe(`[POST]\t/api/v1/users/:id/silences/`, function () {
+
+      it('it should not create a Silence with junk or not moderator at least', async function () {
+        // not admin
+        res = await chai.request(server).post(`/api/v1/users/usertest/silences/`)
+          .set('Authorization', tokenUserTest)
+          .send({ username: 'userTest', password: 'userTest' })
+        expectErrors(res)
+        // not body
+        res = await chai.request(server).post(`/api/v1/users/usertest/silences/`)
+          .set('Authorization', tokenSuperAdmin)
+        expectErrors(res)
+        // bad body
+        res = await chai.request(server).post(`/api/v1/users/usertest/silences/`)
+          .set('Authorization', tokenSuperAdmin)
+          .send({ reason: 123, timePenalty: 'badtime eh' })
+        expectErrors(res)
+      });
+      it('it should Silence userTest using moderator user', async function () {
+        res = await chai.request(server).post(`/api/v1/users/usertest/silences/`)
+          .set('Authorization', tokenModeratorTest)
+          .send({ reason: 'testing silence', timePenalty: 60000 })
+        expectSuccess(res)
+      });
+      it('it should testUser have silenced property', async function () {
+        res = await chai.request(server).get(`/api/v1/users/usertest`)
+          .set('Authorization', tokenUserTest)
+        expectSuccess(res)
+        expect(new Date(res.body.data.result.silenced)).to.be.a('date')
+
+      });
+    });
+
+    describe(`[GET]\t/api/v1/users/:id/silences/`, function () {
+
+      it('it should get the silence of userTest', async function () {
+        res = await chai.request(server).get(`/api/v1/users/usertest/silences/`)
+          .set('Authorization', tokenSuperAdmin)
+        expectSuccess(res)
+        expect(res.body.data.result).to.be.a('array');
+        expect(res.body.data.result[0]).to.include.all.keys('reason', 'id', 'kind');
+        expect(res.body.data.result[0].kind).to.be.eql('silence')
+        idSilenceTestUser = res.body.data.result[0].id
+      });
+    });
+
+    describe(`[DELETE]\t/api/v1/users/:id/silences/:silenceId`, function () {
+
+      it('it should DELETE the silence of userTest', async function () {
+        res = await chai.request(server).delete(`/api/v1/users/usertest/silences/${idSilenceTestUser}`)
+          .set('Authorization', tokenModeratorTest)
+        expectSuccess(res)
+      });
+      it('it shouldnt testUser have silenced property', async function () {
+        res = await chai.request(server).get(`/api/v1/users/usertest`)
+          .set('Authorization', tokenUserTest)
+        expectSuccess(res)
+        expect(res.body.data.result).to.not.have.property('silenced')
+      });
+    });
 
     describe(`[POST]\t/api/v1/users/:id/bans/`, function () {
 
@@ -332,71 +393,11 @@ function execute(serv) {
       });
     });
 
-    // TODO add moderator
-    describe(`[POST]\t/api/v1/users/:id/silences/`, function () {
 
-      it('it should not create a Silence with junk or not moderator at least', async function () {
-        // not admin
-        res = await chai.request(server).post(`/api/v1/users/usertest/silences/`)
-          .set('Authorization', tokenUserTest)
-          .send({ username: 'userTest', password: 'userTest' })
-        expectErrors(res)
-        // not body
-        res = await chai.request(server).post(`/api/v1/users/usertest/silences/`)
-          .set('Authorization', tokenSuperAdmin)
-        expectErrors(res)
-        // bad body
-        res = await chai.request(server).post(`/api/v1/users/usertest/silences/`)
-          .set('Authorization', tokenSuperAdmin)
-          .send({ reason: 123, timePenalty: 'badtime eh' })
-        expectErrors(res)
-      });
-      it('it should Silence userTest using moderator user', async function () {
-        res = await chai.request(server).post(`/api/v1/users/usertest/silences/`)
-          .set('Authorization', tokenModeratorTest)
-          .send({ reason: 'testing silence', timePenalty: 60000 })
-        expectSuccess(res)
-      });
-      it('it should testUser have silenced property', async function () {
-        res = await chai.request(server).get(`/api/v1/users/usertest`)
-          .set('Authorization', tokenUserTest)
-        expectSuccess(res)
-        expect(new Date(res.body.data.result.silenced)).to.be.a('date')
-
-      });
-    });
-
-    describe(`[GET]\t/api/v1/users/:id/silences/`, function () {
-
-      it('it should get the silence of userTest', async function () {
-        res = await chai.request(server).get(`/api/v1/users/usertest/silences/`)
-          .set('Authorization', tokenSuperAdmin)
-        expectSuccess(res)
-        expect(res.body.data.result).to.be.a('array');
-        expect(res.body.data.result[0]).to.include.all.keys('reason', 'id', 'kind');
-        expect(res.body.data.result[0].kind).to.be.eql('silence')
-        idSilenceTestUser = res.body.data.result[0].id
-      });
-    });
-
-    describe(`[DELETE]\t/api/v1/users/:id/silences/:silenceId`, function () {
-
-      it('it should DELETE the silence of userTest', async function () {
-        res = await chai.request(server).delete(`/api/v1/users/usertest/silences/${idSilenceTestUser}`)
-          .set('Authorization', tokenModeratorTest)
-        expectSuccess(res)
-      });
-      it('it shouldnt testUser have silenced property', async function () {
-        res = await chai.request(server).get(`/api/v1/users/usertest`)
-          .set('Authorization', tokenUserTest)
-        expectSuccess(res)
-        expect(res.body.data.result).to.not.have.property('silenced')
-      });
-    });
 
   });
 
-  
+
 
 }
 module.exports.execute = execute

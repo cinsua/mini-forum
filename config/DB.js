@@ -4,6 +4,9 @@ const User = require('../v1/models/user');
 
 const CONFIG = require('./config')
 
+//TODO. more pool thread connections (one per service maybe?)
+// this should improve the spikes in ms taken by some saves
+
 const options = CONFIG.MONGO.OPTIONS
 const uriDB = `${CONFIG.MONGO.CONN_URL}:${CONFIG.MONGO.CONN_PORT}/${CONFIG.MONGO.DB_NAME}`
 

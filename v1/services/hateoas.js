@@ -16,35 +16,35 @@ module.exports = {
 
     if (paginationInfo) {
       pagination = {
-        pages: paginationInfo.pages,
+        totalPages: paginationInfo.totalPages,
         page: paginationInfo.page,
-        total: paginationInfo.total,
+        totalDocs: paginationInfo.totalDocs,
         limit: paginationInfo.limit
       }
-      pagination.links = [{
-        type: 'GET', rel: 'first',
-        href: `${urlWithoutQuery}?page=1&limit=${paginationInfo.limit}`
-      },]
-
-      if (paginationInfo.page > 1)
+      pagination.links = []
+      if (!utils.arraysEqual(result, [])) {
+        pagination.links = [{
+          type: 'GET', rel: 'first',
+          href: `${urlWithoutQuery}?page=1&limit=${paginationInfo.limit}`
+        },]
+      }
+      if (paginationInfo.hasPrevPage)
         pagination.links.push({
           type: 'GET', rel: 'prev',
-          href: `${urlWithoutQuery}?page=${paginationInfo.page - 1}&limit=${paginationInfo.limit}`
+          href: `${urlWithoutQuery}?page=${paginationInfo.prevPage}&limit=${paginationInfo.limit}`
         })
-      if (paginationInfo.page < paginationInfo.pages)
+      if (paginationInfo.hasNextPage)
         pagination.links.push({
           type: 'GET', rel: 'next',
-          href: `${urlWithoutQuery}?page=${paginationInfo.page + 1}&limit=${paginationInfo.limit}`
+          href: `${urlWithoutQuery}?page=${paginationInfo.nextPage}&limit=${paginationInfo.limit}`
         })
 
-      if (paginationInfo.pages > 1)
+      if (paginationInfo.totalPages > 1)
         pagination.links.push({
           type: 'GET', rel: 'last',
           href: `${urlWithoutQuery}?page=${paginationInfo.pages}&limit=${paginationInfo.limit}`
         })
     }
-
-
 
     data = { pagination, result }
     links = getChilds(role, route, originalUrl, routes)
