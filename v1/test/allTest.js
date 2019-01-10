@@ -22,14 +22,14 @@ describe(`  ${chalk.bold.green('[COMPLETE TEST SUITE]')}`, async () => {
   
 })
 
-after(function() {
+after(async function() {
   endTime = new Date();
   var timeDiff = endTime - startTime - 20
   console.log(`${chalk.bold.green('  [FINISHED IN ')} ${chalk.bold.green(timeDiff+' ms]')}`)
   console.log(chalk.bold.cyan('└'+'─'.repeat(78)+'┘'))
   console.log('')
   console.log(`${chalk.bold.cyan('[TESTING]')} Drop Test Database`)
-  mongoose.connection.dropDatabase();
+  await mongoose.connection.dropDatabase();
   
 
 });

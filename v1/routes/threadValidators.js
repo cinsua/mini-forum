@@ -53,6 +53,12 @@ const baseThreadSchema = Joi.object().keys({
   },
 })
 
+const baseCommentSchema = Joi.object().keys({
+  body: {
+    content: contentCommentSchema.required(),
+  },
+})
+
 const baseUpdateThreadSchema = Joi.object().keys({
   body: {
     title: titleSchema,
@@ -89,4 +95,12 @@ module.exports = {
   pinThreadSchema: baseGetThreadSchema
     .concat(noBodySchema)
     .concat(noQuerySchema),
+
+  createCommentSchema: baseCommentSchema
+    .concat(baseGetThreadSchema)
+    .concat(noQuerySchema),
+
+  getCommentsSchema: paginationQuerySchema
+    .concat(baseGetThreadSchema)
+    .concat(noBodySchema)
 }

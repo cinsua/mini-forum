@@ -95,7 +95,7 @@ async function getThreadQuery(threadId, queryUrl) {
   */
   threadQuery = Thread.findById(threadId)
 
-  threadQuery.select(threadFields).populate([{ path: 'author', select: 'username' }, { path: 'comments', select: 'author.username content likes thread' }])
+  threadQuery.select(threadFields).populate([{ path: 'author', select: 'username' }, { path: 'comments', select: 'author content thread likesCounter' }])
 
   return threadQuery
 
@@ -107,7 +107,7 @@ async function getPaginateThreadQuery(thread, readFields, queryUrl) {
 
   //threadFields = readFields.user.join(' ')
   // TODO define read fields in roles
-  threadFields = 'title author likes private pinned'
+  threadFields = 'title author likes likesCounter private pinned'
 
   if (threadFields == 'all') threadFields = undefined
 

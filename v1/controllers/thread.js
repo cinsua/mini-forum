@@ -37,6 +37,7 @@ module.exports = {
 
     thread = await ThreadService.getById(threadId, queryUrl)
 
+    // TODO to avoid duplicate code and future headpain pls move this to a thread service
     if (thread.private && req.credentials.bestRole == 'guest')
       throw newError('REQUEST_THREAD_IS_PRIVATED');
 
@@ -76,8 +77,8 @@ module.exports = {
       throw newError('AUTH_INSUFFICIENT_PRIVILEGES');
 
     thread = await ThreadService.delete(thread)
-    
-    req.data = ({message: 'Thread deleted'})
+    req.data = {}
+    req.data.result = ({message: 'Thread deleted'})
 
     return next()
   },

@@ -47,7 +47,12 @@ commentSchema.virtual('responses', {
 });
 
 commentSchema.virtual('likesCounter').get(function () {
-  return this.likes.lenght
+  //if (!this.likes) return undefined
+  //if (this.likes.length === 0) return undefined
+  //return this.likes.lenght
+  if (this.likes) return this.likes.lenght
+  
+  return 0
 })
 
 commentSchema.virtual('links').get(function () {

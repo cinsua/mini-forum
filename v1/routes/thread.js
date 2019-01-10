@@ -7,6 +7,7 @@ const { getCredentials } = require('../middlewares/getCredentials')
 const response = require('../middlewares/response')
 
 const ThreadController = require('../controllers/thread');
+const CommentController = require('../controllers/comment');
 
 const ServiceCheckOwner = require('../services/ownerCheckers')
 
@@ -84,6 +85,21 @@ module.exports = {
         description: 'Unlike Thread',
         middlewares: [authenticate, getCredentials, reqValidator, ThreadController.unlike]
       },//
+    },
+
+    "/api/v1/threads/:threadId/comments/": {
+      'GET': {
+        roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
+        validator: v.getCommentsSchema,
+        description: 'Get All Comments of Thread',
+        middlewares: [authenticate, getCredentials, reqValidator, CommentController.getAll]
+      }, 
+      'POST': {
+        roleRequired: ['user', 'moderator', 'admin', 'superadmin'],
+        validator: v.createCommentSchema,
+        description: 'Create Comment',
+        middlewares: [authenticate, getCredentials, reqValidator, CommentController.createComment]
+      },
     },
 
 

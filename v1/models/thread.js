@@ -56,7 +56,11 @@ threadSchema.virtual('comments', {
 });
 
 threadSchema.virtual('likesCounter').get(function () {
+  //if (!this.likes) return undefined
+  //if (this.likes.length === 0) return undefined
+
   if (this.likes) return this.likes.lenght
+
   return 0
 })
 

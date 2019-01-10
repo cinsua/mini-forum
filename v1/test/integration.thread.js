@@ -98,7 +98,158 @@ function execute(serv) {
           .send({ junk: '123' })
         expectErrors(res)
       });
+
     });
+
+    describe(`[GET]\t/api/v1/threads:threadId/`, function () {
+
+      it('it should GET a thread not privated as guest or logged in', async function () {
+        resGuest = await chai.request(server).get('/api/v1/threads/' + idThread1)
+        expectSuccess(resGuest)
+        expect(resGuest.body.data.result).to.include.all.keys('title', 'content', 'id');
+        expect(resGuest.body.data.result.id).eql(idThread1)
+        resUser = await chai.request(server).get('/api/v1/threads/' + idThread1)
+          .set('Authorization', tokenUserTest)
+        expectSuccess(resUser)
+        expect(resUser.body.data.result).to.include.all.keys('title', 'content', 'id');
+        expect(resUser.body.data.result.id).eql(idThread1)
+
+        expect(resUser.body.data.result).to.be.eql(resGuest.body.data.result);
+      });
+
+      it('it should has error if there is junk body or params', async function () {
+        res = await chai.request(server).get('/api/v1/threads/' + idThread1)
+          .send({ junk: '123' })
+        expectErrors(res)
+        res = await chai.request(server).get('/api/v1/threads/' + idThread1 + '?asd=1')
+          .send({ junk: '123' })
+        expectErrors(res)
+      });
+
+      it('it should GET a thread privated only by logged in users', async function () {
+        resGuest = await chai.request(server).get('/api/v1/threads/' + idPrivated)
+        expectErrors(resGuest)
+
+        resUser = await chai.request(server).get('/api/v1/threads/' + idPrivated)
+          .set('Authorization', tokenUserTest)
+        expectSuccess(resUser)
+        expect(resUser.body.data.result).to.include.all.keys('title', 'content', 'id');
+        expect(resUser.body.data.result.id).eql(idPrivated)
+      });
+
+    });
+
+    describe(`[PATCH]\t/api/v1/threads:threadId/`, function () {
+
+      it('it should not PATCH a thread ', async function () {
+        resGuest = await chai.request(server).patch('/api/v1/threads/' + idThread1)
+        expectErrors(resGuest)
+        resUser = await chai.request(server).patch('/api/v1/threads/' + idThread1)
+          .set('Authorization', tokenModeratorTest)
+        expectErrors(resUser)
+        resUser = await chai.request(server).patch('/api/v1/threads/' + idThread1 + '?asd=1')
+          .send({ junk: '123' })
+          .set('Authorization', tokenUserTest)
+        expectErrors(resUser)
+      });
+
+      it('it should PATCH a thread only by Owner or Admin', async function () {
+
+        resUser = await chai.request(server).patch('/api/v1/threads/' + idPrivated)
+          .set('Authorization', tokenUserTest)
+          .send({ private: false })
+        expectSuccess(resUser)
+        expect(resUser.body.data.result).to.include.all.keys('title', 'content', 'id');
+        expect(resUser.body.data.result.id).eql(idPrivated)
+        resUser = await chai.request(server).patch('/api/v1/threads/' + idPrivated)
+          .set('Authorization', tokenSuperAdmin)
+          .send({ private: true })
+        expect(resUser.body.data.result).to.include.all.keys('title', 'content', 'id');
+        expect(resUser.body.data.result.id).eql(idPrivated)
+      });
+
+    });
+
+    describe(`[DELETE]\t/api/v1/threads:threadId/`, function () {
+
+      it('it should not DELETE a thread ', async function () {
+        resGuest = await chai.request(server).delete('/api/v1/threads/' + idThread1)
+        expectErrors(resGuest)
+        resUser = await chai.request(server).delete('/api/v1/threads/' + idThread1)
+          .set('Authorization', tokenModeratorTest)
+        expectErrors(resUser)
+        resUser = await chai.request(server).delete('/api/v1/threads/' + idThread1 + '?asd=1')
+          .send({ junk: '123' })
+          .set('Authorization', tokenUserTest)
+        expectErrors(resUser)
+      });
+
+      it('it should DELETE a thread only by Owner or Admin', async function () {
+
+        resUser = await chai.request(server).delete('/api/v1/threads/' + idPrivated)
+          .set('Authorization', tokenUserTest)
+        expectSuccess(resUser)
+        expect(resUser.body.data.result).to.include.all.keys('message');
+
+        resUser = await chai.request(server).delete('/api/v1/threads/' + idPrivated)
+          .set('Authorization', tokenSuperAdmin)
+        expectErrors(resUser)
+        // if Thread not found, means that if not deleted before will be deleting this.. so is ok
+        expect(resUser.body.errors[0].code).eql('REQUEST_THREAD_NOT_FOUND')
+      });
+
+    });
+
+    // TODO TEST PIN AND LIKES!
+
+
+    describe(`[POST]\t/api/v1/threads:threadId/comments/`, function () {
+      it('it should not create a comment if not logged in or junk request', async function () {
+        res = await chai.request(server).post('/api/v1/threads/' + idThread1 + '/comments')
+          .send({content:'comentario boludo'})
+        expectErrors(res)
+
+        res = await chai.request(server).post('/api/v1/threads/' + idThread1 + '/comments')
+        .set('Authorization', tokenUserTest)
+        expectErrors(res)
+        
+        res = await chai.request(server).post('/api/v1/threads/' + idThread1 + '/comments'+'?asd=1')
+        .set('Authorization', tokenUserTest)
+        .send({ junk: '123' })
+        expectErrors(res)
+
+      })
+
+      it('it should Create a comment', async function () {
+        res = await chai.request(server).post('/api/v1/threads/' + idThread1 + '/comments')
+          .set('Authorization', tokenUserTest)
+          .send({content:'this is a test comment'})
+          expectSuccess(res, 201)
+          expect(res.body.data.result).to.include.all.keys('author', 'content', 'id');
+      })
+    })
+
+    describe(`[GET]\t/api/v1/threads:threadId/comments/`, function () {
+      it('it should not get all comments if junk request or bad id', async function () {
+
+        res = await chai.request(server).get('/api/v1/threads/' + 132132132 + '/comments')
+        expectErrors(res)
+
+        res = await chai.request(server).get('/api/v1/threads/' + idThread1 + '/comments')
+        .send({content:'this is a junk'})
+        expectErrors(res)
+      })
+
+      it('it should get all comments', async function () {
+        // TODO TEST PRIVATE THREADS
+        res = await chai.request(server).get('/api/v1/threads/' + idThread1 + '/comments')
+        expectSuccess(res)
+        expect(res.body.data.result).to.be.a('array')
+        expect(res.body.data.result[0]).to.include.all.keys('author', 'content', 'id');
+        
+      })
+
+    })
 
   });
 
