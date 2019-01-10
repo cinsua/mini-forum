@@ -33,9 +33,5 @@ not implemented yet
 
 ### Running the tests
 
-HA! not yet, again
-```
-// populate bd for testing
-// run battery of tests
-// benchmark some typical simple request per sec
-```
+npm run test
+
