@@ -74,7 +74,7 @@ module.exports = {
     } else {
       // if this error is a generic one, we generate the error obj. Remember: message is a property
       // we should intercept mongo errors (11000 for example), it gives dbname/model/field
-      errors.push({ name: err.name, message: err.message, code: err.code })
+      errors.push({ name: err.name, message: err.message, code: err.code, stack: err.stack })
     }
 
     let response = {

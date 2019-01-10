@@ -50,9 +50,7 @@ module.exports = {
   update: async (req, res, next) => {
     const threadId = req.validRequest.params.threadId
     thread = await ThreadService.getById(threadId)
-    checkThreadOwner(thread, req.user, req.credentials)
 
-    //console.log(req.credentials.bestRole)
     if (req.credentials.bestRole == 'user')
       throw newError('AUTH_INSUFFICIENT_PRIVILEGES');
     
@@ -70,9 +68,7 @@ module.exports = {
     
     const threadId = req.validRequest.params.threadId
     thread = await ThreadService.getById(threadId)
-    checkThreadOwner(thread, req.user, req.credentials)
 
-    //console.log(req.credentials.bestRole)
     if (req.credentials.bestRole == 'user')
       throw newError('AUTH_INSUFFICIENT_PRIVILEGES');
 
@@ -131,10 +127,4 @@ module.exports = {
     
     return next()
   },
-}
-
-function checkThreadOwner(thread, reqUser, credentials){
-  if (thread.author.id === reqUser.id){
-    credentials.bestRole = 'owner'
-  }
 }

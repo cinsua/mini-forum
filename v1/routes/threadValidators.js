@@ -59,6 +59,12 @@ const baseCommentSchema = Joi.object().keys({
   },
 })
 
+const baseGetCommentSchema = Joi.object().keys({
+  params: {
+    commentId: mongooseIdSchema,
+  }
+})
+
 const baseUpdateThreadSchema = Joi.object().keys({
   body: {
     title: titleSchema,
@@ -102,5 +108,10 @@ module.exports = {
 
   getCommentsSchema: paginationQuerySchema
     .concat(baseGetThreadSchema)
+    .concat(noBodySchema),
+
+  getCommentSchema: baseGetCommentSchema
+    .concat(baseGetThreadSchema)
     .concat(noBodySchema)
+    .concat(noQuerySchema),
 }

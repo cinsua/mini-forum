@@ -206,16 +206,16 @@ function execute(serv) {
     describe(`[POST]\t/api/v1/threads:threadId/comments/`, function () {
       it('it should not create a comment if not logged in or junk request', async function () {
         res = await chai.request(server).post('/api/v1/threads/' + idThread1 + '/comments')
-          .send({content:'comentario boludo'})
+          .send({ content: 'comentario boludo' })
         expectErrors(res)
 
         res = await chai.request(server).post('/api/v1/threads/' + idThread1 + '/comments')
-        .set('Authorization', tokenUserTest)
+          .set('Authorization', tokenUserTest)
         expectErrors(res)
-        
-        res = await chai.request(server).post('/api/v1/threads/' + idThread1 + '/comments'+'?asd=1')
-        .set('Authorization', tokenUserTest)
-        .send({ junk: '123' })
+
+        res = await chai.request(server).post('/api/v1/threads/' + idThread1 + '/comments' + '?asd=1')
+          .set('Authorization', tokenUserTest)
+          .send({ junk: '123' })
         expectErrors(res)
 
       })
@@ -223,12 +223,12 @@ function execute(serv) {
       it('it should Create a comment', async function () {
         res = await chai.request(server).post('/api/v1/threads/' + idThread1 + '/comments')
           .set('Authorization', tokenUserTest)
-          .send({content:'this is a test comment'})
-          expectSuccess(res, 201)
-          expect(res.body.data.result).to.include.all.keys('author', 'content', 'id');
+          .send({ content: 'this is a test comment' })
+        expectSuccess(res, 201)
+        expect(res.body.data.result).to.include.all.keys('author', 'content', 'id');
       })
     })
-
+    let commentId
     describe(`[GET]\t/api/v1/threads:threadId/comments/`, function () {
       it('it should not get all comments if junk request or bad id', async function () {
 
@@ -236,7 +236,7 @@ function execute(serv) {
         expectErrors(res)
 
         res = await chai.request(server).get('/api/v1/threads/' + idThread1 + '/comments')
-        .send({content:'this is a junk'})
+          .send({ content: 'this is a junk' })
         expectErrors(res)
       })
 
@@ -246,9 +246,59 @@ function execute(serv) {
         expectSuccess(res)
         expect(res.body.data.result).to.be.a('array')
         expect(res.body.data.result[0]).to.include.all.keys('author', 'content', 'id');
-        
+        commentId = res.body.data.result[0].id
+
       })
 
+    })
+
+    describe(`[GET]\t/api/v1/threads:threadId/comments/:commentId/`, function () {
+      it('it should not get a comments if junk request or bad id', async function () {
+
+
+        res = await chai.request(server).get('/api/v1/threads/' + idThread1 + '/comments/' + commentId)
+          .set('Authorization', tokenUserTest)
+          .send({ junk: 'asd' })
+        expectErrors(res)
+        res = await chai.request(server).get('/api/v1/threads/' + 123123123123123 + '/comments/' + commentId)
+          .set('Authorization', tokenUserTest)
+          .send({ junk: 'asd' })
+        expectErrors(res)
+      })
+      it('it should get a comments if logged or not on public threads', async function () {
+
+        res = await chai.request(server).get('/api/v1/threads/' + idThread1 + '/comments/' + commentId)
+          .set('Authorization', tokenUserTest)
+        expectSuccess(res)
+
+        res = await chai.request(server).get('/api/v1/threads/' + idThread1 + '/comments/' + commentId)
+        expectSuccess(res)
+
+        //deletes tries
+
+      })
+
+    })
+
+    describe(`[DELETE]\t/api/v1/threads:threadId/comments/:commentId/`, function () {
+      it('it should not delete a comments if junk request or not owner/admin', async function () {
+
+        res = await chai.request(server).delete('/api/v1/threads/' + idThread1 + '/comments/' + commentId)
+          .set('Authorization', tokenModeratorTest)
+        expectErrors(res)
+
+        res = await chai.request(server).delete('/api/v1/threads/' + idThread1 + '/comments/' + commentId)
+          .set('Authorization', tokenUserTest)
+          .send({ junk: 'asd' })
+        expectErrors(res)
+
+
+      })
+      it('it should delete a comment if owner/admin', async function () {
+        res = await chai.request(server).delete('/api/v1/threads/' + idThread1 + '/comments/' + commentId)
+          .set('Authorization', tokenUserTest)
+        expectSuccess(res)
+      })
     })
 
   });

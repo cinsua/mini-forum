@@ -10,21 +10,12 @@ module.exports = {
 
     return comment
   },
+
   getAll: async (thread, readFields, queryUrl) => {
     //TODO if filter in query in url remove the rest
     query = getPaginateCommentQuery({thread: thread.id}, readFields, queryUrl)
 
     commentsAndPaginationInfo = await query
-    /*
-    usersAndPaginationInfo is: 
-    Object = {
-      "docs": [user],
-      "total": 2,
-      "limit": 12,
-      "page": 1,
-      "pages": 1
-    }
-    */
 
     comments = commentsAndPaginationInfo.docs
     delete commentsAndPaginationInfo.docs
@@ -32,6 +23,20 @@ module.exports = {
 
     return { comments, paginationInfo }
 
+  },
+
+  getById: async (commentId, queryUrl) => {
+
+    query = getCommentQuery(commentId, queryUrl)
+    comment = await query
+    if (!comment) throw newError('REQUEST_THREAD_NOT_FOUND');
+
+    return comment
+  },
+
+  delete: async (comment) => {
+    await comment.delete()
+    return
   },
   
 }
@@ -57,5 +62,24 @@ async function getPaginateCommentQuery(comment, readFields, queryUrl) {
   }
 
   return Comment.paginate(comment, pagination)
+
+}
+
+async function getCommentQuery(commentId, queryUrl) {
+
+  // see fields
+  commentFields = undefined
+  /*
+  penaltyFields = readFields.penalty.join(' ')
+  population = { path: 'penalties' }
+  if (!readFields.penalty.includes('none') &&
+    !readFields.penalty.includes('all'))
+    population.select = penaltyFields
+  */
+  commentQuery = Comment.findById(commentId)
+
+  commentQuery.select(commentFields).populate([{ path: 'author', select: 'username id' }, { path: 'thread', select: 'title id' }])
+
+  return commentQuery
 
 }

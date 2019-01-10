@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha v1/test/allTest.js --timeout 3000 --exit --no-deprecation",
     "dev": "SET NODE_ENV=development&& nodemon server.js",
-    "devlinux": "NODE_ENV=development&& nodemon server.js"
+    "devlinux": "NODE_ENV=development&& nodemon server.js",
+    "prod": "NODE_ENV=production node server.js"
   },
   "author": "",
   "license": "ISC",

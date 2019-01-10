@@ -41,4 +41,59 @@ module.exports = {
 
     return next()
   },
+
+  getById: async (req, res, next) => {
+    const threadId = req.validRequest.params.threadId
+    const commentId = req.validRequest.params.commentId
+    const queryUrl = req.validRequest.query
+
+    thread = await ThreadService.getById(threadId, queryUrl)
+
+    //console.log(req.credentials.roles, req.credentials.bestRole)
+
+    // TODO to avoid duplicate code and future headpain pls move this to a thread service
+    if (thread.private && req.credentials.bestRole == 'guest')
+      throw newError('REQUEST_THREAD_IS_PRIVATED');
+
+    // TODO to avoid duplicate code and future headpain pls move this to a comment service
+    comment = await CommentService.getById(commentId, queryUrl)
+    if (comment.thread.id !== threadId)
+      throw newError('REQUEST_COMMENT_HAS_DIFFERENT_THREAD');
+    
+    
+
+    comment = utils.cleanResult(comment)
+    req.data = hateoas.addLinks(comment, undefined, req.credentials, req.app.routes)
+
+    return next()
+  },
+
+  delete:async  (req, res, next) => {
+    
+    const threadId = req.validRequest.params.threadId
+    const commentId = req.validRequest.params.commentId
+    const queryUrl = req.validRequest.query
+
+    thread = await ThreadService.getById(threadId, queryUrl)
+    
+    // TODO to avoid duplicate code and future headpain pls move this to a thread service
+    if (thread.private && req.credentials.bestRole == 'guest')
+      throw newError('REQUEST_THREAD_IS_PRIVATED');
+
+    // TODO to avoid duplicate code and future headpain pls move this to a comment service
+    comment = await CommentService.getById(commentId, queryUrl)
+    if (comment.thread.id !== threadId)
+      throw newError('REQUEST_COMMENT_HAS_DIFFERENT_THREAD');
+
+    //if (req.credentials.bestRole == 'user')
+    //  throw newError('AUTH_INSUFFICIENT_PRIVILEGES');
+
+    comment = await CommentService.delete(comment)
+    req.data = {}
+    req.data.result = ({message: 'Comment deleted'})
+
+    return next()
+  },
+
+
 }

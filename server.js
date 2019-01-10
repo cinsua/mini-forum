@@ -25,8 +25,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-if (process.env.NODE_ENV !== 'test')
-app.use(logger('combined'))
+if (process.env.NODE_ENV === 'development') app.use(logger('combined'))
 
 // reference to routes registered
 app.routes = userRoutes.routes

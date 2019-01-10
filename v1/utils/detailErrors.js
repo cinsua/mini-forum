@@ -86,6 +86,16 @@ errors = {
     message: 'You already do not like this thread'
   },
 
+  REQUEST_COMMENT_NOT_FOUND: {
+    name: 'RequestComment',
+    message: 'Requested Comment not found'
+  },
+
+  REQUEST_COMMENT_HAS_DIFFERENT_THREAD: {
+    name: 'RequestComment',
+    message: 'Requested Comment has a reference to a different thread'
+  },
+
 }
 
 module.exports.errors = errors
