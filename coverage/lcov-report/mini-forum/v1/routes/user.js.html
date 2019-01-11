@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for mini-forum\v1\routes\user.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">all files</a> / <a href="index.html">mini-forum/v1/routes/</a> user.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>16/16</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/0</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>1/1</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>16/16</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const { reqValidator } = require('../middlewares/request')
+const v = require('../routes/userValidators')
+const CONFIG = require('../../config/config')
+const passport = require('passport');
+const { getCredentials } = require('../middlewares/getCredentials')
+&nbsp;
+const response = require('../middlewares/response')
+&nbsp;
+const UserController = require('../controllers/user');
+const PenaltyController = require('../controllers/penalty');
+&nbsp;
+const hateoas = require('../services/hateoas')
+&nbsp;
+const ServiceCheckOwner = require('../services/ownerCheckers')
+&nbsp;
+/*#################################################################
+#         This file register the relation between                 #               
+#         routes with roleRequired/validator/description          #
+#################################################################*/
+&nbsp;
+const authenticate = passport.authenticate(['bearer', 'guest'], { session: false })
+&nbsp;
+module.exports = {
+  routes: {
+    "startMiddlewares": [],
+    "/api/v1/": {
+      'GET': {
+        roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
+        validator: v.noReqSchema,
+        description: 'Get Server Status',
+        middlewares: [authenticate, getCredentials, reqValidator, hello]
+      },// 
+    },
+    "/api/v1/users/": {
+      'GET': {
+        roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
+        validator: v.getUsersSchema,
+        description: 'Get all users',
+        middlewares: [authenticate, getCredentials, reqValidator, UserController.getAll]
+      },
+      'POST': {
+        roleRequired: ['guest', 'admin', 'superadmin'],
+        validator: v.createUserSchema,
+        description: 'Create user',
+        middlewares: [authenticate, getCredentials, reqValidator, UserController.createUser]
+      },
+    },
+    "/api/v1/users/login/": {
+      'POST': {
+        roleRequired: ['guest'],
+        validator: v.loginUserSchema,
+        description: 'Login',
+        middlewares: [authenticate, getCredentials, reqValidator, UserController.login]
+      },
+    },
+    "/api/v1/users/:id/": {
+      'GET': {
+        roleRequired: ['guest', 'user', 'moderator', 'admin', 'owner', 'superadmin'],
+        validator: v.getUserSchema,
+        checkOwner: ServiceCheckOwner.user,
+        description: 'Get user',
+        middlewares: [authenticate, getCredentials, reqValidator, UserController.getById]
+      },
+      'DELETE': {
+        roleRequired: ['admin', 'owner', 'superadmin'],
+        validator: v.getUserSchema,
+        checkOwner: ServiceCheckOwner.user,
+        description: 'Delete User',
+        middlewares: [authenticate, getCredentials, reqValidator, UserController.deleteMe]
+      },
+      'PATCH': {
+        roleRequired: ['admin', 'owner', 'superadmin'],
+        validator: '',
+        checkOwner: ServiceCheckOwner.user,
+        description: 'Update User',
+        middlewares: [authenticate, getCredentials, reqValidator, UserController.updateMe]
+      },
+    },
+    "/api/v1/users/:id/bans/": {
+      'POST': {
+        roleRequired: ['admin', 'superadmin'],
+        validator: v.createPenaltySchema,
+        description: 'Create Ban',
+        middlewares: [authenticate, getCredentials, reqValidator, PenaltyController.banUser]
+      },
+      'GET': {
+        roleRequired: ['owner', 'moderator', 'admin', 'superadmin'],
+        validator: v.getPenaltiesSchema,
+        checkOwner: ServiceCheckOwner.user,
+        description: 'Get Bans',
+        middlewares: [authenticate, getCredentials, reqValidator, PenaltyController.getBans]
+      },
+    },
+    "/api/v1/users/:id/silences/": {
+      'POST': {
+        roleRequired: ['moderator', 'admin', 'superadmin'],
+        validator: v.createPenaltySchema,
+        description: 'Create Silence',
+        middlewares: [authenticate, getCredentials, reqValidator, PenaltyController.silenceUser]
+      },
+      'GET': {
+        roleRequired: ['owner', 'moderator', 'admin', 'superadmin'],
+        validator: v.getPenaltiesSchema,
+        checkOwner: ServiceCheckOwner.user,
+        description: 'Get Silences',
+        middlewares: [authenticate, getCredentials, reqValidator, PenaltyController.getSilences]
+      },
+    },
+    "/api/v1/users/:id/roles/": {
+      'GET': {
+        roleRequired: ['user', 'moderator', 'admin', 'owner', 'superadmin'],
+        validator: v.getUserSchema,
+        checkOwner: ServiceCheckOwner.user,
+        description: 'Get Roles',
+        middlewares: [authenticate, getCredentials, reqValidator, hello]
+      },
+      'DELETE': {
+        roleRequired: ['admin', 'superadmin'],
+        validator: v.setRoleSchema,
+        description: 'Delete Role',
+        middlewares: [authenticate, getCredentials, reqValidator, UserController.removeRole]
+      },
+      'POST': {
+        roleRequired: ['admin', 'superadmin'],
+        validator: v.setRoleSchema,
+        description: 'Add Role',
+        middlewares: [authenticate, getCredentials, reqValidator, UserController.addRole]
+      },
+    },
+    "/api/v1/users/:id/bans/:banId/": {
+      'GET': {
+        roleRequired: ['owner', 'admin', 'superadmin'],
+        validator: v.getPenaltySchema,
+        checkOwner: ServiceCheckOwner.user,
+        description: 'Get Ban',
+        middlewares: [authenticate, getCredentials, reqValidator, hello]
+      },
+      'DELETE': {
+        roleRequired: ['admin', 'superadmin'],
+        validator: v.getPenaltySchema,
+        description: 'Delete Ban',
+        middlewares: [authenticate, getCredentials, reqValidator, PenaltyController.removeBan]
+      },
+    },
+    "/api/v1/users/:id/silences/:silenceId/": {
+      'GET': {
+        roleRequired: ['moderator', 'owner', 'admin', 'superadmin'],
+        validator: v.getPenaltySchema,
+        checkOwner: ServiceCheckOwner.user,
+        description: 'Get Silence',
+        middlewares: [authenticate, getCredentials, reqValidator, hello]
+      },
+      'DELETE': {
+        roleRequired: ['moderator', 'admin', 'superadmin'],
+        validator: v.getPenaltySchema,
+        description: 'Delete Silence',
+        middlewares: [authenticate, getCredentials, reqValidator, PenaltyController.removeSilence]
+      },
+    },
+    "finishMiddlewares": [response.sendSuccess, response.sendError],
+  },
+&nbsp;
+&nbsp;
+}
+&nbsp;
+function hello(req, res, next) {
+  data = { message: 'Server running', user: user.username, version: CONFIG.VERSION, commit: CONFIG.COMMIT }
+  req.data = hateoas.addLinks(data, undefined, req.credentials, req.app.routes)
+&nbsp;
+  next()
+&nbsp;
+}
+&nbsp;
+// old way
+/*
+var express = require('express')
+const userRouter = express.Router();
+&nbsp;
+const UserController = require('../controllers/user');
+const PenaltyController = require('../controllers/penalty');
+const { getCredentials } = require('../middlewares/getCredentials')
+const { reqValidator } = require('../middlewares/request')
+*/
+/*
+TODO LIST
+put a serious logger
+get routes for bans/silences/roles
+delete user
+remove update user. view the change password token
+*/
+/*
+const passport = require('passport');
+let passp = passport.authenticate(['bearer', 'guest'], { session: false })
+*/
+/*#################################################################
+#         All routes api/v1/users/*                               #
+#################################################################*/
+/*
+userRouter.use(passp)
+&nbsp;
+userRouter.route('/')
+  .get(getCredentials, reqValidator, UserController.getAll)
+  .post(getCredentials, reqValidator, UserController.createUser)
+&nbsp;
+//works users/:id users/username users/me
+userRouter.route('/:id')
+  .get(getCredentials, reqValidator, UserController.getById)
+  .delete(getCredentials, reqValidator, UserController.deleteMe)
+  // patch should be redone
+  .patch(getCredentials, UserController.updateMe)
+&nbsp;
+userRouter.route('/login')
+  .post(getCredentials, reqValidator, UserController.login)
+&nbsp;
+userRouter.route('/:id/bans')
+  .post(getCredentials, reqValidator, PenaltyController.banUser)
+  .get(getCredentials, reqValidator, PenaltyController.getBans)
+&nbsp;
+// TODO get
+userRouter.route('/:id/bans/:banId')
+  .delete(getCredentials, reqValidator, PenaltyController.removeBan)
+&nbsp;
+userRouter.route('/:id/silences')
+  .post(getCredentials, reqValidator, PenaltyController.silenceUser)
+  .get(getCredentials, reqValidator, PenaltyController.getSilences)
+&nbsp;
+// TODO get
+userRouter.route('/:id/silences/:silenceId')
+  .delete(getCredentials, reqValidator, PenaltyController.removeSilence)
+&nbsp;
+// TODO get route
+userRouter.route('/:id/roles')
+  .post(getCredentials, reqValidator, UserController.addRole)
+  .delete(getCredentials, reqValidator, UserController.removeRole)
+&nbsp;
+module.exports = userRouter;*/</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Jan 11 2019 10:05:04 GMT-0300 (GMT-03:00)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>

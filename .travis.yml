@@ -6,3 +6,8 @@ cache:
   - "$HOME/.npm"
 services:
   - mongodb
+script:
+  - npm run test-travis
+after_script:
+    - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+    - rm -rf ./coverage

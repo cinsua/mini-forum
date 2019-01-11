@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for mini-forum\v1\routes\thread.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">all files</a> / <a href="index.html">mini-forum/v1/routes/</a> thread.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>11/11</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/0</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/0</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>11/11</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const { reqValidator } = require('../middlewares/request')
+const v = require('../routes/threadValidators')
+const CONFIG = require('../../config/config')
+const passport = require('passport');
+const { getCredentials } = require('../middlewares/getCredentials')
+&nbsp;
+const response = require('../middlewares/response')
+&nbsp;
+const ThreadController = require('../controllers/thread');
+const CommentController = require('../controllers/comment');
+&nbsp;
+const ServiceCheckOwner = require('../services/ownerCheckers')
+&nbsp;
+/*#################################################################
+#         This file register the relation between                 #               
+#         routes with roleRequired/validator/description          #
+#################################################################*/
+&nbsp;
+const authenticate = passport.authenticate(['bearer', 'guest'], { session: false })
+&nbsp;
+module.exports = {
+  routes: {
+    "startMiddlewares": [],
+&nbsp;
+    "/api/v1/threads/": {
+      'GET': {
+        roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
+        validator: v.getThreadsSchema,
+        description: 'Get All Threads',
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.getAll]
+      },// 
+      'POST': {
+        roleRequired: ['user', 'moderator', 'admin', 'superadmin'],
+        validator: v.createThreadSchema,
+        description: 'Create Thread',
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.createThread]
+      },
+    },
+    "/api/v1/threads/:threadId/": {
+      'GET': {
+        roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
+        validator: v.getThreadSchema,
+        description: 'Get Thread',
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.getById]
+      },//
+      'PATCH': {
+        roleRequired: ['user', 'owner', 'admin', 'superadmin'],
+        validator: v.updateThreadSchema,
+        checkOwner: ServiceCheckOwner.thread,
+        description: 'Update Thread',
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.update]
+      },//
+      'DELETE': {
+        roleRequired: ['owner', 'admin', 'superadmin'],
+        validator: v.getThreadSchema,
+        checkOwner: ServiceCheckOwner.thread,
+        description: 'Delete Thread',
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.delete]
+      },//
+    },
+    "/api/v1/threads/:threadId/pin/": {
+      'POST': {
+        roleRequired: ['admin', 'superadmin'],
+        validator: v.pinThreadSchema,
+        description: 'Pin Thread',
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.pin]
+      },//
+      'DELETE': {
+        roleRequired: ['admin', 'superadmin'],
+        validator: v.pinThreadSchema,
+        description: 'Unpin Thread',
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.unpin]
+      },//
+    },
+    "/api/v1/threads/:threadId/like/": {
+      'POST': {
+        roleRequired: ['user', 'moderator', 'admin', 'superadmin'],
+        validator: v.pinThreadSchema,
+        description: 'Like Thread',
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.like]
+      },//
+      'DELETE': {
+        roleRequired: ['user', 'moderator', 'admin', 'superadmin'],
+        validator: v.pinThreadSchema,
+        description: 'Unlike Thread',
+        middlewares: [authenticate, getCredentials, reqValidator, ThreadController.unlike]
+      },//
+    },
+&nbsp;
+    "/api/v1/threads/:threadId/comments/": {
+      'GET': {
+        roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
+        validator: v.getCommentsSchema,
+        description: 'Get All Comments of Thread',
+        middlewares: [authenticate, getCredentials, reqValidator, CommentController.getAll]
+      },
+      'POST': {
+        roleRequired: ['user', 'moderator', 'admin', 'superadmin'],
+        validator: v.createCommentSchema,
+        description: 'Create Comment',
+        middlewares: [authenticate, getCredentials, reqValidator, CommentController.createComment]
+      },
+    },
+&nbsp;
+    "/api/v1/threads/:threadId/comments/:commentId": {
+      'GET': {
+        roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
+        validator: v.getCommentSchema,
+        description: 'Get a Comment from Thread',
+        //checkOwner: ServiceCheckOwner.comment,
+        middlewares: [authenticate, getCredentials, reqValidator, CommentController.getById]
+      },
+      'DELETE': {
+        roleRequired: ['owner', 'admin', 'superadmin'],
+        validator: v.getCommentSchema,
+        description: 'Delete a Comment from Thread',
+        checkOwner: ServiceCheckOwner.comment,
+        middlewares: [authenticate, getCredentials, reqValidator, CommentController.delete]
+      },
+    },
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+    "finishMiddlewares": [response.sendSuccess, response.sendError],
+&nbsp;
+  }
+}</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Jan 11 2019 10:05:04 GMT-0300 (GMT-03:00)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>
