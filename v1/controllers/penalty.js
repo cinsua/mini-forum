@@ -11,10 +11,10 @@ module.exports = {
     const readFields = req.credentials.readFields
     const queryUrl = req.validRequest.query
 
-    user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
-    bans = await PenaltyService.getBans(user)
+    let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
+    let bans = await PenaltyService.getBans(user)
 
-    req.data = hateoas.addLinks(bans, undefined, req.credentials, req.app.routes)
+    req.data = hateoas.addLinks(bans, paginationInfo = undefined, req.credentials, req.app.routes)
 
     return next()
   },
@@ -28,9 +28,9 @@ module.exports = {
     const { timePenalty, expirePenalty, reason } = req.validRequest.body
     let pen = { reason, timePenalty, expirePenalty, user:user.id, author: req.user.id }
 
-    ban = await PenaltyService.create(pen, 'ban')
+    let ban = await PenaltyService.create(pen, 'ban')
 
-    req.data = hateoas.addLinks(ban, undefined, req.credentials, req.app.routes)
+    req.data = hateoas.addLinks(ban, paginationInfo = undefined, req.credentials, req.app.routes)
 
 
     return next()
@@ -42,10 +42,10 @@ module.exports = {
     const readFields = req.credentials.readFields
     const queryUrl = req.validRequest.query
 
-    user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
-    silences = await PenaltyService.getSilences(user)
+    let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
+    let silences = await PenaltyService.getSilences(user)
 
-    req.data = hateoas.addLinks(silences, undefined, req.credentials, req.app.routes)
+    req.data = hateoas.addLinks(silences, paginationInfo = undefined, req.credentials, req.app.routes)
 
     return next()
   },
@@ -55,13 +55,13 @@ module.exports = {
     const readFields = req.credentials.readFields
     const queryUrl = req.validRequest.query
 
-    user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
+    let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
     const { timePenalty, expirePenalty, reason } = req.validRequest.body
     let pen = { reason, timePenalty, expirePenalty, user:user.id, author: req.user.id }
 
-    silence = await PenaltyService.create(pen, 'silence')
+    let silence = await PenaltyService.create(pen, 'silence')
 
-    req.data = hateoas.addLinks(silence, undefined, req.credentials, req.app.routes)
+    req.data = hateoas.addLinks(silence, paginationInfo = undefined, req.credentials, req.app.routes)
     return next()
   },
 
@@ -70,12 +70,12 @@ module.exports = {
     const readFields = req.credentials.readFields
     const queryUrl = req.validRequest.query
 
-    user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
-    ban = await PenaltyService.getBan(user, req.params.banId)
+    let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
+    let ban = await PenaltyService.getBan(user, req.params.banId)
     await PenaltyService.deletePenalty(ban)
 
-    data = { message: `ban removed from [${user.username}]` }
-    req.data = hateoas.addLinks(data, undefined, req.credentials, req.app.routes)
+    let data = { message: `ban removed from [${user.username}]` }
+    req.data = hateoas.addLinks(data, paginationInfo = undefined, req.credentials, req.app.routes)
 
     return next()
   },
@@ -85,12 +85,12 @@ module.exports = {
     const readFields = req.credentials.readFields
     const queryUrl = req.validRequest.query
 
-    user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
-    silence = await PenaltyService.getSilence(user, req.params.silenceId)
+    let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
+    let silence = await PenaltyService.getSilence(user, req.params.silenceId)
     await PenaltyService.deletePenalty(silence)
 
-    data = { message: `silence removed from [${user.username}]` }
-    req.data = hateoas.addLinks(data, undefined, req.credentials, req.app.routes)
+    let data = { message: `silence removed from [${user.username}]` }
+    req.data = hateoas.addLinks(data, paginationInfo = undefined, req.credentials, req.app.routes)
 
     return next()
   }
