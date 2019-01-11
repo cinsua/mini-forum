@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/cinsua/mini-forum.svg?branch=master)](https://travis-ci.org/cinsua/mini-forum)
 # mini-forum
 
 mini-forum is an REST(ish)/GraphQL(not yet) Api with passport local strategy
