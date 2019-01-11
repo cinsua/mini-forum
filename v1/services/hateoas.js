@@ -7,12 +7,13 @@ const utils = require('../utils/utils')
 
 module.exports = {
 
-  addLinks: (result, paginationInfo, credentials, routes) => {
+  addLinks (result, credentials, routes, {paginationInfo} = {}) {
     let { bestRole, route, originalUrl } = credentials
     role = bestRole
     let pagination = undefined
     // should keep others query params
     urlWithoutQuery = originalUrl.split('?')[0]
+    //let paginationInfo = options.paginationInfo
 
     if (paginationInfo) {
       pagination = {

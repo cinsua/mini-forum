@@ -1,5 +1,5 @@
-const passport = require('passport');
-const User = require('../models/user');
+const passport = require('passport')
+const User = require('../models/user')
 const CONFIG = require('../../config/config')
 const BearerStrategy = require('passport-http-bearer').Strategy
 const jwt = require('jsonwebtoken')
@@ -14,7 +14,7 @@ const verifyToken = async function (token, done) {
   jwt.verify(token, CONFIG.JWT.SECRET, async (err, decoded) => {
 
     if (err) {
-      codes = {
+      let codes = {
         'jwt malformed': 'JWT_MF',
         'jwt signature is required': 'JWT_SR',
         'invalid signature': 'JWT_SI',
@@ -22,13 +22,13 @@ const verifyToken = async function (token, done) {
         'invalid token': 'JWT_INV',
         'unexpected token': 'JWT_UNX'
       }
-      msg = err.message
+      let msg = err.message
       //Unexpected or unexpected, lead to some errors, we group them
       if (msg.includes('nexpected')) msg = 'unexpected token'
       return done(newErrorCustom(codes[msg], 'LoginError', msg))
     }
 
-    user = await User.findById(decoded.user_id).populate('penalties');
+    let user = await User.findById(decoded.user_id).populate('penalties')
     if (!user) {
       return done(newError('LOGIN_PW_UNAME_INVALID'))
     }

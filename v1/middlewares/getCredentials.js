@@ -4,7 +4,7 @@ const roles = require('../models/roles')
 
 module.exports = {
 
-  getCredentials: async function (req, res, next) {
+  async getCredentials(req, res, next) {
 
     // we will fill this with roles and read/write/update/delete permissions
     let credentials = {}
@@ -12,12 +12,12 @@ module.exports = {
     credentials.route = req.baseUrl + req.route.path
     credentials.originalUrl = req.originalUrl
 
-    routes = req.app.routes
+    let routes = req.app.routes
 
     if (await checkOwner(req)) credentials.roles.push('owner')
 
     // based on route and method we pick the best role, or die trying
-    requiredRoles = routes[req.baseUrl + req.route.path][req.method].roleRequired
+    let requiredRoles = routes[req.baseUrl + req.route.path][req.method].roleRequired
 
     let availableRoles = requiredRoles.filter(role => credentials.roles.includes(role))
 
@@ -28,10 +28,10 @@ module.exports = {
 
     // we put values to available roles, taken from roles.levels
     const rolesLevel = availableRoles
-      .reduce((obj, key) => ({ ...obj, [key]: roles.levels[key] }), {});
+      .reduce((obj, key) => ({ ...obj, [key]: roles.levels[key] }), {})
 
     // best role based on values taken from rolesLevel
-    bestRole = Object.keys(rolesLevel).reduce((a, b) => rolesLevel[a] > rolesLevel[b] ? a : b)
+    let bestRole = Object.keys(rolesLevel).reduce((a, b) => rolesLevel[a] > rolesLevel[b] ? a : b)
     credentials.bestRole = bestRole
 
     // fill up readFields based on bestRole
@@ -50,7 +50,7 @@ module.exports = {
 async function checkOwner(req) {
 
   const route = req.app.routes[req.baseUrl + req.route.path][req.method]
-  owner = false
+  let owner = false
   if (route.checkOwner) {
     if (await route.checkOwner(req) > 0) owner = true
   }

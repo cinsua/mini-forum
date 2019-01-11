@@ -1,16 +1,14 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const CONFIG = require('../../config/config')
 
-const { newMongooseError } = require('../utils/customErrors')
-
 // plugins
-const mongoose_delete = require('mongoose-delete');
-const mongoosePaginate = require('mongoose-paginate-v2');
+const mongoose_delete = require('mongoose-delete')
+const mongoosePaginate = require('mongoose-paginate-v2')
 const mongooseHidden = require('mongoose-hidden')()
 
-const Schema = mongoose.Schema;
+const Schema = mongoose.Schema
 
 const userSchema = new Schema({
   username: {
@@ -33,18 +31,17 @@ const userSchema = new Schema({
     toObject: { getters: true, setters: true, virtuals: true },
     toJSON: { getters: true, setters: true, virtuals: true },
     runSettersOnQuery: true
-  });
+  })
 
 userSchema.plugin(mongooseHidden)
-userSchema.plugin(mongoosePaginate);
-userSchema.plugin(mongoose_delete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' });
-
+userSchema.plugin(mongoosePaginate)
+userSchema.plugin(mongoose_delete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' })
 userSchema.virtual('penalties', {
   ref: 'Penalty', // The model to use
   localField: '_id',  // Find Penalties where `localField`
   foreignField: 'user', // is equal to `foreignField`
   justOne: false, // gives us an array
-});
+})
 
 userSchema.virtual('banned').get(function () {
   if (!this.penalties) return undefined
@@ -60,7 +57,7 @@ userSchema.virtual('banned').get(function () {
 
   // can be omitted, keep for sanity
   return undefined
-});
+})
 
 userSchema.virtual('silenced').get(function () {
   if (!this.penalties) return undefined
@@ -70,17 +67,17 @@ userSchema.virtual('silenced').get(function () {
   let datesSilences = this.penalties
     .map(silence => (silence.kind === 'silence') ? silence.expiresAt : undefined)
     .filter(date => date)
-  let lastSilence = Math.max.apply(null, datesSilences);
+  let lastSilence = Math.max.apply(null, datesSilences)
 
   if (lastSilence > Date.now()) return new Date(lastSilence)// .toUTCString()
 
   // can be omitted, keep for sanity
   return undefined
-});
+})
 
 userSchema.virtual('links').get(function () {
 
-  self = {
+  let self = {
     type: 'GET', rel: 'self',
     href: `/api/v1/users/${this.username}`
   }
@@ -89,7 +86,7 @@ userSchema.virtual('links').get(function () {
 
 // encrypt password before save
 userSchema.pre('save', async function (next) {
-  const user = this;
+  const user = this
 
   // don't rehash if it's same password
   if (!user.isModified('password')) return next()
@@ -97,16 +94,16 @@ userSchema.pre('save', async function (next) {
   user.password = await bcrypt.hash(user.password, CONFIG.JWT.SALTING_ROUNDS)
 
   return next()
-});
+})
 
 userSchema.methods.comparePassword = async function (pw) {
-  return await bcrypt.compare(pw, this.password);
+  return await bcrypt.compare(pw, this.password)
 }
 
 userSchema.methods.getJWT = function () {
   // TODO
-  // let expiration_time = parseInt(CONFIG.jwt_expiration);
-  return "Bearer " + jwt.sign({ user_id: this._id }, CONFIG.JWT.SECRET, { expiresIn: 10000 });
-};
+  // let expiration_time = parseInt(CONFIG.jwt_expiration)
+  return "Bearer " + jwt.sign({ user_id: this._id }, CONFIG.JWT.SECRET, { expiresIn: 10000 })
+}
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', userSchema)

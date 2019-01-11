@@ -1,10 +1,10 @@
-const User = require('../models/user');
+const User = require('../models/user')
 const ObjectId = require('mongoose').Types.ObjectId
 const { newError } = require('../utils/customErrors')
 const hateoas = require('./hateoas')
 
 module.exports = {
-  create: async ({ username, password }) => {
+  async create({ username, password }) {
     //const { username, password } = body
     const user = new User({ username, password })
     user.roles.push('user')
@@ -12,11 +12,11 @@ module.exports = {
     return user
   },
 
-  getAll: async (readFields, queryUrl) => {
+  async getAll(readFields, queryUrl) {
     //TODO if filter in query in url remove the rest
-    query = getPaginateUsersQuery({}, readFields, queryUrl)
+    let query = getPaginateUsersQuery({}, readFields, queryUrl)
 
-    usersAndPaginationInfo = await query
+    let usersAndPaginationInfo = await query
     /*
     usersAndPaginationInfo is: 
     Object = {
@@ -28,65 +28,65 @@ module.exports = {
     }
     */
 
-    users = usersAndPaginationInfo.docs
+    let users = usersAndPaginationInfo.docs
     delete usersAndPaginationInfo.docs
-    paginationInfo = usersAndPaginationInfo
+    let paginationInfo = usersAndPaginationInfo
 
     return { users, paginationInfo }
 
   },
 
-  getByIdOrUsername: async (idOrUsername, readFields, queryUrl) => {
+  async getByIdOrUsername(idOrUsername, readFields, queryUrl) {
 
-    query = getUserquery(idOrUsername, readFields, queryUrl)
-    user = await query
-    if (!user) throw newError('REQUEST_USER_NOT_FOUND');
+    let query = getUserquery(idOrUsername, readFields, queryUrl)
+    let user = await query
+    if (!user) throw newError('REQUEST_USER_NOT_FOUND')
 
     return user
   },
 
   // only for login
-  getByUsername: async (username) => {
+  async getByUsername(username) {
 
-    query = getUserquery(username, { user: ['all'], penalty: ['all'] })
+    let query = getUserquery(username, { user: ['all'], penalty: ['all'] })
     let user = await query
     return user
   },
 
   // never used ? maybe deprecated
-  deleteMe: async (req) => {
+  async deleteMe(req) {
     const { user } = req
     await user.delete()
     return
   },
 
   // never used ? maybe deprecated
-  updateMe: async (req) => {
+  async updateMe(req) {
     let user, data
-    user = req.user;
-    data = req.body;
-    user.set(data);
-    user = await user.save();
+    user = req.user
+    data = req.body
+    user.set(data)
+    user = await user.save()
     return user
   },
 
-  update: async (user, updObj) => {
+  async update(user, updObj) {
     user.set(updObj)
-    user = await user.save();
+    user = await user.save()
     return user
   },
 
-  addPenalty: async (user, penalty) => {
+  async addPenalty(user, penalty) {
     user.penalties.push(penalty)
     user.save()
   },
 
-  addRol: async (user, rol) => {
+  async addRol(user, rol) {
     user.roles.push(rol)
     user.save()
   },
 
-  removeRol: async (user, rol) => {
+  async removeRol(user, rol) {
     user.roles = user.roles.filter(r => r !== rol)
     //const filteredItems = items.filter(item => item !== valueToRemove)
 
@@ -98,11 +98,11 @@ module.exports = {
 //TODO query url filter
 async function getUserquery(userId, readFields, queryUrl) {
 
-  userFields = readFields.user.join(' ')
+  let userFields = readFields.user.join(' ')
   if (userFields == 'all') userFields = undefined
 
-  penaltyFields = readFields.penalty.join(' ')
-  population = { path: 'penalties' }
+  let penaltyFields = readFields.penalty.join(' ')
+  let population = { path: 'penalties' }
   if (!readFields.penalty.includes('none') &&
     !readFields.penalty.includes('all'))
     population.select = penaltyFields
@@ -113,7 +113,7 @@ async function getUserquery(userId, readFields, queryUrl) {
   } catch (e) {
     idValid = undefined
   }
-
+  let userQuery
   (userId != idValid) ?
     userQuery = User.findOne({ username: userId }) :
     userQuery = User.findById(userId)
@@ -127,13 +127,13 @@ async function getUserquery(userId, readFields, queryUrl) {
 //TODO query url filter
 async function getPaginateUsersQuery(user, readFields, queryUrl) {
 
-  userFields = readFields.user.join(' ')
+  let userFields = readFields.user.join(' ')
 
   if (userFields == 'all') userFields = undefined
 
-  penaltyFields = readFields.penalty.join(' ')
+  let penaltyFields = readFields.penalty.join(' ')
 
-  population = { path: 'penalties' }
+  let population = { path: 'penalties' }
   if (!readFields.penalty.includes('none') &&
     !readFields.penalty.includes('all'))
     population.select = penaltyFields

@@ -1,18 +1,18 @@
-const Joi = require('joi');
+const Joi = require('joi')
 
 module.exports = {
-  reqValidator: function (req, res, next) {
+  reqValidator(req, res, next) {
 
     schemaValidation = req.app.routes[req.baseUrl + req.route.path][req.method].validator
 
     // simplified version of req, takes only the client inputs
-    request = {
+    let request = {
       body: req.body,
       params: req.params,
       query: req.query
     }
 
-    const result = Joi.validate(request, schemaValidation, { abortEarly: false });
+    const result = Joi.validate(request, schemaValidation, { abortEarly: false })
     if (result.error) {
       next(result.error)
     }

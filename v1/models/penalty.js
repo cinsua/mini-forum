@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
-const mongoose_delete = require('mongoose-delete');
-const mongoosePaginate = require('mongoose-paginate');
+const mongoose = require('mongoose')
+const mongoose_delete = require('mongoose-delete')
+const mongoosePaginate = require('mongoose-paginate')
 const mongooseHidden = require('mongoose-hidden')()
 
-const Schema = mongoose.Schema;
+const Schema = mongoose.Schema
 
 const penaltySchema = new Schema({
   reason: {
@@ -37,32 +37,32 @@ const penaltySchema = new Schema({
     toObject: { getters: true, setters: true, virtuals: true },
     toJSON: { getters: true, setters: true, virtuals: true },
     runSettersOnQuery: true
-  });
+  })
 
 penaltySchema.plugin(mongooseHidden)
-penaltySchema.plugin(mongoosePaginate);
-penaltySchema.plugin(mongoose_delete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' });
+penaltySchema.plugin(mongoosePaginate)
+penaltySchema.plugin(mongoose_delete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' })
 
 penaltySchema.virtual('timePenalty').set(function (v) {
   this.expiresAt = Date.now() + v
-});
+})
 
 penaltySchema.virtual('links').get(function () {
-  
+  let kindRoute, userid
   (this.kind === 'ban') ?
     kindRoute = 'bans' :
     kindRoute = 'silences'
-  
-    // if the penalty is populated, we take username, else we link the ugly id
-    this.user.username ?
+
+  // if the penalty is populated, we take username, else we link the ugly id
+  this.user.username ?
     userid = user.username :
     userid = this.user
-  
-    self = {
+
+  let self = {
     type: 'GET', rel: 'self',
     href: `/api/v1/users/${userid}/${kindRoute}/${this.id}`
   }
   return [self]
 })
 
-module.exports = mongoose.model('Penalty', penaltySchema);
+module.exports = mongoose.model('Penalty', penaltySchema)

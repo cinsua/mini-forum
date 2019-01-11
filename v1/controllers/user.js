@@ -1,23 +1,23 @@
-const UserService = require('../services/user');
+const UserService = require('../services/user')
 const { newError } = require('../utils/customErrors')
 const hateoas = require('../services/hateoas')
 const rolesLevels = require('../models/roles').levels
 
 module.exports = {
 
-  createUser: async (req, res, next) => {
+  async createUser(req, res, next) {
     const { username, password } = req.validRequest.body
 
-    user = await UserService.create({ username, password })
+    let user = await UserService.create({ username, password })
 
     req.status = 201
     user = cleanUser(user, req.credentials.readFields, req.validRequest.query)
-    req.data = hateoas.addLinks(user, undefined, req.credentials, req.app.routes)
+    req.data = hateoas.addLinks(user, req.credentials, req.app.routes)
 
     return next()
   },
 
-  getAll: async (req, res, next) => {
+  async getAll(req, res, next) {
 
     const queryUrl = req.validRequest.query
     const readFields = req.credentials.readFields
@@ -25,68 +25,68 @@ module.exports = {
     let { users, paginationInfo } = await UserService.getAll(readFields, queryUrl)
 
     users = cleanUsers(users, readFields, queryUrl)
-    req.data = hateoas.addLinks(users, paginationInfo, req.credentials, req.app.routes)
+    req.data = hateoas.addLinks(users, req.credentials, req.app.routes, { paginationInfo })
 
     return next()
   },
 
-  login: async (req, res, next) => {
+  async login(req, res, next) {
     let { username, password } = req.validRequest.body
 
-    let user = await UserService.getByUsername(username);
-    if (!user) throw newError('LOGIN_PW_UNAME_INVALID');
+    let user = await UserService.getByUsername(username)
+    if (!user) throw newError('LOGIN_PW_UNAME_INVALID')
 
-    access = await user.comparePassword(password);
-    if (!access) throw newError('LOGIN_PW_UNAME_INVALID');
+    let access = await user.comparePassword(password)
+    if (!access) throw newError('LOGIN_PW_UNAME_INVALID')
 
-    if (user.banned) throw newError('LOGIN_USER_BANNED');
+    if (user.banned) throw newError('LOGIN_USER_BANNED')
 
-    data = {
+    let data = {
       token: user.getJWT(),
       id: user.id,
       message: `Welcome ${user.username}`,
       links: { type: 'GET', rel: 'self', href: '/api/v1/users/me' }
     }
-    req.data = hateoas.addLinks(data, undefined, req.credentials, req.app.routes)
+    req.data = hateoas.addLinks(data, req.credentials, req.app.routes)
 
     return next()
   },
 
   // refactor this
-  deleteMe: async (req, res, next) => {
-    let user = await UserService.deleteMe(req);
+  async deleteMe(req, res, next) {
+    let user = await UserService.deleteMe(req)
     req.data = { message: 'User logged in deleted' }
 
     return next()
   },
 
   // refactor this
-  updateMe: async (req, res, next) => {
-    user = await UserService.updateMe(req)
+  async updateMe(req, res, next) {
+    let user = await UserService.updateMe(req)
     req.data = { user, message: 'Saved' }
 
     return next()
   },
 
-  getById: async (req, res, next) => {
+  async getById(req, res, next) {
     const idOrUsername = req.validRequest.params.id
     const readFields = req.credentials.readFields
     const queryUrl = req.validRequest.query
 
-    user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
+    let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
 
     user = cleanUser(user, readFields, queryUrl)
-    req.data = hateoas.addLinks(user, undefined, req.credentials, req.app.routes)
+    req.data = hateoas.addLinks(user, req.credentials, req.app.routes)
 
     return next()
   },
 
-  addRole: async (req, res, next) => {
+  async addRole(req, res, next) {
     const idOrUsername = req.validRequest.params.id
     const readFields = req.credentials.readFields
     const queryUrl = req.validRequest.query
 
-    user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
+    let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
     const role = req.validRequest.body.role
 
     if (user.roles.includes(role))
@@ -97,18 +97,18 @@ module.exports = {
 
     await UserService.addRol(user, role)
 
-    data = { message: `role [${role}] added to user [${user.username}]` }
-    req.data = hateoas.addLinks(data, undefined, req.credentials, req.app.routes)
+    let data = { message: `role [${role}] added to user [${user.username}]` }
+    req.data = hateoas.addLinks(data, req.credentials, req.app.routes)
 
     return next()
   },
 
-  removeRole: async (req, res, next) => {
+  async removeRole(req, res, next) {
     const idOrUsername = req.validRequest.params.id
     const readFields = req.credentials.readFields
     const queryUrl = req.validRequest.query
 
-    user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
+    let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
     const role = req.validRequest.body.role
 
     if (!user.roles.includes(role))
@@ -119,8 +119,8 @@ module.exports = {
 
     await UserService.removeRol(user, req.body.role)
 
-    data = { message: `role [${role}] deleted from user [${user.username}]` }
-    req.data = hateoas.addLinks(data, undefined, req.credentials, req.app.routes)
+    let data = { message: `role [${role}] deleted from user [${user.username}]` }
+    req.data = hateoas.addLinks(data, req.credentials, req.app.routes)
 
     return next()
   },

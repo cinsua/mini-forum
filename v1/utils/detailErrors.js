@@ -1,27 +1,6 @@
 
 errors = {
-  TEST_CODE: {
-    name: '',
-    message: ''
-  },
-  // User creation
-  USER_CREATION_PW_SHORT: {
-    name: 'UserCreation',
-    message: 'Password is too short, require at least 4 characters'
-  },
-  USER_CREATION_UNAME_SHORT: {
-    name: 'UserCreation',
-    message: 'Username is too short, require at least 4 characters'
-  },
-  USER_CREATION_PW_UNAME_REQUIRED: {
-    name: 'UserCreation',
-    message: 'You must provide username and password to create an user'
-  },
   // User login
-  LOGIN_PW_UNAME_REQUIRED: {
-    name: 'UserLogin',
-    message: 'You must provide username and password for login'
-  },
   LOGIN_PW_UNAME_INVALID: {
     name: 'UserLogin',
     message: 'Username/Password combination are not valid'
@@ -34,7 +13,6 @@ errors = {
     name: 'UserLogin',
     message: 'You must be logged in to access'
   },
-
   // RESOURCES
   REQUEST_USER_NOT_FOUND: {
     name: 'RequestUser',
@@ -44,11 +22,6 @@ errors = {
   REQUEST_PENALTY_NOT_FOUND: {
     name: 'RequestPenalty',
     message: 'Requested penalty not found'
-  },
-
-  ASSIGNMENT_ROLE_INVALID: {
-    name: 'RoleError',
-    message: 'You must provide a valid role'
   },
 
   ASSIGNMENT_ROLE_ALREADY_PRESENT: {

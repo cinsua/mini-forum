@@ -4,7 +4,7 @@ const Comment = require('../models/comment')
 const utils = require('../utils/utils')
 
 module.exports = {
-  user: async function (req) {
+  async user(req) {
     owner = false
 
     if (req.params.id === req.user.id ||
@@ -25,11 +25,11 @@ module.exports = {
     return owner
   },
 
-  thread: async function (req) {
+  async thread(req) {
     return Thread.countDocuments({ author: req.user._id, _id: req.params.threadId })
   },
 
-  comment: async function (req) {
-    return Comment.countDocuments({ author: req.user._id, thread: req.params.threadId, _id:req.params.commentId })
+  async comment(req) {
+    return Comment.countDocuments({ author: req.user._id, thread: req.params.threadId, _id: req.params.commentId })
   }
 }

@@ -1,13 +1,13 @@
 const { reqValidator } = require('../middlewares/request')
 const v = require('../routes/threadValidators')
 const CONFIG = require('../../config/config')
-const passport = require('passport');
+const passport = require('passport')
 const { getCredentials } = require('../middlewares/getCredentials')
 
 const response = require('../middlewares/response')
 
-const ThreadController = require('../controllers/thread');
-const CommentController = require('../controllers/comment');
+const ThreadController = require('../controllers/thread')
+const CommentController = require('../controllers/comment')
 
 const ServiceCheckOwner = require('../services/ownerCheckers')
 

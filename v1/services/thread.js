@@ -1,21 +1,21 @@
-const Thread = require('../models/thread');
-const Comment = require('../models/comment');
+const Thread = require('../models/thread')
+const Comment = require('../models/comment')
 const { newError } = require('../utils/customErrors')
 // TODO delete req dependency
 module.exports = {
 
-  create: async ({ title, content, author, private = false }) => {
+  async create({ title, content, author, private = false }) {
     let thread = new Thread({ title, content, author, private })
     await thread.save()
 
     return thread
   },
 
-  getAll: async (readFields, queryUrl) => {
+  async getAll(readFields, queryUrl) {
     //TODO if filter in query in url remove the rest
-    query = getPaginateThreadQuery({}, readFields, queryUrl)
+    let query = getPaginateThreadQuery({}, readFields, queryUrl)
 
-    threadsAndPaginationInfo = await query
+    let threadsAndPaginationInfo = await query
     /*
     usersAndPaginationInfo is: 
     Object = {
@@ -27,42 +27,42 @@ module.exports = {
     }
     */
 
-    threads = threadsAndPaginationInfo.docs
+    let threads = threadsAndPaginationInfo.docs
     delete threadsAndPaginationInfo.docs
-    paginationInfo = threadsAndPaginationInfo
+    let paginationInfo = threadsAndPaginationInfo
 
     return { threads, paginationInfo }
 
   },
-  getById: async (threadId, queryUrl) => {
+  async getById(threadId, queryUrl) {
 
-    query = getThreadQuery(threadId, queryUrl)
-    thread = await query
-    if (!thread) throw newError('REQUEST_THREAD_NOT_FOUND');
+    let query = getThreadQuery(threadId, queryUrl)
+    let thread = await query
+    if (!thread) throw newError('REQUEST_THREAD_NOT_FOUND')
 
     return thread
   },
 
-  update: async (thread, updateInfo) => {
+  async update(thread, updateInfo) {
     thread.set(updateInfo)
-    thread = await thread.save();
+    thread = await thread.save()
     return thread
   },
 
-  delete: async (thread) => {
+  async delete(thread) {
     await thread.delete()
     return
   },
 
-  pinned: async (thread, pin) => {
+  async pinned(thread, pin) {
     thread.pinned = pin
-    thread = await thread.save();
+    thread = await thread.save()
     return thread
   },
 
-  like: async (thread, user) => {
+  async like(thread, user) {
     if (thread.likes.indexOf(user.id) > -1)
-      throw newError('THREAD_ALREADY_LIKED');
+      throw newError('THREAD_ALREADY_LIKED')
 
     thread.likes.push(user.id)
     await thread.save()
@@ -70,9 +70,9 @@ module.exports = {
 
   },
 
-  unlike: async (thread, user) => {
+  async unlike(thread, user) {
     if (thread.likes.indexOf(user.id) < 0)
-      throw newError('THREAD_NOT_LIKED');
+      throw newError('THREAD_NOT_LIKED')
 
     thread.likes.remove(user.id)
     await thread.save()
@@ -85,7 +85,7 @@ module.exports = {
 async function getThreadQuery(threadId, queryUrl) {
 
   // see fields
-  threadFields = undefined
+  let threadFields = undefined
   /*
   penaltyFields = readFields.penalty.join(' ')
   population = { path: 'penalties' }
@@ -93,7 +93,7 @@ async function getThreadQuery(threadId, queryUrl) {
     !readFields.penalty.includes('all'))
     population.select = penaltyFields
   */
-  threadQuery = Thread.findById(threadId)
+ let threadQuery = Thread.findById(threadId)
 
   threadQuery.select(threadFields).populate([{ path: 'author', select: 'username' }, { path: 'comments', select: 'author content thread likesCounter' }])
 
@@ -107,7 +107,7 @@ async function getPaginateThreadQuery(thread, readFields, queryUrl) {
 
   //threadFields = readFields.user.join(' ')
   // TODO define read fields in roles
-  threadFields = 'title author likes likesCounter private pinned'
+  let threadFields = 'title author likes likesCounter private pinned'
 
   if (threadFields == 'all') threadFields = undefined
 

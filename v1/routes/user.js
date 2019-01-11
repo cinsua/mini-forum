@@ -1,13 +1,13 @@
 const { reqValidator } = require('../middlewares/request')
 const v = require('../routes/userValidators')
 const CONFIG = require('../../config/config')
-const passport = require('passport');
+const passport = require('passport')
 const { getCredentials } = require('../middlewares/getCredentials')
 
 const response = require('../middlewares/response')
 
-const UserController = require('../controllers/user');
-const PenaltyController = require('../controllers/penalty');
+const UserController = require('../controllers/user')
+const PenaltyController = require('../controllers/penalty')
 
 const hateoas = require('../services/hateoas')
 
@@ -164,8 +164,8 @@ module.exports = {
 }
 
 function hello(req, res, next) {
-  data = { message: 'Server running', user: user.username, version: CONFIG.VERSION, commit: CONFIG.COMMIT }
-  req.data = hateoas.addLinks(data, undefined, req.credentials, req.app.routes)
+  let data = { message: 'Server running', user: req.user.username, version: CONFIG.VERSION, commit: CONFIG.COMMIT }
+  req.data = hateoas.addLinks(data, req.credentials, req.app.routes)
 
   next()
 
@@ -174,10 +174,10 @@ function hello(req, res, next) {
 // old way
 /*
 const express = require('express')
-const userRouter = express.Router();
+const userRouter = express.Router()
 
-const UserController = require('../controllers/user');
-const PenaltyController = require('../controllers/penalty');
+const UserController = require('../controllers/user')
+const PenaltyController = require('../controllers/penalty')
 const { getCredentials } = require('../middlewares/getCredentials')
 const { reqValidator } = require('../middlewares/request')
 */
@@ -189,7 +189,7 @@ delete user
 remove update user. view the change password token
 */
 /*
-const passport = require('passport');
+const passport = require('passport')
 let passp = passport.authenticate(['bearer', 'guest'], { session: false })
 */
 /*#################################################################
@@ -233,4 +233,4 @@ userRouter.route('/:id/roles')
   .post(getCredentials, reqValidator, UserController.addRole)
   .delete(getCredentials, reqValidator, UserController.removeRole)
 
-module.exports = userRouter;*/
+module.exports = userRouter*/

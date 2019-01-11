@@ -1,44 +1,44 @@
-const Thread = require('../models/thread');
-const Comment = require('../models/comment');
+const Thread = require('../models/thread')
+const Comment = require('../models/comment')
 const { newError } = require('../utils/customErrors')
 
 module.exports = {
 
-  create: async ({ content, thread, author }) => {
-    let comment = new Comment({ content, thread, author})
+  async create({ content, thread, author }) {
+    let comment = new Comment({ content, thread, author })
     await comment.save()
 
     return comment
   },
 
-  getAll: async (thread, readFields, queryUrl) => {
+  async getAll(thread, readFields, queryUrl) {
     //TODO if filter in query in url remove the rest
-    query = getPaginateCommentQuery({thread: thread.id}, readFields, queryUrl)
+    let query = getPaginateCommentQuery({ thread: thread.id }, readFields, queryUrl)
 
-    commentsAndPaginationInfo = await query
+    let commentsAndPaginationInfo = await query
 
-    comments = commentsAndPaginationInfo.docs
+    let comments = commentsAndPaginationInfo.docs
     delete commentsAndPaginationInfo.docs
-    paginationInfo = commentsAndPaginationInfo
+    let paginationInfo = commentsAndPaginationInfo
 
     return { comments, paginationInfo }
 
   },
 
-  getById: async (commentId, queryUrl) => {
+  async getById(commentId, queryUrl) {
 
-    query = getCommentQuery(commentId, queryUrl)
-    comment = await query
-    if (!comment) throw newError('REQUEST_THREAD_NOT_FOUND');
+    let query = getCommentQuery(commentId, queryUrl)
+    let comment = await query
+    if (!comment) throw newError('REQUEST_THREAD_NOT_FOUND')
 
     return comment
   },
 
-  delete: async (comment) => {
+  async delete(comment) {
     await comment.delete()
     return
   },
-  
+
 }
 
 async function getPaginateCommentQuery(comment, readFields, queryUrl) {
@@ -46,7 +46,7 @@ async function getPaginateCommentQuery(comment, readFields, queryUrl) {
 
   //threadFields = readFields.user.join(' ')
   // TODO define read fields in roles
-  commentFields = 'author likes likesCounter content links'
+  let commentFields = 'author likes likesCounter content links'
 
   if (commentFields == 'all') commentFields = undefined
 
@@ -68,7 +68,7 @@ async function getPaginateCommentQuery(comment, readFields, queryUrl) {
 async function getCommentQuery(commentId, queryUrl) {
 
   // see fields
-  commentFields = undefined
+  let commentFields = undefined
   /*
   penaltyFields = readFields.penalty.join(' ')
   population = { path: 'penalties' }
@@ -76,7 +76,7 @@ async function getCommentQuery(commentId, queryUrl) {
     !readFields.penalty.includes('all'))
     population.select = penaltyFields
   */
-  commentQuery = Comment.findById(commentId)
+  let commentQuery = Comment.findById(commentId)
 
   commentQuery.select(commentFields).populate([{ path: 'author', select: 'username id' }, { path: 'thread', select: 'title id' }])
 

@@ -1,14 +1,27 @@
-let chai = require('chai');
-let chaiHttp = require('chai-http');
-//let server = require('../../server');
-const chalk = require('chalk');
-const expect = chai.expect;
+let chai = require('chai')
+let chaiHttp = require('chai-http')
+//let server = require('../../server')
+const chalk = require('chalk')
+const expect = chai.expect
+
+function expectSuccess(res, status = 200) {
+  expect(res).to.have.status(status)
+  expect(res.body).to.have.all.keys('success', 'data')
+  expect(res.body).to.have.property('success').eql(true)
+  expect(res.body.data).to.have.property('result')
+}
+
+function expectErrors(res) {
+  expect(res).to.have.status(500)
+  expect(res.body).to.have.all.keys('success', 'errors')
+  expect(res.body.errors).to.be.a('array')
+  expect(res.body).to.have.property('success').eql(false)
+}
 
 let server
-
 function execute(serv) {
   server = serv
-  chai.use(chaiHttp);
+  chai.use(chaiHttp)
 
   describe(`\n    ${chalk.bold.green('✱ Routes /api/v1/threads/*')}\n`, function () {
     let tokenUserTest
@@ -34,8 +47,8 @@ function execute(serv) {
         res = await chai.request(server).post('/api/v1/users/login/')
           .send({ username: 'moderatortest', password: 'moderatorTest' })
         tokenModeratorTest = res.body.data.result.token
-      });
-    });
+      })
+    })
 
     describe(`[POST]\t/api/v1/threads/`, function () {
 
@@ -46,7 +59,7 @@ function execute(serv) {
         res = await chai.request(server).post('/api/v1/threads')
           .send({ title: 'user 1 thread', content: 'testing content' })
         expectErrors(res)
-      });
+      })
 
       it('it should Create thread1 and threadPrivate by user1', async function () {
         //thread1
@@ -54,7 +67,7 @@ function execute(serv) {
           .send({ title: 'thread1', content: 'testing content' })
           .set('Authorization', tokenUserTest)
         expectSuccess(res, 201)
-        expect(res.body.data.result).to.include.all.keys('title', 'id', 'content', 'author');
+        expect(res.body.data.result).to.include.all.keys('title', 'id', 'content', 'author')
         expect(res.body.data.result.author).to.be.eql(idUserTest)
         expect(res.body.data.result.title).to.be.eql('thread1')
         idThread1 = res.body.data.result.id
@@ -63,32 +76,32 @@ function execute(serv) {
           .send({ title: 'threadPrivate', content: 'testing content private', private: true })
           .set('Authorization', tokenUserTest)
         expectSuccess(res, 201)
-        expect(res.body.data.result).to.include.all.keys('title', 'id', 'content', 'author');
+        expect(res.body.data.result).to.include.all.keys('title', 'id', 'content', 'author')
         expect(res.body.data.result.author).to.be.eql(idUserTest)
         expect(res.body.data.result.title).to.be.eql('threadPrivate')
         idPrivated = res.body.data.result.id
-      });
+      })
 
       it('it should not Create thread with same title', async function () {
         res = await chai.request(server).post('/api/v1/threads')
           .send({ title: 'thread1', content: 'testing content22222' })
         expectErrors(res)
-      });
+      })
 
-    });
+    })
     describe(`[GET]\t/api/v1/threads/`, function () {
 
       it('it should GET all threads as guest or logged in', async function () {
         resGuest = await chai.request(server).get('/api/v1/threads')
         expectSuccess(resGuest)
-        expect(resGuest.body.data.result).to.be.a('array');
+        expect(resGuest.body.data.result).to.be.a('array')
         resUser = await chai.request(server).get('/api/v1/threads')
           .set('Authorization', tokenUserTest)
         expectSuccess(resUser)
-        expect(resUser.body.data.result).to.be.a('array');
+        expect(resUser.body.data.result).to.be.a('array')
 
-        expect(resUser.body.data.result).to.be.eql(resGuest.body.data.result);
-      });
+        expect(resUser.body.data.result).to.be.eql(resGuest.body.data.result)
+      })
 
       it('it should has error if there is junk body or params', async function () {
         res = await chai.request(server).get('/api/v1/threads')
@@ -97,25 +110,25 @@ function execute(serv) {
         res = await chai.request(server).get('/api/v1/threads/?asd=1')
           .send({ junk: '123' })
         expectErrors(res)
-      });
+      })
 
-    });
+    })
 
     describe(`[GET]\t/api/v1/threads:threadId/`, function () {
 
       it('it should GET a thread not privated as guest or logged in', async function () {
         resGuest = await chai.request(server).get('/api/v1/threads/' + idThread1)
         expectSuccess(resGuest)
-        expect(resGuest.body.data.result).to.include.all.keys('title', 'content', 'id');
+        expect(resGuest.body.data.result).to.include.all.keys('title', 'content', 'id')
         expect(resGuest.body.data.result.id).eql(idThread1)
         resUser = await chai.request(server).get('/api/v1/threads/' + idThread1)
           .set('Authorization', tokenUserTest)
         expectSuccess(resUser)
-        expect(resUser.body.data.result).to.include.all.keys('title', 'content', 'id');
+        expect(resUser.body.data.result).to.include.all.keys('title', 'content', 'id')
         expect(resUser.body.data.result.id).eql(idThread1)
 
-        expect(resUser.body.data.result).to.be.eql(resGuest.body.data.result);
-      });
+        expect(resUser.body.data.result).to.be.eql(resGuest.body.data.result)
+      })
 
       it('it should has error if there is junk body or params', async function () {
         res = await chai.request(server).get('/api/v1/threads/' + idThread1)
@@ -124,7 +137,7 @@ function execute(serv) {
         res = await chai.request(server).get('/api/v1/threads/' + idThread1 + '?asd=1')
           .send({ junk: '123' })
         expectErrors(res)
-      });
+      })
 
       it('it should GET a thread privated only by logged in users', async function () {
         resGuest = await chai.request(server).get('/api/v1/threads/' + idPrivated)
@@ -133,11 +146,11 @@ function execute(serv) {
         resUser = await chai.request(server).get('/api/v1/threads/' + idPrivated)
           .set('Authorization', tokenUserTest)
         expectSuccess(resUser)
-        expect(resUser.body.data.result).to.include.all.keys('title', 'content', 'id');
+        expect(resUser.body.data.result).to.include.all.keys('title', 'content', 'id')
         expect(resUser.body.data.result.id).eql(idPrivated)
-      });
+      })
 
-    });
+    })
 
     describe(`[PATCH]\t/api/v1/threads:threadId/`, function () {
 
@@ -151,7 +164,7 @@ function execute(serv) {
           .send({ junk: '123' })
           .set('Authorization', tokenUserTest)
         expectErrors(resUser)
-      });
+      })
 
       it('it should PATCH a thread only by Owner or Admin', async function () {
 
@@ -159,16 +172,16 @@ function execute(serv) {
           .set('Authorization', tokenUserTest)
           .send({ private: false })
         expectSuccess(resUser)
-        expect(resUser.body.data.result).to.include.all.keys('title', 'content', 'id');
+        expect(resUser.body.data.result).to.include.all.keys('title', 'content', 'id')
         expect(resUser.body.data.result.id).eql(idPrivated)
         resUser = await chai.request(server).patch('/api/v1/threads/' + idPrivated)
           .set('Authorization', tokenSuperAdmin)
           .send({ private: true })
-        expect(resUser.body.data.result).to.include.all.keys('title', 'content', 'id');
+        expect(resUser.body.data.result).to.include.all.keys('title', 'content', 'id')
         expect(resUser.body.data.result.id).eql(idPrivated)
-      });
+      })
 
-    });
+    })
 
     describe(`[DELETE]\t/api/v1/threads:threadId/`, function () {
 
@@ -182,23 +195,23 @@ function execute(serv) {
           .send({ junk: '123' })
           .set('Authorization', tokenUserTest)
         expectErrors(resUser)
-      });
+      })
 
       it('it should DELETE a thread only by Owner or Admin', async function () {
 
         resUser = await chai.request(server).delete('/api/v1/threads/' + idPrivated)
           .set('Authorization', tokenUserTest)
         expectSuccess(resUser)
-        expect(resUser.body.data.result).to.include.all.keys('message');
+        expect(resUser.body.data.result).to.include.all.keys('message')
 
         resUser = await chai.request(server).delete('/api/v1/threads/' + idPrivated)
           .set('Authorization', tokenSuperAdmin)
         expectErrors(resUser)
         // if Thread not found, means that if not deleted before will be deleting this.. so is ok
         expect(resUser.body.errors[0].code).eql('REQUEST_THREAD_NOT_FOUND')
-      });
+      })
 
-    });
+    })
 
     // TODO TEST PIN AND LIKES!
 
@@ -225,7 +238,7 @@ function execute(serv) {
           .set('Authorization', tokenUserTest)
           .send({ content: 'this is a test comment' })
         expectSuccess(res, 201)
-        expect(res.body.data.result).to.include.all.keys('author', 'content', 'id');
+        expect(res.body.data.result).to.include.all.keys('author', 'content', 'id')
       })
     })
     let commentId
@@ -245,7 +258,7 @@ function execute(serv) {
         res = await chai.request(server).get('/api/v1/threads/' + idThread1 + '/comments')
         expectSuccess(res)
         expect(res.body.data.result).to.be.a('array')
-        expect(res.body.data.result[0]).to.include.all.keys('author', 'content', 'id');
+        expect(res.body.data.result[0]).to.include.all.keys('author', 'content', 'id')
         commentId = res.body.data.result[0].id
 
       })
@@ -301,25 +314,7 @@ function execute(serv) {
       })
     })
 
-  });
+  })
 
 }
 module.exports.execute = execute
-
-function expectAnUser(res) {
-  expect(res.body.data.result).to.include.all.keys('username', 'id', 'links');
-}
-
-function expectSuccess(res, status = 200) {
-  expect(res).to.have.status(status);
-  expect(res.body).to.have.all.keys('success', 'data');
-  expect(res.body).to.have.property('success').eql(true);
-  expect(res.body.data).to.have.property('result')
-}
-
-function expectErrors(res) {
-  expect(res).to.have.status(500);
-  expect(res.body).to.have.all.keys('success', 'errors');
-  expect(res.body.errors).to.be.a('array');
-  expect(res.body).to.have.property('success').eql(false);
-}

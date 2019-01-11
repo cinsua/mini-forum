@@ -1,4 +1,4 @@
-const Joi = require('joi');
+const Joi = require('joi')
 const roles = require('../models/roles')
 
 /*#################################################################
@@ -16,7 +16,7 @@ const rolesSchema = Joi.array().items(roleSchema)
 // Penalty
 const reasonSchema = Joi.string().min(3).max(300).lowercase()
 const timePenaltySchema = Joi.number().positive()
-const expirePenaltySchema = Joi.date().min('now');
+const expirePenaltySchema = Joi.date().min('now')
 
 // pagination
 const pageSchema = Joi.number().positive()

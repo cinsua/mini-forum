@@ -3,9 +3,9 @@ const server = require('../../tools/serverTools')
 const CONFIG = require('../../config/config')
 
 module.exports = {
-  sendSuccess: async function (req, res, next) {
+  async sendSuccess(req, res, next) {
 
-    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Type', 'application/json')
 
     // This handle all request in API/V1/* that not received treatment, can be in another middleware
     if (!req.data && !req.status) {
@@ -13,7 +13,7 @@ module.exports = {
       server.showReq(req)
       res.status(req.status)
       res.send('Not Found in API/v1')
-      return next();
+      return next()
     }
 
     let response = {
@@ -27,43 +27,16 @@ module.exports = {
       server.showReq(req)
     }
     res.status(req.status)
-    res.send(response);
-    return next();
+    res.send(response)
+    return next()
   },
 
-  /*
-  // MONGOOSE ERRORS DEPRECATED after the implement of JOI request validation
-  // keep for sanity for now
-  Mongoose intercepts every error in validation, drop him, and keep the message.
-  Therefore generate another ValidationError and boilerplate the message inside other
-  comments.
+  async sendError(err, req, res, next) {
 
-  Then what we do to keep our code/msg/name is put them in a json inside the message.
-  when error is caught in middleware for handler errors, the message is depured y restored
-  from CUT_TAG. its ugly, but i want my own codes of errors
-  */
-  sendError: async function (err, req, res, next) {
-
-    //res.setHeader('Content-Type', 'application/json');
+    //res.setHeader('Content-Type', 'application/json')
     let errors = []
 
-    // MONGOOSE VALIDATION ERRORS HANDLER -- deprecated
-    if (err.message.includes('CUT_TAG')) {
-      // mongoose package all the validation errors, so we can have
-      // more than 1 error
-      let listOfErrors = err.message.split('"CUT_TAG"')
-      // ignore the first, dont has a json
-      for (i = 1; i < listOfErrors.length; i++) {
-        let eWithJunk = listOfErrors[i]
-        // slice the residual characters outside json. Ex: ': { json }, '
-        let e = eWithJunk.slice(eWithJunk.indexOf('{'), eWithJunk.lastIndexOf('}'))
-        e = JSON.parse(e)
-        // for now, we will not keep stack for mongoose errors
-        // e.stack = err.stack
-        errors.push(e);
-      }
-
-    } else if (err.getError) {
+    if (err.getError) {
       // if it is a custom error has getError() defined
       errors.push(err.getError())
 
@@ -74,6 +47,7 @@ module.exports = {
     } else {
       // if this error is a generic one, we generate the error obj. Remember: message is a property
       // we should intercept mongo errors (11000 for example), it gives dbname/model/field
+      // for dev propouses we pass stack to response
       errors.push({ name: err.name, message: err.message, code: err.code, stack: err.stack })
     }
 
@@ -95,6 +69,6 @@ module.exports = {
     }
 
     res.status(req.status)
-    res.send(response);
+    res.send(response)
   }
 }

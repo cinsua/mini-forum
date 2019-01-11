@@ -1,5 +1,5 @@
 //require chalk module to give colors to console text
-const chalk = require('chalk');
+const chalk = require('chalk')
 
 module.exports = {
 
@@ -12,11 +12,11 @@ module.exports = {
 
   pad: (pad, str, padLeft) => {
     if (typeof str === 'undefined')
-      return pad;
+      return pad
     if (padLeft) {
-      return (pad + str).slice(-pad.length);
+      return (pad + str).slice(-pad.length)
     } else {
-      return (str + pad).substring(0, pad.length);
+      return (str + pad).substring(0, pad.length)
     }
   },
 
@@ -28,16 +28,16 @@ module.exports = {
     switch (req.method) {
       case 'GET':
         method = chalk.blue('[ GET  ]')
-        break;
+        break
       case 'POST':
         method = chalk.green('[ POST ]')
-        break;
+        break
       case 'DELETE':
         method = chalk.magenta('[DELETE]')
-        break;
+        break
       case 'PUT':
         method = chalk.yellow('[ PUT  ]')
-        break;
+        break
       default:
         method = chalk.red('[OTHER ]')
     }

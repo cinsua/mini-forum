@@ -1,13 +1,13 @@
-const passport = require('passport');
-const util = require('util');
-const Strategy = require('passport-strategy');
+const passport = require('passport')
+const util = require('util')
+const Strategy = require('passport-strategy')
 const roles = require('../models/roles')
 
 module.exports = function () {
   passport.use(new GuestStrategy(function (req, done) {
     //here we should make sure this is not a fail attempt:
     // not token in header.. not username/pw in body to accept
-    user = roles.guest
+    let user = roles.guest
     done(null, user)
   }
   ))
@@ -17,24 +17,24 @@ module.exports = function () {
 
 function GuestStrategy(options, verify) {
   if (typeof options == 'function') {
-    verify = options;
-    options = {};
+    verify = options
+    options = {}
   }
   if (!verify) {
-    throw new TypeError('GuestStrategy requires a verify callback');
+    throw new TypeError('GuestStrategy requires a verify callback')
   }
-  Strategy.call(this);
-  this.name = 'guest';
-  this._verify = verify;
+  Strategy.call(this)
+  this.name = 'guest'
+  this._verify = verify
 }
 
-util.inherits(GuestStrategy, Strategy);
+util.inherits(GuestStrategy, Strategy)
 
 GuestStrategy.prototype.authenticate = function (req, options) {
-  let self = this;
+  let self = this
   this._verify(req, function (err, user, info) {
-    if (err) { return self.error(err); }
-    if (!user) { return self.fail(info); }
-    self.success(user, info);
-  });
-};
+    if (err) { return self.error(err) }
+    if (!user) { return self.fail(info) }
+    self.success(user, info)
+  })
+}

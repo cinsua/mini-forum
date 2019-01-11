@@ -1,5 +1,4 @@
-const Joi = require('joi');
-const roles = require('../models/roles')
+const Joi = require('joi')
 
 /*#################################################################
 #         Field level schema validations                          #
