@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/cinsua/mini-forum.svg?branch=master)](https://travis-ci.org/cinsua/mini-forum)
+[![Coverage Status](https://coveralls.io/repos/github/cinsua/mini-forum/badge.svg?branch=master)](https://coveralls.io/github/cinsua/mini-forum?branch=master)
 # mini-forum
 
 mini-forum is an REST(ish)/GraphQL(not yet) Api with passport local strategy
