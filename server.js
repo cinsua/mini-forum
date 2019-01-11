@@ -1,4 +1,4 @@
-var express = require('express')
+const express = require('express')
 // this module allow capture all errors, sync n async, by middlewares
 // its a node patch, sounds bad, but is tradeoff for cleaner code
 // eliminate the boilerplate from try/catch and wrappers
@@ -15,11 +15,11 @@ const userRoutes = require('./v1/routes/user')
 const threadRoutes = require('./v1/routes/thread')
 const apiV1 = require('./v1/routes/index.js');
 
-var app = express();
+const app = express();
 
 // config server variables
 const CONFIG = require('./config/config.js');
-var server = require('./tools/serverTools')
+const server = require('./tools/serverTools')
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({

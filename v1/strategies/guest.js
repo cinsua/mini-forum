@@ -31,7 +31,7 @@ function GuestStrategy(options, verify) {
 util.inherits(GuestStrategy, Strategy);
 
 GuestStrategy.prototype.authenticate = function (req, options) {
-  var self = this;
+  let self = this;
   this._verify(req, function (err, user, info) {
     if (err) { return self.error(err); }
     if (!user) { return self.fail(info); }

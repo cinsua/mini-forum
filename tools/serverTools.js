@@ -1,5 +1,5 @@
 //require chalk module to give colors to console text
-var chalk = require('chalk');
+const chalk = require('chalk');
 
 module.exports = {
 

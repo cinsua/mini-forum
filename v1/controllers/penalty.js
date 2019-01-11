@@ -27,11 +27,8 @@ module.exports = {
     user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
     const { timePenalty, expirePenalty, reason } = req.validRequest.body
     let pen = { reason, timePenalty, expirePenalty, user:user.id, author: req.user.id }
-    //startTime = new Date();
+
     ban = await PenaltyService.create(pen, 'ban')
-    //endTime = new Date();
-    //var timeDiff = endTime - startTime
-    //console.log('BAN TIME: ', timeDiff)
 
     req.data = hateoas.addLinks(ban, undefined, req.credentials, req.app.routes)
 
@@ -61,11 +58,8 @@ module.exports = {
     user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
     const { timePenalty, expirePenalty, reason } = req.validRequest.body
     let pen = { reason, timePenalty, expirePenalty, user:user.id, author: req.user.id }
-    //startTime = new Date();
+
     silence = await PenaltyService.create(pen, 'silence')
-    //endTime = new Date();
-    //var timeDiff = endTime - startTime
-    //console.log('SILENCE TIME: ', timeDiff)
 
     req.data = hateoas.addLinks(silence, undefined, req.credentials, req.app.routes)
     return next()

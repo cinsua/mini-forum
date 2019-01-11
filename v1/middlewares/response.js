@@ -1,5 +1,5 @@
 //default response to all success scenarios AND all errors
-var server = require('../../tools/serverTools')
+const server = require('../../tools/serverTools')
 const CONFIG = require('../../config/config')
 
 module.exports = {

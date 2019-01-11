@@ -1,5 +1,5 @@
 const User = require('../models/user');
-var ObjectId = require('mongoose').Types.ObjectId
+const ObjectId = require('mongoose').Types.ObjectId
 const { newError } = require('../utils/customErrors')
 const hateoas = require('./hateoas')
 

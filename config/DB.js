@@ -1,5 +1,5 @@
-var mongoose = require('mongoose');
-var server = require('../tools/serverTools')
+const mongoose = require('mongoose');
+const server = require('../tools/serverTools')
 const User = require('../v1/models/user');
 
 const CONFIG = require('./config')

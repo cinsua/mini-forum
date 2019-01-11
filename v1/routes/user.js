@@ -173,7 +173,7 @@ function hello(req, res, next) {
 
 // old way
 /*
-var express = require('express')
+const express = require('express')
 const userRouter = express.Router();
 
 const UserController = require('../controllers/user');

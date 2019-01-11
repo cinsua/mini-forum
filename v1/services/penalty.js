@@ -4,21 +4,13 @@ const { newError } = require('../utils/customErrors')
 module.exports = {
 
   create: async ({ reason, timePenalty, expirePenalty, user, author }, kind) => {
-    //startTime = new Date();
+
     let penalty = new Penalty({ reason, kind, author, user })
-    //endTime = new Date();
-    //var timeDiff = endTime - startTime
-    //console.log('PEN INSTANCE CREATION: ', timeDiff)
 
     if (timePenalty) penalty.timePenalty = timePenalty
     if (expirePenalty) penalty.expiresAt = expirePenalty
-    //console.log(penalty)
 
-    //startTime = new Date();
     await penalty.save()
-    //endTime = new Date();
-    //var timeDiff = endTime - startTime
-    //console.log('PEN SAVE: ', timeDiff)
 
     return penalty
   },

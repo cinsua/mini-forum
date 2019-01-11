@@ -2,11 +2,9 @@
 let chai = require('chai');
 let chaiHttp = require('chai-http');
 
-var chalk = require('chalk');
-
-var expect = chai.expect;
-
-var server
+const chalk = require('chalk');
+const expect = chai.expect;
+let server
 
 function execute(serv) {
   server = serv

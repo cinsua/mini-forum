@@ -3,8 +3,8 @@ const CONFIG = require('../../config/config')
 
 // plugins
 const mongoose_delete = require('mongoose-delete');
-var mongoosePaginate = require('mongoose-paginate-v2');
-let mongooseHidden = require('mongoose-hidden')()
+const mongoosePaginate = require('mongoose-paginate-v2');
+const mongooseHidden = require('mongoose-hidden')()
 
 const Schema = mongoose.Schema;
 
