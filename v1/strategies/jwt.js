@@ -28,7 +28,7 @@ const verifyToken = async function (token, done) {
       return done(newErrorCustom(codes[msg], 'LoginError', msg))
     }
 
-    let user = await User.findById(decoded.user_id).populate('penalties')
+    let user = await User.findById(decoded.userId).populate('penalties')
     if (!user) {
       return done(newError('LOGIN_PW_UNAME_INVALID'))
     }

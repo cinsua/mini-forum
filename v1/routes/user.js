@@ -5,17 +5,20 @@ const passport = require('passport')
 const { getCredentials } = require('../middlewares/getCredentials')
 
 const response = require('../middlewares/response')
-
 const UserController = require('../controllers/user')
 const PenaltyController = require('../controllers/penalty')
-
 const hateoas = require('../services/hateoas')
-
 const ServiceCheckOwner = require('../services/ownerCheckers')
 
+function aliveChecker(req, res, next) {
+  let data = { message: 'Server running', user: req.user.username, version: CONFIG.VERSION, commit: CONFIG.COMMIT }
+  req.data = hateoas.addLinks(data, req.credentials, req.app.routes)
+  next()
+}
+
 /*#################################################################
-#         This file register the relation between                 #               
-#         routes with roleRequired/validator/description          #
+    This file is the blueprint for register all routes of
+    users
 #################################################################*/
 
 const authenticate = passport.authenticate(['bearer', 'guest'], { session: false })
@@ -23,14 +26,16 @@ const authenticate = passport.authenticate(['bearer', 'guest'], { session: false
 module.exports = {
   routes: {
     'startMiddlewares': [],
+
     '/api/v1/': {
       'GET': {
         roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
         validator: v.noReqSchema,
         description: 'Get Server Status',
-        middlewares: [authenticate, getCredentials, reqValidator, hello]
+        middlewares: [authenticate, getCredentials, reqValidator, aliveChecker]
       },// 
     },
+
     '/api/v1/users/': {
       'GET': {
         roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
@@ -45,6 +50,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, UserController.createUser]
       },
     },
+
     '/api/v1/users/login/': {
       'POST': {
         roleRequired: ['guest'],
@@ -53,6 +59,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, UserController.login]
       },
     },
+
     '/api/v1/users/:id/': {
       'GET': {
         roleRequired: ['guest', 'user', 'moderator', 'admin', 'owner', 'superadmin'],
@@ -76,6 +83,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, UserController.updateMe]
       },
     },
+
     '/api/v1/users/:id/bans/': {
       'POST': {
         roleRequired: ['admin', 'superadmin'],
@@ -91,6 +99,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, PenaltyController.getBans]
       },
     },
+
     '/api/v1/users/:id/silences/': {
       'POST': {
         roleRequired: ['moderator', 'admin', 'superadmin'],
@@ -106,13 +115,14 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, PenaltyController.getSilences]
       },
     },
+
     '/api/v1/users/:id/roles/': {
       'GET': {
         roleRequired: ['user', 'moderator', 'admin', 'owner', 'superadmin'],
         validator: v.getUserSchema,
         checkOwner: ServiceCheckOwner.user,
         description: 'Get Roles',
-        middlewares: [authenticate, getCredentials, reqValidator, hello]
+        middlewares: [authenticate, getCredentials, reqValidator, aliveChecker]
       },
       'DELETE': {
         roleRequired: ['admin', 'superadmin'],
@@ -127,13 +137,14 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, UserController.addRole]
       },
     },
+
     '/api/v1/users/:id/bans/:banId/': {
       'GET': {
         roleRequired: ['owner', 'admin', 'superadmin'],
         validator: v.getPenaltySchema,
         checkOwner: ServiceCheckOwner.user,
         description: 'Get Ban',
-        middlewares: [authenticate, getCredentials, reqValidator, hello]
+        middlewares: [authenticate, getCredentials, reqValidator, aliveChecker]
       },
       'DELETE': {
         roleRequired: ['admin', 'superadmin'],
@@ -142,13 +153,14 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, PenaltyController.removeBan]
       },
     },
+
     '/api/v1/users/:id/silences/:silenceId/': {
       'GET': {
         roleRequired: ['moderator', 'owner', 'admin', 'superadmin'],
         validator: v.getPenaltySchema,
         checkOwner: ServiceCheckOwner.user,
         description: 'Get Silence',
-        middlewares: [authenticate, getCredentials, reqValidator, hello]
+        middlewares: [authenticate, getCredentials, reqValidator, aliveChecker]
       },
       'DELETE': {
         roleRequired: ['moderator', 'admin', 'superadmin'],
@@ -157,19 +169,14 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, PenaltyController.removeSilence]
       },
     },
+
     'finishMiddlewares': [response.sendSuccess, response.sendError],
   },
 
 
 }
 
-function hello(req, res, next) {
-  let data = { message: 'Server running', user: req.user.username, version: CONFIG.VERSION, commit: CONFIG.COMMIT }
-  req.data = hateoas.addLinks(data, req.credentials, req.app.routes)
 
-  next()
-
-}
 
 // old way
 /*

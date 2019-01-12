@@ -10,7 +10,6 @@ module.exports = {
     // This handle all request in API/V1/* that not received treatment, can be in another middleware
     if (!req.data && !req.status) {
       req.status = 404
-      server.showReq(req)
       res.status(req.status)
       res.send('Not Found in API/v1')
       return next()
@@ -22,10 +21,6 @@ module.exports = {
     }
 
     if (!req.status) req.status = 200
-    //let status = req.status || 200
-    if (process.env.NODE_ENV === 'development') {
-      server.showReq(req)
-    }
     res.status(req.status)
     res.send(response)
     return next()
@@ -59,10 +54,6 @@ module.exports = {
 
     // TODO use standar status codes
     if (!req.status) req.status = 500
-
-    if (process.env.NODE_ENV === 'development') {
-      server.showReq(req, err)
-    }
 
     if (CONFIG.TRACE_ERRORS_CONSOLE) {
       server.showTrace(errors, err)

@@ -3,6 +3,64 @@ const ObjectId = require('mongoose').Types.ObjectId
 const { newError } = require('../utils/customErrors')
 const hateoas = require('./hateoas')
 
+//TODO query url filter
+async function getUserquery(userId, readFields, queryUrl) {
+
+  let fields = readFields.user.join(' ')
+  let userFields
+  if (fields !== 'all') userFields = fields
+
+  let penaltyFields = readFields.penalty.join(' ')
+  let population = { path: 'penalties' }
+  if (!readFields.penalty.includes('none') &&
+    !readFields.penalty.includes('all'))
+    population.select = penaltyFields
+
+  // check if req.params.id is an id or username
+  let idValid
+  try {
+    idValid = new ObjectId(userId)
+  } catch{}/*catch (e) {
+    idValid = undefined
+  }*/
+  let userQuery
+  (JSON.stringify(userId) !== JSON.stringify(idValid)) ?
+    userQuery = User.findOne({ username: userId }) :
+    userQuery = User.findById(userId)
+
+  userQuery.select(userFields).populate(population)
+  return userQuery
+}
+
+//TODO query url filter
+async function getPaginateUsersQuery(user, readFields, queryUrl) {
+
+  let fields = readFields.user.join(' ')
+  let userFields
+  if (fields !== 'all') 
+    userFields = fields
+
+  let penaltyFields = readFields.penalty.join(' ')
+
+  let population = { path: 'penalties' }
+  if (!readFields.penalty.includes('none') &&
+    !readFields.penalty.includes('all'))
+    population.select = penaltyFields
+
+  // TODO this should be extract from config
+  let { page = 1, limit = 20 } = queryUrl
+
+  let pagination = {
+    select: userFields,
+    sort: { createdAt: -1 },
+    populate: population,
+    lean: false,
+    page: Number(page),
+    limit: Number(limit)
+  }
+  return User.paginate(user, pagination)
+}
+
 module.exports = {
   async create({ username, password }) {
     //const { username, password } = body
@@ -87,7 +145,7 @@ module.exports = {
   },
 
   async removeRol(user, rol) {
-    user.roles = user.roles.filter(r => r !== rol)
+    user.roles = user.roles.filter((r) => (r !== rol))
     //const filteredItems = items.filter(item => item !== valueToRemove)
 
     user.save()
@@ -95,61 +153,3 @@ module.exports = {
 
 }
 
-//TODO query url filter
-async function getUserquery(userId, readFields, queryUrl) {
-
-  let userFields = readFields.user.join(' ')
-  if (userFields == 'all') userFields = undefined
-
-  let penaltyFields = readFields.penalty.join(' ')
-  let population = { path: 'penalties' }
-  if (!readFields.penalty.includes('none') &&
-    !readFields.penalty.includes('all'))
-    population.select = penaltyFields
-
-  // check if req.params.id is an id or username
-  try {
-    idValid = new ObjectId(userId)
-  } catch (e) {
-    idValid = undefined
-  }
-  let userQuery
-  (userId != idValid) ?
-    userQuery = User.findOne({ username: userId }) :
-    userQuery = User.findById(userId)
-
-  userQuery.select(userFields).populate(population)
-
-  return userQuery
-
-}
-
-//TODO query url filter
-async function getPaginateUsersQuery(user, readFields, queryUrl) {
-
-  let userFields = readFields.user.join(' ')
-
-  if (userFields == 'all') userFields = undefined
-
-  let penaltyFields = readFields.penalty.join(' ')
-
-  let population = { path: 'penalties' }
-  if (!readFields.penalty.includes('none') &&
-    !readFields.penalty.includes('all'))
-    population.select = penaltyFields
-
-  // TODO this should be extract from config
-  let { page = 1, limit = 20 } = queryUrl
-
-  let pagination = {
-    select: userFields,
-    sort: { createdAt: -1 },
-    populate: population,
-    lean: false,
-    page: Number(page),
-    limit: Number(limit)
-  }
-
-  return User.paginate(user, pagination)
-
-}

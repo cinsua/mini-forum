@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 const CONFIG = require('../../config/config')
 
 // plugins
-const mongoose_delete = require('mongoose-delete')
+const mongooseDelete = require('mongoose-delete')
 const mongoosePaginate = require('mongoose-paginate-v2')
 const mongooseHidden = require('mongoose-hidden')()
 
@@ -35,7 +35,7 @@ const userSchema = new Schema({
 
 userSchema.plugin(mongooseHidden)
 userSchema.plugin(mongoosePaginate)
-userSchema.plugin(mongoose_delete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' })
+userSchema.plugin(mongooseDelete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' })
 userSchema.virtual('penalties', {
   ref: 'Penalty', // The model to use
   localField: '_id',  // Find Penalties where `localField`
@@ -44,35 +44,36 @@ userSchema.virtual('penalties', {
 })
 
 userSchema.virtual('banned').get(function () {
-  if (!this.penalties) return undefined
-  if (this.penalties.length === 0) return undefined
+  if (!this.penalties) return
+  if (this.penalties.length === 0) return
 
   // get an array of dates of bans
   let datesBan = this.penalties
-    .map(ban => (ban.kind === 'ban') ? ban.expiresAt : undefined)
-    .filter(date => date)
+    .filter((ban) => (ban.kind === 'ban'))
+    .map((ban) => (ban.expiresAt))
+
   let lastBan = Math.max.apply(null, datesBan)
 
   if (lastBan > Date.now()) return new Date(lastBan)// .toUTCString()
 
   // can be omitted, keep for sanity
-  return undefined
+  return
 })
 
 userSchema.virtual('silenced').get(function () {
-  if (!this.penalties) return undefined
-  if (this.penalties.length === 0) return undefined
+  if (!this.penalties) return
+  if (this.penalties.length === 0) return
 
   // get an array of dates of silences
   let datesSilences = this.penalties
-    .map(silence => (silence.kind === 'silence') ? silence.expiresAt : undefined)
-    .filter(date => date)
+    .filter((silence) => (silence.kind === 'silence'))
+    .map((silence) => (silence.expiresAt))
   let lastSilence = Math.max.apply(null, datesSilences)
 
   if (lastSilence > Date.now()) return new Date(lastSilence)// .toUTCString()
-
+  
   // can be omitted, keep for sanity
-  return undefined
+  return
 })
 
 userSchema.virtual('links').get(function () {
@@ -103,7 +104,7 @@ userSchema.methods.comparePassword = async function (pw) {
 userSchema.methods.getJWT = function () {
   // TODO
   // let expiration_time = parseInt(CONFIG.jwt_expiration)
-  return 'Bearer ' + jwt.sign({ user_id: this._id }, CONFIG.JWT.SECRET, { expiresIn: 10000 })
+  return 'Bearer ' + jwt.sign({ userId: this._id }, CONFIG.JWT.SECRET, { expiresIn: 10000 })
 }
 
 module.exports = mongoose.model('User', userSchema)

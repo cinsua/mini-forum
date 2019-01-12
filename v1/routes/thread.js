@@ -1,19 +1,16 @@
 const { reqValidator } = require('../middlewares/request')
 const v = require('../routes/threadValidators')
-const CONFIG = require('../../config/config')
 const passport = require('passport')
 const { getCredentials } = require('../middlewares/getCredentials')
-
 const response = require('../middlewares/response')
-
 const ThreadController = require('../controllers/thread')
 const CommentController = require('../controllers/comment')
 
 const ServiceCheckOwner = require('../services/ownerCheckers')
 
 /*#################################################################
-#         This file register the relation between                 #               
-#         routes with roleRequired/validator/description          #
+    This file is the blueprint for register all routes of
+    threads
 #################################################################*/
 
 const authenticate = passport.authenticate(['bearer', 'guest'], { session: false })
@@ -36,6 +33,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, ThreadController.createThread]
       },
     },
+
     '/api/v1/threads/:threadId/': {
       'GET': {
         roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
@@ -58,6 +56,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, ThreadController.delete]
       },//
     },
+
     '/api/v1/threads/:threadId/pin/': {
       'POST': {
         roleRequired: ['admin', 'superadmin'],
@@ -72,6 +71,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, ThreadController.unpin]
       },//
     },
+
     '/api/v1/threads/:threadId/like/': {
       'POST': {
         roleRequired: ['user', 'moderator', 'admin', 'superadmin'],
@@ -118,9 +118,6 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, CommentController.delete]
       },
     },
-
-
-
 
     'finishMiddlewares': [response.sendSuccess, response.sendError],
 
