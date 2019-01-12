@@ -3,15 +3,6 @@ const util = require('util')
 const Strategy = require('passport-strategy')
 const roles = require('../models/roles')
 
-GuestStrategy.prototype.authenticate = function (req, options) {
-  let self = this
-  this._verify(req, function (err, user, info) {
-    if (err) return self.error(err)
-    if (!user) return self.fail(info)
-    self.success(user, info)
-  })
-}
-
 function GuestStrategy(options, verify) {
   if (typeof options == 'function') {
     verify = options
@@ -23,6 +14,15 @@ function GuestStrategy(options, verify) {
   Strategy.call(this)
   this.name = 'guest'
   this._verify = verify
+}
+
+GuestStrategy.prototype.authenticate = function (req, options) {
+  let self = this
+  this._verify(req, function (err, user, info) {
+    if (err) return self.error(err)
+    if (!user) return self.fail(info)
+    self.success(user, info)
+  })
 }
 
 module.exports = function () {

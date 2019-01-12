@@ -11,9 +11,9 @@ module.exports = {
     return thread
   },
 
-  async getAll(readFields, queryUrl) {
+  async getAll(queryUrl) {
     //TODO if filter in query in url remove the rest
-    let query = getPaginateThreadQuery({}, readFields, queryUrl)
+    let query = getPaginateThreadQuery({}, queryUrl)
 
     let threadsAndPaginationInfo = await query
     /*
@@ -32,11 +32,11 @@ module.exports = {
     let paginationInfo = threadsAndPaginationInfo
 
     return { threads, paginationInfo }
-
   },
-  async getById(threadId, queryUrl) {
 
-    let query = getThreadQuery(threadId, queryUrl)
+  async getById(threadId) {
+
+    let query = getThreadQuery(threadId)
     let thread = await query
     if (!thread) throw newError('REQUEST_THREAD_NOT_FOUND')
 
@@ -79,30 +79,28 @@ module.exports = {
     return thread
   },
 
+  async checkAccessToPrivate(thread, credentials){
+    if (thread.private && credentials.bestRole === 'guest')
+      throw newError('REQUEST_THREAD_IS_PRIVATED')
+  }
+
 }
 
 //TODO query url filter
-async function getThreadQuery(threadId, queryUrl) {
+async function getThreadQuery(threadId) {
 
-  // see fields
-  let threadFields = undefined
-  /*
-  penaltyFields = readFields.penalty.join(' ')
-  population = { path: 'penalties' }
-  if (!readFields.penalty.includes('none') &&
-    !readFields.penalty.includes('all'))
-    population.select = penaltyFields
-  */
- let threadQuery = Thread.findById(threadId)
+  let threadFields
+  let threadQuery = Thread.findById(threadId)
 
-  threadQuery.select(threadFields).populate([{ path: 'author', select: 'username' }, { path: 'comments', select: 'author content thread likesCounter' }])
-
+  threadQuery.select(threadFields)
+    .populate([{ path: 'author', select: 'username' },
+    { path: 'comments', select: 'author content thread likesCounter' }])
   return threadQuery
 
 }
 
 //TODO query url filter
-async function getPaginateThreadQuery(thread, readFields, queryUrl) {
+async function getPaginateThreadQuery(thread, queryUrl) {
   // for now, response is fixed
 
   //threadFields = readFields.user.join(' ')

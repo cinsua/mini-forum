@@ -1,7 +1,6 @@
 const ThreadService = require('../services/thread')
 const { newError } = require('../utils/customErrors')
 const hateoas = require('../services/hateoas')
-const rolesLevels = require('../models/roles').levels
 const utils = require('../utils/utils')
 
 module.exports = {
@@ -21,9 +20,8 @@ module.exports = {
   async getAll(req, res, next) {
 
     const queryUrl = req.validRequest.query
-    const readFields = req.credentials.readFields
 
-    let { threads, paginationInfo } = await ThreadService.getAll(readFields, queryUrl)
+    let { threads, paginationInfo } = await ThreadService.getAll(queryUrl)
 
     threads = utils.cleanResult(threads)
     req.data = hateoas.addLinks(threads, req.credentials, req.app.routes, { paginationInfo })
@@ -33,13 +31,10 @@ module.exports = {
 
   async getById(req, res, next) {
     const threadId = req.validRequest.params.threadId
-    const queryUrl = req.validRequest.query
 
-    let thread = await ThreadService.getById(threadId, queryUrl)
+    let thread = await ThreadService.getById(threadId)
 
-    // TODO to avoid duplicate code and future headpain pls move this to a thread service
-    if (thread.private && req.credentials.bestRole == 'guest')
-      throw newError('REQUEST_THREAD_IS_PRIVATED')
+    await ThreadService.checkAccessToPrivate(thread, req.credentials)
 
     thread = utils.cleanResult(thread)
     req.data = hateoas.addLinks(thread, req.credentials, req.app.routes)
@@ -50,9 +45,6 @@ module.exports = {
   async update(req, res, next) {
     const threadId = req.validRequest.params.threadId
     let thread = await ThreadService.getById(threadId)
-
-    if (req.credentials.bestRole == 'user')
-      throw newError('AUTH_INSUFFICIENT_PRIVILEGES')
 
     const updThread = req.validRequest.body
 
@@ -68,9 +60,6 @@ module.exports = {
 
     const threadId = req.validRequest.params.threadId
     let thread = await ThreadService.getById(threadId)
-
-    if (req.credentials.bestRole == 'user')
-      throw newError('AUTH_INSUFFICIENT_PRIVILEGES')
 
     thread = await ThreadService.delete(thread)
     req.data = {}

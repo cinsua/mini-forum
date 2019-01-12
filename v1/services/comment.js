@@ -2,7 +2,7 @@ const Thread = require('../models/thread')
 const Comment = require('../models/comment')
 const { newError } = require('../utils/customErrors')
 
-async function getPaginateCommentQuery(comment, readFields, queryUrl) {
+async function getPaginateCommentQuery(comment, queryUrl) {
   // for now, response is fixed
   let commentFields = 'author likes likesCounter content links'
 
@@ -18,7 +18,7 @@ async function getPaginateCommentQuery(comment, readFields, queryUrl) {
   return Comment.paginate(comment, pagination)
 }
 
-async function getCommentQuery(commentId, queryUrl) {
+async function getCommentQuery(commentId) {
   // for now, response is fixed
   let commentFields
   let commentQuery = Comment.findById(commentId)
@@ -36,9 +36,9 @@ module.exports = {
     return comment
   },
 
-  async getAll(thread, readFields, queryUrl) {
+  async getAll(thread, queryUrl) {
     //TODO if filter in query in url remove the rest
-    let query = getPaginateCommentQuery({ thread: thread.id }, readFields, queryUrl)
+    let query = getPaginateCommentQuery({ thread: thread.id }, queryUrl)
 
     let commentsAndPaginationInfo = await query
 
@@ -50,9 +50,9 @@ module.exports = {
 
   },
 
-  async getById(commentId, queryUrl) {
+  async getById(commentId) {
 
-    let query = getCommentQuery(commentId, queryUrl)
+    let query = getCommentQuery(commentId)
     let comment = await query
     if (!comment) throw newError('REQUEST_THREAD_NOT_FOUND')
 
@@ -63,6 +63,11 @@ module.exports = {
     await comment.delete()
     return
   },
+
+  async checkCommentBelongsToThread(comment, thread){
+    if (comment.thread.id !== thread.id)
+      throw newError('REQUEST_COMMENT_HAS_DIFFERENT_THREAD')
+  }
 
 }
 

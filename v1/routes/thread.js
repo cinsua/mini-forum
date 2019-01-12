@@ -42,7 +42,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, ThreadController.getById]
       },//
       'PATCH': {
-        roleRequired: ['user', 'owner', 'admin', 'superadmin'],
+        roleRequired: ['owner', 'admin', 'superadmin'],
         validator: v.updateThreadSchema,
         checkOwner: ServiceCheckOwner.thread,
         description: 'Update Thread',

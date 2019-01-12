@@ -13,7 +13,7 @@ module.exports = {
     let comment = await CommentService.create({ content, thread: thread.id, author: req.user.id })
 
     req.status = 201
-    //thread = await ThreadService.getById(threadId, undefined)
+
     comment = utils.cleanResult(comment)
     req.data = hateoas.addLinks(comment, req.credentials, req.app.routes)
 
@@ -23,17 +23,13 @@ module.exports = {
   async getAll(req, res, next) {
 
     const queryUrl = req.validRequest.query
-    const readFields = req.credentials.readFields
     const threadId = req.validRequest.params.threadId
 
     let thread = await ThreadService.getById(threadId, undefined, queryUrl)
 
-    // TODO to avoid duplicate code and future headpain pls move this to a thread service
-    if (thread.private && req.credentials.bestRole == 'guest')
-      throw newError('REQUEST_THREAD_IS_PRIVATED')
+    await ThreadService.checkAccessToPrivate(thread, req.credentials)
 
-
-    let { comments, paginationInfo } = await CommentService.getAll(thread, readFields, queryUrl)
+    let { comments, paginationInfo } = await CommentService.getAll(thread, queryUrl)
 
     comments = utils.cleanResult(comments)
     req.data = hateoas.addLinks(comments, req.credentials, req.app.routes)
@@ -48,18 +44,11 @@ module.exports = {
 
     let thread = await ThreadService.getById(threadId, queryUrl)
 
-    //console.log(req.credentials.roles, req.credentials.bestRole)
+    await ThreadService.checkAccessToPrivate(thread, req.credentials)
 
-    // TODO to avoid duplicate code and future headpain pls move this to a thread service
-    if (thread.private && req.credentials.bestRole == 'guest')
-      throw newError('REQUEST_THREAD_IS_PRIVATED')
+    let comment = await CommentService.getById(commentId)
 
-    // TODO to avoid duplicate code and future headpain pls move this to a comment service
-    let comment = await CommentService.getById(commentId, queryUrl)
-    if (comment.thread.id !== threadId)
-      throw newError('REQUEST_COMMENT_HAS_DIFFERENT_THREAD')
-
-
+    await CommentService.checkCommentBelongsToThread(comment, thread)
 
     comment = utils.cleanResult(comment)
     req.data = hateoas.addLinks(comment, req.credentials, req.app.routes)
@@ -74,18 +63,11 @@ module.exports = {
     const queryUrl = req.validRequest.query
 
     let thread = await ThreadService.getById(threadId, queryUrl)
+    await ThreadService.checkAccessToPrivate(thread, req.credentials)
 
-    // TODO to avoid duplicate code and future headpain pls move this to a thread service
-    if (thread.private && req.credentials.bestRole == 'guest')
-      throw newError('REQUEST_THREAD_IS_PRIVATED')
+    let comment = await CommentService.getById(commentId)
 
-    // TODO to avoid duplicate code and future headpain pls move this to a comment service
-    let comment = await CommentService.getById(commentId, queryUrl)
-    if (comment.thread.id !== threadId)
-      throw newError('REQUEST_COMMENT_HAS_DIFFERENT_THREAD')
-
-    //if (req.credentials.bestRole == 'user')
-    //  throw newError('AUTH_INSUFFICIENT_PRIVILEGES')
+    await CommentService.checkCommentBelongsToThread(comment, thread)
 
     comment = await CommentService.delete(comment)
     req.data = {}
