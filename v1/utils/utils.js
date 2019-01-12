@@ -19,7 +19,7 @@ module.exports = {
   cleanResult(docs) {
     if (Array.isArray(docs))
       return module.exports.cleanDocuments(docs)
-    else if (Object.prototype.toString.call(docs) === "[object String]")
+    else if (Object.prototype.toString.call(docs) === '')
       return docs
     else return module.exports.cleanDocument(docs)
   },

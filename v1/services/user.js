@@ -20,11 +20,11 @@ module.exports = {
     /*
     usersAndPaginationInfo is: 
     Object = {
-      "docs": [user],
-      "total": 2,
-      "limit": 12,
-      "page": 1,
-      "pages": 1
+      'docs': [user],
+      'total': 2,
+      'limit': 12,
+      'page': 1,
+      'pages': 1
     }
     */
 

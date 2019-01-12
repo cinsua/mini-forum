@@ -20,9 +20,9 @@ const authenticate = passport.authenticate(['bearer', 'guest'], { session: false
 
 module.exports = {
   routes: {
-    "startMiddlewares": [],
+    'startMiddlewares': [],
 
-    "/api/v1/threads/": {
+    '/api/v1/threads/': {
       'GET': {
         roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
         validator: v.getThreadsSchema,
@@ -36,7 +36,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, ThreadController.createThread]
       },
     },
-    "/api/v1/threads/:threadId/": {
+    '/api/v1/threads/:threadId/': {
       'GET': {
         roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
         validator: v.getThreadSchema,
@@ -58,7 +58,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, ThreadController.delete]
       },//
     },
-    "/api/v1/threads/:threadId/pin/": {
+    '/api/v1/threads/:threadId/pin/': {
       'POST': {
         roleRequired: ['admin', 'superadmin'],
         validator: v.pinThreadSchema,
@@ -72,7 +72,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, ThreadController.unpin]
       },//
     },
-    "/api/v1/threads/:threadId/like/": {
+    '/api/v1/threads/:threadId/like/': {
       'POST': {
         roleRequired: ['user', 'moderator', 'admin', 'superadmin'],
         validator: v.pinThreadSchema,
@@ -87,7 +87,7 @@ module.exports = {
       },//
     },
 
-    "/api/v1/threads/:threadId/comments/": {
+    '/api/v1/threads/:threadId/comments/': {
       'GET': {
         roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
         validator: v.getCommentsSchema,
@@ -102,7 +102,7 @@ module.exports = {
       },
     },
 
-    "/api/v1/threads/:threadId/comments/:commentId": {
+    '/api/v1/threads/:threadId/comments/:commentId': {
       'GET': {
         roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
         validator: v.getCommentSchema,
@@ -122,7 +122,7 @@ module.exports = {
 
 
 
-    "finishMiddlewares": [response.sendSuccess, response.sendError],
+    'finishMiddlewares': [response.sendSuccess, response.sendError],
 
   }
 }

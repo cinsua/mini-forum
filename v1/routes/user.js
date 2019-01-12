@@ -22,8 +22,8 @@ const authenticate = passport.authenticate(['bearer', 'guest'], { session: false
 
 module.exports = {
   routes: {
-    "startMiddlewares": [],
-    "/api/v1/": {
+    'startMiddlewares': [],
+    '/api/v1/': {
       'GET': {
         roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
         validator: v.noReqSchema,
@@ -31,7 +31,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, hello]
       },// 
     },
-    "/api/v1/users/": {
+    '/api/v1/users/': {
       'GET': {
         roleRequired: ['guest', 'user', 'moderator', 'admin', 'superadmin'],
         validator: v.getUsersSchema,
@@ -45,7 +45,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, UserController.createUser]
       },
     },
-    "/api/v1/users/login/": {
+    '/api/v1/users/login/': {
       'POST': {
         roleRequired: ['guest'],
         validator: v.loginUserSchema,
@@ -53,7 +53,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, UserController.login]
       },
     },
-    "/api/v1/users/:id/": {
+    '/api/v1/users/:id/': {
       'GET': {
         roleRequired: ['guest', 'user', 'moderator', 'admin', 'owner', 'superadmin'],
         validator: v.getUserSchema,
@@ -76,7 +76,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, UserController.updateMe]
       },
     },
-    "/api/v1/users/:id/bans/": {
+    '/api/v1/users/:id/bans/': {
       'POST': {
         roleRequired: ['admin', 'superadmin'],
         validator: v.createPenaltySchema,
@@ -91,7 +91,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, PenaltyController.getBans]
       },
     },
-    "/api/v1/users/:id/silences/": {
+    '/api/v1/users/:id/silences/': {
       'POST': {
         roleRequired: ['moderator', 'admin', 'superadmin'],
         validator: v.createPenaltySchema,
@@ -106,7 +106,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, PenaltyController.getSilences]
       },
     },
-    "/api/v1/users/:id/roles/": {
+    '/api/v1/users/:id/roles/': {
       'GET': {
         roleRequired: ['user', 'moderator', 'admin', 'owner', 'superadmin'],
         validator: v.getUserSchema,
@@ -127,7 +127,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, UserController.addRole]
       },
     },
-    "/api/v1/users/:id/bans/:banId/": {
+    '/api/v1/users/:id/bans/:banId/': {
       'GET': {
         roleRequired: ['owner', 'admin', 'superadmin'],
         validator: v.getPenaltySchema,
@@ -142,7 +142,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, PenaltyController.removeBan]
       },
     },
-    "/api/v1/users/:id/silences/:silenceId/": {
+    '/api/v1/users/:id/silences/:silenceId/': {
       'GET': {
         roleRequired: ['moderator', 'owner', 'admin', 'superadmin'],
         validator: v.getPenaltySchema,
@@ -157,7 +157,7 @@ module.exports = {
         middlewares: [authenticate, getCredentials, reqValidator, PenaltyController.removeSilence]
       },
     },
-    "finishMiddlewares": [response.sendSuccess, response.sendError],
+    'finishMiddlewares': [response.sendSuccess, response.sendError],
   },
 
 

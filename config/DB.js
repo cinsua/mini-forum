@@ -10,17 +10,45 @@ const CONFIG = require('./config')
 const options = CONFIG.MONGO.OPTIONS
 const uriDB = `${CONFIG.MONGO.CONN_URL}:${CONFIG.MONGO.CONN_PORT}/${CONFIG.MONGO.DB_NAME}`
 
+async function dropDB(){
+  if (CONFIG.MONGO.DROP_DATABASE_AT_START) {
+    console.log(`${server.tagMagenta} Deleting DB`)
+    mongoose.connection.dropDatabase()
+  }
+}
+
+async function createAdmin() {
+  //console.log(`${server.tagMagenta} Filling DB`)
+  let superadmin = await User.findOne({ username: 'superadmin' })
+  if (!superadmin) {
+    superadmin = new User
+    superadmin.username = 'superadmin'
+    superadmin.password = CONFIG.MONGO.SUPERADMIN_PASS
+    superadmin.roles = ['moderator', 'admin', 'superadmin']
+    superadmin.save()
+    console.log(`${server.tagMagenta} Superadmin created`)
+  }
+  let user1 = await User.findOne({ username: 'user1' })
+  if (!user1) {
+    user1 = new User({ username: 'user1', password: 'user1', roles: ['user'] })
+    user1.save()
+    console.log(`${server.tagMagenta} User1 created`)
+    //console.log('user1 created')
+  }
+
+}
+
 //export this function and imported by app.js
 module.exports = {
 
-  connectDB: async function (app) {
+  async connectDB (app) {
     mongoose.Promise = global.Promise
     mongoose.connect(uriDB, options)
     mongoose.connection.on('connected', async function () {
       console.log(`${server.tagCyan} Succefully connected to ${uriDB}`)
       await dropDB()
       await createAdmin()
-      app.emit("MongooseReady")
+      app.emit('MongooseReady')
     })
 
     mongoose.connection.on('error', function (err) {
@@ -43,36 +71,6 @@ module.exports = {
       process.exit(0)
     })
 
-  }
-
-}
-
-async function dropDB(){
-  if (CONFIG.MONGO.DROP_DATABASE_AT_START) {
-    console.log(`${server.tagMagenta} Deleting DB`)
-    mongoose.connection.dropDatabase()
-  }
-}
-
-async function createAdmin() {
-  //temporary patch to nasty MS Windows ctrl+c 
-  //mongoose.connection.dropDatabase()
-  console.log(`${server.tagMagenta} Filling DB`)
-  superadmin = await User.findOne({ username: 'superadmin' })
-  if (!superadmin) {
-    superadmin = new User
-    superadmin.username = 'superadmin'
-    superadmin.password = CONFIG.MONGO.SUPERADMIN_PASS
-    superadmin.roles = ['moderator', 'admin', 'superadmin']
-    superadmin.save()
-    console.log(`${server.tagMagenta} Superadmin created`)
-  }
-  user1 = await User.findOne({ username: 'user1' })
-  if (!user1) {
-    user1 = new User({ username: 'user1', password: 'user1', roles: ['user'] })
-    user1.save()
-    console.log(`${server.tagMagenta} User1 created`)
-    //console.log('user1 created')
   }
 
 }

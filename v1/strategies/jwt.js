@@ -10,7 +10,7 @@ module.exports = function () {
 }
 
 const verifyToken = async function (token, done) {
-  //TODO if token has no "bearer " throws bad request.. we should intercept in somewhere
+  //TODO if token has no 'bearer ' throws bad request.. we should intercept in somewhere
   jwt.verify(token, CONFIG.JWT.SECRET, async (err, decoded) => {
 
     if (err) {

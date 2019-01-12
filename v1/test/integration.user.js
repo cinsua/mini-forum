@@ -43,7 +43,7 @@ function execute(serv) {
     /*
     before(function (done) {
       console.log('waiting for Mongoose connection')
-      server.on("MongooseReady", function () {
+      server.on('MongooseReady', function () {
         console.log('Mongoose is ready, starting Tests')
         done()
       })

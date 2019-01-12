@@ -103,7 +103,7 @@ userSchema.methods.comparePassword = async function (pw) {
 userSchema.methods.getJWT = function () {
   // TODO
   // let expiration_time = parseInt(CONFIG.jwt_expiration)
-  return "Bearer " + jwt.sign({ user_id: this._id }, CONFIG.JWT.SECRET, { expiresIn: 10000 })
+  return 'Bearer ' + jwt.sign({ user_id: this._id }, CONFIG.JWT.SECRET, { expiresIn: 10000 })
 }
 
 module.exports = mongoose.model('User', userSchema)
