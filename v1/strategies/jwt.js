@@ -5,10 +5,6 @@ const BearerStrategy = require('passport-http-bearer').Strategy
 const jwt = require('jsonwebtoken')
 const { newError, newErrorCustom } = require('../utils/customErrors')
 
-module.exports = function () {
-  passport.use(new BearerStrategy(verifyToken))
-}
-
 const verifyToken = async function (token, done) {
   //TODO if token has no 'bearer ' throws bad request.. we should intercept in somewhere
   jwt.verify(token, CONFIG.JWT.SECRET, async (err, decoded) => {
@@ -29,14 +25,16 @@ const verifyToken = async function (token, done) {
     }
 
     let user = await User.findById(decoded.userId).populate('penalties')
-    if (!user) {
+    if (!user)
       return done(newError('LOGIN_PW_UNAME_INVALID'))
-    }
 
-    if (user.banned) {
+    if (user.banned)
       return done(newError('LOGIN_USER_BANNED'))
-    }
 
     return done(null, user)
   })
+}
+
+module.exports = function () {
+  passport.use(new BearerStrategy(verifyToken))
 }

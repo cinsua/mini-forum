@@ -1,6 +1,12 @@
 const { newError } = require('../utils/customErrors')
 const roles = require('../models/roles')
 
+async function checkOwner(req) {
+  const route = req.app.routes[req.baseUrl + req.route.path][req.method]
+  if (route.checkOwner)
+    if (await route.checkOwner(req) > 0) return true
+  return false
+}
 
 module.exports = {
 
@@ -19,12 +25,11 @@ module.exports = {
     // based on route and method we pick the best role, or die trying
     let requiredRoles = routes[req.baseUrl + req.route.path][req.method].roleRequired
 
-    let availableRoles = requiredRoles.filter(role => credentials.roles.includes(role))
+    let availableRoles = requiredRoles.filter((role) => credentials.roles.includes(role))
 
     // check if an array is empty takes more than equals []
-    if (!Array.isArray(availableRoles) || !availableRoles.length) {
+    if (!Array.isArray(availableRoles) || !availableRoles.length)
       throw newError('AUTH_INSUFFICIENT_PRIVILEGES')
-    }
 
     // we put values to available roles, taken from roles.levels
     const rolesLevel = availableRoles
@@ -45,14 +50,4 @@ module.exports = {
     return next()
 
   }
-}
-
-async function checkOwner(req) {
-
-  const route = req.app.routes[req.baseUrl + req.route.path][req.method]
-  let owner = false
-  if (route.checkOwner) {
-    if (await route.checkOwner(req) > 0) owner = true
-  }
-  return owner
 }

@@ -5,24 +5,21 @@ const utils = require('../utils/utils')
 
 module.exports = {
   async user(req) {
-    owner = false
+    //let owner = false
 
-    if (req.params.id === req.user.id ||
-      req.params.id === req.user.username) {
-      owner = true
-    }
+    if (req.params.id === req.user.id || req.params.id === req.user.username)
+      return true
 
     // users/me -> users/req.user.id (already auth)
     if (req.params.id === 'me') {
       if (!utils.arraysEqual(req.user.roles, ['guest'])) {
         req.params.id = req.user.id
-        owner = true
-      } else {
-        throw newError('LOGIN_REQUIRED')
+        return true
       }
-
+      else
+        throw newError('LOGIN_REQUIRED')
     }
-    return owner
+    return false
   },
 
   async thread(req) {

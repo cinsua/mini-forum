@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const mongoose_delete = require('mongoose-delete')
+const mongooseDelete = require('mongoose-delete')
 const mongoosePaginate = require('mongoose-paginate')
 const mongooseHidden = require('mongoose-hidden')()
 
@@ -18,7 +18,7 @@ const penaltySchema = new Schema({
   expiresAt: {
     type: Date,
     required: true,
-    default: function () { return Date.now() + 60 * 1000 }
+    default() { return Date.now() + 60 * 1000 }
   },
   kind: {
     type: String,
@@ -41,7 +41,7 @@ const penaltySchema = new Schema({
 
 penaltySchema.plugin(mongooseHidden)
 penaltySchema.plugin(mongoosePaginate)
-penaltySchema.plugin(mongoose_delete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' })
+penaltySchema.plugin(mongooseDelete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' })
 
 penaltySchema.virtual('timePenalty').set(function (v) {
   this.expiresAt = Date.now() + v
@@ -54,9 +54,9 @@ penaltySchema.virtual('links').get(function () {
     kindRoute = 'silences'
 
   // if the penalty is populated, we take username, else we link the ugly id
-  this.user.username ?
-    userid = user.username :
-    userid = this.user
+  userid = this.user.username ?
+    this.user.username :
+    this.user
 
   let self = {
     type: 'GET', rel: 'self',

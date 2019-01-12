@@ -16,17 +16,9 @@ async function getUserquery(userId, readFields, queryUrl) {
     !readFields.penalty.includes('all'))
     population.select = penaltyFields
 
-  // check if req.params.id is an id or username
-  let idValid
-  try {
-    idValid = new ObjectId(userId)
-  } catch{}/*catch (e) {
-    idValid = undefined
-  }*/
-  let userQuery
-  (JSON.stringify(userId) !== JSON.stringify(idValid)) ?
-    userQuery = User.findOne({ username: userId }) :
-    userQuery = User.findById(userId)
+  let userQuery = (ObjectId.isValid(userId)) ?
+    User.findById(userId) :
+    User.findOne({ username: userId })
 
   userQuery.select(userFields).populate(population)
   return userQuery
@@ -37,7 +29,7 @@ async function getPaginateUsersQuery(user, readFields, queryUrl) {
 
   let fields = readFields.user.join(' ')
   let userFields
-  if (fields !== 'all') 
+  if (fields !== 'all')
     userFields = fields
 
   let penaltyFields = readFields.penalty.join(' ')
