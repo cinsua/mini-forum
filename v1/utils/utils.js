@@ -6,7 +6,8 @@ module.exports = {
     })
   },
   cleanDocument(doc) {
-    doc = doc.toObject()
+    if (doc.toObject)
+      doc = doc.toObject()
     module.exports.removeNullsNested(doc)
     return doc
   },

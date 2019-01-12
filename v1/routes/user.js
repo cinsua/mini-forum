@@ -7,12 +7,11 @@ const { getCredentials } = require('../middlewares/getCredentials')
 const response = require('../middlewares/response')
 const UserController = require('../controllers/user')
 const PenaltyController = require('../controllers/penalty')
-const hateoas = require('../services/hateoas')
 const ServiceCheckOwner = require('../services/ownerCheckers')
 
 function aliveChecker(req, res, next) {
   let data = { message: 'Server running', user: req.user.username, version: CONFIG.VERSION, commit: CONFIG.COMMIT }
-  req.data = hateoas.addLinks(data, req.credentials, req.app.routes)
+  req.data = data
   next()
 }
 

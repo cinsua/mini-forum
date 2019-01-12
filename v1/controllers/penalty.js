@@ -1,7 +1,5 @@
 const UserService = require('../services/user')
 const PenaltyService = require('../services/penalty')
-const { newError } = require('../utils/customErrors')
-const hateoas = require('../services/hateoas')
 
 module.exports = {
 
@@ -14,7 +12,7 @@ module.exports = {
     let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
     let bans = await PenaltyService.getBans(user)
 
-    req.data = hateoas.addLinks(bans, req.credentials, req.app.routes)
+    req.data = bans
 
     return next()
   },
@@ -30,8 +28,7 @@ module.exports = {
 
     let ban = await PenaltyService.create(pen, 'ban')
 
-    req.data = hateoas.addLinks(ban, req.credentials, req.app.routes)
-
+    req.data = ban
 
     return next()
   },
@@ -45,7 +42,7 @@ module.exports = {
     let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
     let silences = await PenaltyService.getSilences(user)
 
-    req.data = hateoas.addLinks(silences, req.credentials, req.app.routes)
+    req.data = silences
 
     return next()
   },
@@ -61,7 +58,7 @@ module.exports = {
 
     let silence = await PenaltyService.create(pen, 'silence')
 
-    req.data = hateoas.addLinks(silence, req.credentials, req.app.routes)
+    req.data = silence
     return next()
   },
 
@@ -74,8 +71,7 @@ module.exports = {
     let ban = await PenaltyService.getBan(user, req.params.banId)
     await PenaltyService.deletePenalty(ban)
 
-    let data = { message: `ban removed from [${user.username}]` }
-    req.data = hateoas.addLinks(data, req.credentials, req.app.routes)
+    req.data = { message: `ban removed from [${user.username}]` }
 
     return next()
   },
@@ -89,8 +85,7 @@ module.exports = {
     let silence = await PenaltyService.getSilence(user, req.params.silenceId)
     await PenaltyService.deletePenalty(silence)
 
-    let data = { message: `silence removed from [${user.username}]` }
-    req.data = hateoas.addLinks(data, req.credentials, req.app.routes)
+    req.data = { message: `silence removed from [${user.username}]` }
 
     return next()
   }

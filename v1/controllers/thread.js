@@ -1,6 +1,4 @@
 const ThreadService = require('../services/thread')
-const { newError } = require('../utils/customErrors')
-const hateoas = require('../services/hateoas')
 const utils = require('../utils/utils')
 
 module.exports = {
@@ -8,12 +6,11 @@ module.exports = {
   async createThread(req, res, next) {
     const { title, content, private } = req.validRequest.body
     let thread = await ThreadService.create({ title, content, author: req.user.id, private })
-    thread = utils.cleanResult(thread)
+
 
     req.status = 201
     //user = cleanUser(user, req.credentials.readFields, req.validRequest.query)
-    req.data = hateoas.addLinks(thread, req.credentials, req.app.routes)
-
+    req.data = thread
     return next()
   },
 
@@ -23,9 +20,9 @@ module.exports = {
 
     let { threads, paginationInfo } = await ThreadService.getAll(queryUrl)
 
-    threads = utils.cleanResult(threads)
-    req.data = hateoas.addLinks(threads, req.credentials, req.app.routes, { paginationInfo })
-
+    req.data = threads
+    req.paginationInfo = paginationInfo
+  
     return next()
   },
 
@@ -36,8 +33,7 @@ module.exports = {
 
     await ThreadService.checkAccessToPrivate(thread, req.credentials)
 
-    thread = utils.cleanResult(thread)
-    req.data = hateoas.addLinks(thread, req.credentials, req.app.routes)
+    req.data = thread
 
     return next()
   },
@@ -50,8 +46,7 @@ module.exports = {
 
     thread = await ThreadService.update(thread, updThread)
 
-    thread = utils.cleanResult(thread)
-    req.data = hateoas.addLinks(thread, req.credentials, req.app.routes)
+    req.data = thread
 
     return next()
   },
@@ -62,8 +57,7 @@ module.exports = {
     let thread = await ThreadService.getById(threadId)
 
     thread = await ThreadService.delete(thread)
-    req.data = {}
-    req.data.result = ({ message: 'Thread deleted' })
+    req.data = { message: 'Thread deleted' }
 
     return next()
   },
@@ -75,8 +69,7 @@ module.exports = {
 
     thread = await ThreadService.pinned(thread, true)
 
-    thread = utils.cleanResult(thread)
-    req.data = hateoas.addLinks(thread, req.credentials, req.app.routes)
+    req.data = thread
 
     return next()
   },
@@ -88,8 +81,7 @@ module.exports = {
 
     thread = await ThreadService.pinned(thread, false)
 
-    thread = utils.cleanResult(thread)
-    req.data = hateoas.addLinks(thread, req.credentials, req.app.routes)
+    req.data = thread
 
     return next()
   },
@@ -100,8 +92,7 @@ module.exports = {
 
     thread = await ThreadService.like(thread, req.user)
 
-    thread = utils.cleanResult(thread)
-    req.data = hateoas.addLinks(thread, req.credentials, req.app.routes)
+    req.data = thread
     return next()
   },
 
@@ -111,8 +102,7 @@ module.exports = {
 
     thread = await ThreadService.unlike(thread, req.user)
 
-    thread = utils.cleanResult(thread)
-    req.data = hateoas.addLinks(thread, req.credentials, req.app.routes)
+    req.data = thread
 
     return next()
   },

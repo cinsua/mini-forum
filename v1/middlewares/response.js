@@ -1,6 +1,7 @@
 //default response to all success scenarios AND all errors
 const server = require('../../tools/serverTools')
 const CONFIG = require('../../config/config')
+const hateoas = require('../services/hateoas')
 
 module.exports = {
   async sendSuccess(req, res, next) {
@@ -16,7 +17,7 @@ module.exports = {
     }
 
     let response = {
-      data: req.data,
+      data: hateoas.addLinks(req.data, req.credentials, req.app.routes, {paginationInfo: req.paginationInfo}),
       success: true
     }
 
@@ -24,6 +25,7 @@ module.exports = {
     res.status(req.status)
     res.send(response)
     return next()
+
   },
 
   async sendError(err, req, res, next) {

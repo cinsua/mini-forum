@@ -1,7 +1,18 @@
 const UserService = require('../services/user')
 const { newError } = require('../utils/customErrors')
-const hateoas = require('../services/hateoas')
 const rolesLevels = require('../models/roles').levels
+
+// refactor this, must clean from fields
+function cleanUser(user, readFields, query) {
+  user = user.toObject()
+  if (!readFields.user.includes('penalties') && !readFields.user.includes('all')) delete user.penalties
+  return user
+}
+
+function cleanUsers(users, readFields, query) {
+  users = users.map((us) => (cleanUser(us, readFields, query)))
+  return users
+}
 
 module.exports = {
 
@@ -11,8 +22,8 @@ module.exports = {
     let user = await UserService.create({ username, password })
 
     req.status = 201
-    user = cleanUser(user, req.credentials.readFields, req.validRequest.query)
-    req.data = hateoas.addLinks(user, req.credentials, req.app.routes)
+    user = await cleanUser(user, req.credentials.readFields, req.validRequest.query)
+    req.data = user
 
     return next()
   },
@@ -24,8 +35,9 @@ module.exports = {
 
     let { users, paginationInfo } = await UserService.getAll(readFields, queryUrl)
 
-    users = cleanUsers(users, readFields, queryUrl)
-    req.data = hateoas.addLinks(users, req.credentials, req.app.routes, { paginationInfo })
+    users = await cleanUsers(users, readFields, queryUrl)
+    req.data = users
+    req.paginationInfo = paginationInfo
 
     return next()
   },
@@ -47,7 +59,7 @@ module.exports = {
       message: `Welcome ${user.username}`,
       links: { type: 'GET', rel: 'self', href: '/api/v1/users/me' }
     }
-    req.data = hateoas.addLinks(data, req.credentials, req.app.routes)
+    req.data = data
 
     return next()
   },
@@ -75,8 +87,8 @@ module.exports = {
 
     let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
 
-    user = cleanUser(user, readFields, queryUrl)
-    req.data = hateoas.addLinks(user, req.credentials, req.app.routes)
+    user = await cleanUser(user, readFields, queryUrl)
+    req.data = user
 
     return next()
   },
@@ -98,7 +110,7 @@ module.exports = {
     await UserService.addRol(user, role)
 
     let data = { message: `role [${role}] added to user [${user.username}]` }
-    req.data = hateoas.addLinks(data, req.credentials, req.app.routes)
+    req.data = data
 
     return next()
   },
@@ -120,25 +132,11 @@ module.exports = {
     await UserService.removeRol(user, req.body.role)
 
     let data = { message: `role [${role}] deleted from user [${user.username}]` }
-    req.data = hateoas.addLinks(data, req.credentials, req.app.routes)
+    req.data = data
 
     return next()
   },
 
 }
 
-// refactor this, must clean from fields
-function cleanUser(user, readFields, query) {
 
-  user = user.toObject()
-  if (!readFields.user.includes('penalties') && !readFields.user.includes('all')) delete user.penalties
-
-  return user
-}
-
-function cleanUsers(users, readFields, query) {
-
-  users = users.map((us) => (cleanUser(us, readFields, query)))
-
-  return users
-}

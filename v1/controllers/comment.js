@@ -1,7 +1,5 @@
 const ThreadService = require('../services/thread')
 const CommentService = require('../services/comment')
-const { newError } = require('../utils/customErrors')
-const hateoas = require('../services/hateoas')
 const utils = require('../utils/utils')
 
 module.exports = {
@@ -14,8 +12,7 @@ module.exports = {
 
     req.status = 201
 
-    comment = utils.cleanResult(comment)
-    req.data = hateoas.addLinks(comment, req.credentials, req.app.routes)
+    req.data = comment
 
     return next()
   },
@@ -31,8 +28,8 @@ module.exports = {
 
     let { comments, paginationInfo } = await CommentService.getAll(thread, queryUrl)
 
-    comments = utils.cleanResult(comments)
-    req.data = hateoas.addLinks(comments, req.credentials, req.app.routes)
+    req.data = comments
+    req.paginationInfo = paginationInfo
 
     return next()
   },
@@ -50,8 +47,7 @@ module.exports = {
 
     await CommentService.checkCommentBelongsToThread(comment, thread)
 
-    comment = utils.cleanResult(comment)
-    req.data = hateoas.addLinks(comment, req.credentials, req.app.routes)
+    req.data = comment
 
     return next()
   },
@@ -70,8 +66,7 @@ module.exports = {
     await CommentService.checkCommentBelongsToThread(comment, thread)
 
     comment = await CommentService.delete(comment)
-    req.data = {}
-    req.data.result = ({ message: 'Comment deleted' })
+    req.data= { message: 'Comment deleted' }
 
     return next()
   },

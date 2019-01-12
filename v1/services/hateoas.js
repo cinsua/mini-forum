@@ -37,59 +37,64 @@ function getChilds(role, route, originalUrl, routes) {
 
 }
 
+function getPaginationLinks(paginationInfo, result, originalUrl) {
+  let urlWithoutQuery = originalUrl.split('?')[0]
+
+  let pagination
+  pagination = {
+    totalPages: paginationInfo.totalPages,
+    page: paginationInfo.page,
+    totalDocs: paginationInfo.totalDocs,
+    limit: paginationInfo.limit
+  }
+  pagination.links = []
+  if (!utils.arraysEqual(result, [])) {
+    let first = {
+      type: 'GET', rel: 'first',
+      href: `${urlWithoutQuery}?page=1&limit=${paginationInfo.limit}`
+    }
+    pagination.links = [first]
+  }
+  if (paginationInfo.hasPrevPage) {
+    let prev = {
+      type: 'GET', rel: 'prev',
+      href: `${urlWithoutQuery}?page=${paginationInfo.prevPage}&limit=${paginationInfo.limit}`
+    }
+    pagination.links.push(prev)
+  }
+  if (paginationInfo.hasNextPage) {
+    let next = {
+      type: 'GET', rel: 'next',
+      href: `${urlWithoutQuery}?page=${paginationInfo.nextPage}&limit=${paginationInfo.limit}`
+    }
+    pagination.links.push(next)
+  }
+
+  if (paginationInfo.totalPages > 1) {
+    let last = {
+      type: 'GET', rel: 'last',
+      href: `${urlWithoutQuery}?page=${paginationInfo.totalPages}&limit=${paginationInfo.limit}`
+    }
+    pagination.links.push(last)
+  }
+  return pagination
+}
+
 module.exports = {
 
   addLinks(result, credentials, routes, { paginationInfo } = {}) {
     let { bestRole, route, originalUrl } = credentials
     let role = bestRole
-    let pagination
-    // should keep others query params
-    let urlWithoutQuery = originalUrl.split('?')[0]
-    //let paginationInfo = options.paginationInfo
-
-    let data = { pagination, result }
+    result = utils.cleanResult(result)
+    //console.log(resulta)
+    let data = { result }
     let links = getChilds(role, route, originalUrl, routes)
     if (Array.isArray(links) && links.length) data.links = links
+
     if (!paginationInfo)
       return data
 
-    pagination = {
-      totalPages: paginationInfo.totalPages,
-      page: paginationInfo.page,
-      totalDocs: paginationInfo.totalDocs,
-      limit: paginationInfo.limit
-    }
-    pagination.links = []
-    if (!utils.arraysEqual(result, [])) {
-      let first = {
-        type: 'GET', rel: 'first',
-        href: `${urlWithoutQuery}?page=1&limit=${paginationInfo.limit}`
-      }
-      pagination.links = [first]
-    }
-    if (paginationInfo.hasPrevPage) {
-      let prev = {
-        type: 'GET', rel: 'prev',
-        href: `${urlWithoutQuery}?page=${paginationInfo.prevPage}&limit=${paginationInfo.limit}`
-      }
-      pagination.links.push(prev)
-    }
-    if (paginationInfo.hasNextPage) {
-      let next = {
-        type: 'GET', rel: 'next',
-        href: `${urlWithoutQuery}?page=${paginationInfo.nextPage}&limit=${paginationInfo.limit}`
-      }
-      pagination.links.push(next)
-    }
-
-    if (paginationInfo.totalPages > 1) {
-      let last = {
-        type: 'GET', rel: 'last',
-        href: `${urlWithoutQuery}?page=${paginationInfo.pages}&limit=${paginationInfo.limit}`
-      }
-      pagination.links.push(last)
-    }
-
+    data.pagination = getPaginationLinks(paginationInfo, result, originalUrl)
     return data
   }
 }
