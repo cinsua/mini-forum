@@ -5,11 +5,11 @@ module.exports = {
 
   // TODO FILTER / PAGINATION
   async getBans(req, res, next) {
-    const idOrUsername = req.validRequest.params.id
-    const readFields = req.credentials.readFields
-    const queryUrl = req.validRequest.query
-
-    let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
+    let user = await UserService.getByIdOrUsername(
+      req.validRequest.params.id,
+      req.credentials.readFields,
+      req.validRequest.query
+    )
     let bans = await PenaltyService.getBans(user)
 
     req.data = bans
@@ -18,11 +18,11 @@ module.exports = {
   },
 
   async banUser(req, res, next) {
-    const idOrUsername = req.validRequest.params.id
-    const readFields = req.credentials.readFields
-    const queryUrl = req.validRequest.query
-
-    let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
+    let user = await UserService.getByIdOrUsername(
+      req.validRequest.params.id,
+      req.credentials.readFields,
+      req.validRequest.query
+    )
     const { timePenalty, expirePenalty, reason } = req.validRequest.body
     let pen = { reason, timePenalty, expirePenalty, user: user.id, author: req.user.id }
 
@@ -35,11 +35,11 @@ module.exports = {
 
   // TODO FILTER / PAGINATION
   async getSilences(req, res, next) {
-    const idOrUsername = req.validRequest.params.id
-    const readFields = req.credentials.readFields
-    const queryUrl = req.validRequest.query
-
-    let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
+    let user = await UserService.getByIdOrUsername(
+      req.validRequest.params.id,
+      req.credentials.readFields,
+      req.validRequest.query
+    )
     let silences = await PenaltyService.getSilences(user)
 
     req.data = silences
@@ -48,11 +48,11 @@ module.exports = {
   },
 
   async silenceUser(req, res, next) {
-    const idOrUsername = req.validRequest.params.id
-    const readFields = req.credentials.readFields
-    const queryUrl = req.validRequest.query
-
-    let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
+    let user = await UserService.getByIdOrUsername(
+      req.validRequest.params.id,
+      req.credentials.readFields,
+      req.validRequest.query
+    )
     const { timePenalty, expirePenalty, reason } = req.validRequest.body
     let pen = { reason, timePenalty, expirePenalty, user: user.id, author: req.user.id }
 
@@ -63,12 +63,8 @@ module.exports = {
   },
 
   async removeBan(req, res, next) {
-    const idOrUsername = req.validRequest.params.id
-    const readFields = req.credentials.readFields
-    const queryUrl = req.validRequest.query
-
-    let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
-    let ban = await PenaltyService.getBan(user, req.params.banId)
+    let { user, penalty } = await _getPenaltyFromUser(req, 'ban')
+    ban = penalty
     await PenaltyService.deletePenalty(ban)
 
     req.data = { message: `ban removed from [${user.username}]` }
@@ -77,16 +73,29 @@ module.exports = {
   },
 
   async removeSilence(req, res, next) {
-    const idOrUsername = req.validRequest.params.id
-    const readFields = req.credentials.readFields
-    const queryUrl = req.validRequest.query
 
-    let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
-    let silence = await PenaltyService.getSilence(user, req.params.silenceId)
+    let { user, penalty } = await _getPenaltyFromUser(req, 'silence')
+    silence = penalty
+
     await PenaltyService.deletePenalty(silence)
 
     req.data = { message: `silence removed from [${user.username}]` }
 
     return next()
   }
+}
+
+async function _getPenaltyFromUser(req, kind) {
+  let user = await UserService.getByIdOrUsername(
+    req.validRequest.params.id,
+    req.credentials.readFields,
+    req.validRequest.query
+  )
+  // todo check if penalty is from user
+  let penalty = kind === 'silence' ?
+    await PenaltyService.getSilence(user, req.params.silenceId) :
+    await PenaltyService.getBan(user, req.params.banId)
+
+  return { penalty, user }
+
 }

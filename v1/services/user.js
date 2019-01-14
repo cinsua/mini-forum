@@ -85,6 +85,7 @@ module.exports = {
 
   },
 
+  // refactor this pls getUserquery and getPaginateUsersquery
   async getByIdOrUsername(idOrUsername, readFields, queryUrl) {
 
     let query = getUserquery(idOrUsername, readFields, queryUrl)
