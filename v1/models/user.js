@@ -2,11 +2,7 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const CONFIG = require('../../config/config')
-
-// plugins
-const mongooseDelete = require('mongoose-delete')
-const mongoosePaginate = require('mongoose-paginate-v2')
-const mongooseHidden = require('mongoose-hidden')()
+const plugins = require('./plugins')
 
 const Schema = mongoose.Schema
 
@@ -26,16 +22,10 @@ const userSchema = new Schema({
   roles: [String],
 
 },
-  {
-    timestamps: true,
-    toObject: { getters: true, setters: true, virtuals: true },
-    toJSON: { getters: true, setters: true, virtuals: true },
-    runSettersOnQuery: true
-  })
+  plugins.generalOptions)
 
-userSchema.plugin(mongooseHidden)
-userSchema.plugin(mongoosePaginate)
-userSchema.plugin(mongooseDelete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' })
+userSchema.plugin(plugins.generalPlugins)
+
 userSchema.virtual('penalties', {
   ref: 'Penalty', // The model to use
   localField: '_id',  // Find Penalties where `localField`
@@ -71,7 +61,7 @@ userSchema.virtual('silenced').get(function () {
   let lastSilence = Math.max.apply(null, datesSilences)
 
   if (lastSilence > Date.now()) return new Date(lastSilence)// .toUTCString()
-  
+
   // can be omitted, keep for sanity
   return
 })

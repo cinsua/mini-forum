@@ -9,7 +9,7 @@ let endTime
 
 before(function (done) {
   console.log(`${chalk.bold.cyan('[TESTING]')} Waiting for Mongoose connection`)
-  console.log(mongoose.connection.readyState)
+  //console.log(mongoose.connection.readyState)
   server.on('MongooseReady', function () {
     console.log(`${chalk.bold.cyan('[TESTING]')} Mongoose is ready, starting tests`)
     console.log(`${chalk.bold.cyan('┌'+'─'.repeat(78)+'┐')}`)

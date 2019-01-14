@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
-const mongooseDelete = require('mongoose-delete')
-const mongoosePaginate = require('mongoose-paginate')
-const mongooseHidden = require('mongoose-hidden')()
+const plugins = require('./plugins')
 
 const Schema = mongoose.Schema
 
@@ -32,16 +30,9 @@ const penaltySchema = new Schema({
   },
 
 },
-  {
-    timestamps: true,
-    toObject: { getters: true, setters: true, virtuals: true },
-    toJSON: { getters: true, setters: true, virtuals: true },
-    runSettersOnQuery: true
-  })
+plugins.generalOptions)
 
-penaltySchema.plugin(mongooseHidden)
-penaltySchema.plugin(mongoosePaginate)
-penaltySchema.plugin(mongooseDelete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' })
+penaltySchema.plugin(plugins.generalPlugins)
 
 penaltySchema.virtual('timePenalty').set(function (v) {
   this.expiresAt = Date.now() + v

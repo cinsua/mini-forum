@@ -4,9 +4,6 @@ const User = require('../v1/models/user')
 
 const CONFIG = require('./config')
 
-//TODO. more pool thread connections (one per service maybe?)
-// this should improve the spikes in ms taken by some saves
-
 const options = CONFIG.MONGO.OPTIONS
 const uriDB = `${CONFIG.MONGO.CONN_URL}:${CONFIG.MONGO.CONN_PORT}/${CONFIG.MONGO.DB_NAME}`
 
@@ -33,7 +30,6 @@ async function createAdmin() {
     user1 = new User({ username: 'user1', password: 'user1', roles: ['user'] })
     user1.save()
     console.log(`${server.tagMagenta} User1 created`)
-    //console.log('user1 created')
   }
 
 }

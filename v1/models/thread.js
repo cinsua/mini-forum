@@ -1,10 +1,5 @@
 const mongoose = require('mongoose')
-const CONFIG = require('../../config/config')
-
-// plugins
-const mongooseDelete = require('mongoose-delete')
-const mongoosePaginate = require('mongoose-paginate-v2')
-const mongooseHidden = require('mongoose-hidden')()
+const plugins = require('./plugins')
 
 const Schema = mongoose.Schema
 
@@ -37,16 +32,9 @@ const threadSchema = new Schema({
   }],
 
 },
-  {
-    timestamps: true,
-    toObject: { getters: true, setters: true, virtuals: true },
-    toJSON: { getters: true, setters: true, virtuals: true },
-    runSettersOnQuery: true
-  })
+  plugins.generalOptions)
 
-threadSchema.plugin(mongooseHidden)
-threadSchema.plugin(mongoosePaginate)
-threadSchema.plugin(mongooseDelete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' })
+threadSchema.plugin(plugins.generalPlugins)
 
 threadSchema.virtual('comments', {
   ref: 'Comment', // The model to use
@@ -56,11 +44,8 @@ threadSchema.virtual('comments', {
 })
 
 threadSchema.virtual('likesCounter').get(function () {
-  //if (!this.likes) return undefined
-  //if (this.likes.length === 0) return undefined
 
   if (this.likes) return this.likes.lenght
-
   return 0
 })
 
