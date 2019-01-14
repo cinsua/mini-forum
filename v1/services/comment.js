@@ -1,4 +1,3 @@
-const Thread = require('../models/thread')
 const Comment = require('../models/comment')
 const { newError } = require('../utils/customErrors')
 

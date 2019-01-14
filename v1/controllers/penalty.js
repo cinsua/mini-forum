@@ -22,7 +22,7 @@ module.exports = {
     const readFields = req.credentials.readFields
     const queryUrl = req.validRequest.query
 
-    user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
+    let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
     const { timePenalty, expirePenalty, reason } = req.validRequest.body
     let pen = { reason, timePenalty, expirePenalty, user: user.id, author: req.user.id }
 

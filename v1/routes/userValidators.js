@@ -11,7 +11,6 @@ const mongooseIdSchema = Joi.string().regex(/^[0-9a-fA-F]{24}$/)
 const usernameSchema = Joi.string().alphanum().min(4).max(20).lowercase()
 const passwordSchema = Joi.string().regex(/^[a-zA-Z0-9]{4,30}$/)
 const roleSchema = Joi.string().lowercase().valid(Object.keys(roles.levels)).invalid('owner')
-const rolesSchema = Joi.array().items(roleSchema)
 
 // Penalty
 const reasonSchema = Joi.string().min(3).max(300).lowercase()
@@ -116,5 +115,5 @@ module.exports = {
     .concat(baseGetUserSchema)
     .concat(noQuerySchema),
  
-  noReqSchema: noReqSchema
+  noReqSchema
 }

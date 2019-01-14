@@ -1,13 +1,12 @@
 const ThreadService = require('../services/thread')
 const CommentService = require('../services/comment')
-const utils = require('../utils/utils')
 
 module.exports = {
   async createComment(req, res, next) {
     const { content } = req.validRequest.body
     const threadId = req.validRequest.params.threadId
 
-    let thread = await ThreadService.getById(threadId, undefined)
+    let thread = await ThreadService.getById(threadId)
     let comment = await CommentService.create({ content, thread: thread.id, author: req.user.id })
 
     req.status = 201
@@ -22,7 +21,7 @@ module.exports = {
     const queryUrl = req.validRequest.query
     const threadId = req.validRequest.params.threadId
 
-    let thread = await ThreadService.getById(threadId, undefined, queryUrl)
+    let thread = await ThreadService.getById(threadId)
 
     await ThreadService.checkAccessToPrivate(thread, req.credentials)
 
@@ -39,7 +38,7 @@ module.exports = {
     const commentId = req.validRequest.params.commentId
     const queryUrl = req.validRequest.query
 
-    let thread = await ThreadService.getById(threadId, queryUrl)
+    let thread = await ThreadService.getById(threadId)
 
     await ThreadService.checkAccessToPrivate(thread, req.credentials)
 
@@ -58,7 +57,7 @@ module.exports = {
     const commentId = req.validRequest.params.commentId
     const queryUrl = req.validRequest.query
 
-    let thread = await ThreadService.getById(threadId, queryUrl)
+    let thread = await ThreadService.getById(threadId)
     await ThreadService.checkAccessToPrivate(thread, req.credentials)
 
     let comment = await CommentService.getById(commentId)

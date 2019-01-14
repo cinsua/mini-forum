@@ -1,5 +1,5 @@
 
-errors = {
+const errors = {
   // User login
   LOGIN_PW_UNAME_INVALID: {
     name: 'UserLogin',

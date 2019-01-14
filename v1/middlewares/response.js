@@ -33,20 +33,18 @@ module.exports = {
     //res.setHeader('Content-Type', 'application/json')
     let errors = []
 
-    if (err.getError) {
-      // if it is a custom error has getError() defined
+    // if it is a custom error has getError() defined
+    // if it is a request Joi validation has isJoi = true
+    // if not any of above, we dont know, and put the stacktrace in response (thinking of ticket system maybe)
+    
+    // TODO intercept mongo 11000 error
+    if (err.getError)       
       errors.push(err.getError())
-
-    } else if (err.isJoi) {
-      // is a request Joi validation
+    else if (err.isJoi) 
       errors = err.details.map((detail) => ({ code: 'REQUEST_VALIDATION', name: err.name, message: detail.message }))
-
-    } else {
-      // if this error is a generic one, we generate the error obj. Remember: message is a property
-      // we should intercept mongo errors (11000 for example), it gives dbname/model/field
-      // for dev propouses we pass stack to response
+    else
       errors.push({ name: err.name, message: err.message, code: err.code, stack: err.stack })
-    }
+    
 
     let response = {
       success: false,
@@ -57,9 +55,8 @@ module.exports = {
     // TODO use standar status codes
     if (!req.status) req.status = 500
 
-    if (CONFIG.TRACE_ERRORS_CONSOLE) {
+    if (CONFIG.TRACE_ERRORS_CONSOLE)
       server.showTrace(errors, err)
-    }
 
     res.status(req.status)
     res.send(response)

@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const CONFIG = require('../../config/config')
 
 // plugins
-const mongoose_delete = require('mongoose-delete')
+const mongooseDelete = require('mongoose-delete')
 const mongoosePaginate = require('mongoose-paginate-v2')
 const mongooseHidden = require('mongoose-hidden')()
 
@@ -46,7 +46,7 @@ const threadSchema = new Schema({
 
 threadSchema.plugin(mongooseHidden)
 threadSchema.plugin(mongoosePaginate)
-threadSchema.plugin(mongoose_delete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' })
+threadSchema.plugin(mongooseDelete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' })
 
 threadSchema.virtual('comments', {
   ref: 'Comment', // The model to use

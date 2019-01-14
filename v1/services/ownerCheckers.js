@@ -1,7 +1,7 @@
 const Thread = require('../models/thread')
-const User = require('../models/user')
 const Comment = require('../models/comment')
 const utils = require('../utils/utils')
+const { newError } = require('../utils/customErrors')
 
 module.exports = {
   async user(req) {

@@ -1,7 +1,6 @@
 const User = require('../models/user')
 const ObjectId = require('mongoose').Types.ObjectId
 const { newError } = require('../utils/customErrors')
-const hateoas = require('./hateoas')
 
 //TODO query url filter
 async function getUserquery(userId, readFields, queryUrl) {

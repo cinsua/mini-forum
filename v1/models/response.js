@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const CONFIG = require('../../config/config')
 
 // plugins
-const mongoose_delete = require('mongoose-delete')
+const mongooseDelete = require('mongoose-delete')
 const mongoosePaginate = require('mongoose-paginate')
 const mongooseHidden = require('mongoose-hidden')()
 
@@ -33,7 +33,7 @@ const responseSchema = new Schema({
 
 responseSchema.plugin(mongooseHidden)
 responseSchema.plugin(mongoosePaginate)
-responseSchema.plugin(mongoose_delete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' })
+responseSchema.plugin(mongooseDelete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' })
 
 responseSchema.virtual('links').get(function () {
   let self = {
