@@ -26,5 +26,10 @@ module.exports = {
 
   async deletePenalty(penalty) {
     penalty.delete()
-  }
+  },
+
+  async checkPenaltyBelongsToUser(user, penalty){
+    if (!penalty.user.equals(user._id))
+      throw newError('REQUEST_PENALTY_HAS_DIFFERENT_USER')
+  },
 }

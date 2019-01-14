@@ -13,6 +13,8 @@ async function _getPenaltyFromUser(req, kind) {
     { penaltyId: req.params.banId, kind: 'ban' }
 
   let penalty = await PenaltyService.getOneFromUser(user, penaltyParams)
+  await PenaltyService.checkPenaltyBelongsToUser(user, penalty)
+    
   return { penalty, user }
 }
 
@@ -77,8 +79,8 @@ module.exports = {
 
   async removeBan(req, res, next) {
     let { user, penalty } = await _getPenaltyFromUser(req, 'ban')
-    let ban = penalty
-    await PenaltyService.deletePenalty(ban)
+
+    await PenaltyService.deletePenalty(penalty)
 
     req.data = { message: `ban removed from [${user.username}]` }
 
@@ -88,9 +90,8 @@ module.exports = {
   async removeSilence(req, res, next) {
 
     let { user, penalty } = await _getPenaltyFromUser(req, 'silence')
-    let silence = penalty
 
-    await PenaltyService.deletePenalty(silence)
+    await PenaltyService.deletePenalty(penalty)
 
     req.data = { message: `silence removed from [${user.username}]` }
 

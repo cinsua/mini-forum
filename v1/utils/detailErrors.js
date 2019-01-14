@@ -24,6 +24,11 @@ const errors = {
     message: 'Requested penalty not found'
   },
 
+  REQUEST_PENALTY_HAS_DIFFERENT_USER: {
+    name: 'RequestPenalty',
+    message: 'Requested Penalty has a reference to a different User'
+  },
+
   ASSIGNMENT_ROLE_ALREADY_PRESENT: {
     name: 'RoleError',
     message: 'The user already have the role requested'
