@@ -15,29 +15,13 @@ module.exports = {
     return penalty
   },
 
-  async getBans(user) {
-    let bans = await Penalty.find({ user: user.id, kind: 'ban' }).populate('author')
-
-    return bans
+  async getAllFromUser(user, {kind} = {}) {
+    let penalties = await Penalty.find({ user: user.id, kind}).populate('author')
+    return penalties
   },
 
-  async getBan(user, banId) {
-    let ban = await Penalty.findById(banId)//.populate('author')
-    if (!ban) throw newError('REQUEST_PENALTY_NOT_FOUND')
-
-    return ban
-  },
-
-  async getSilences(user) {
-    let silences = await Penalty.find({ user: user.id, kind: 'silence' }).populate('author')
-    return silences
-  },
-
-  async getSilence(user, silenceId) {
-    let silence = await Penalty.findById(silenceId)
-    if (!silence) throw newError('REQUEST_PENALTY_NOT_FOUND')
-
-    return silence
+  async getOneFromUser(user, {penaltyId, kind} = {}) {
+    return await Penalty.findOne({ user: user.id, kind, _id:penaltyId}).populate('author')
   },
 
   async deletePenalty(penalty) {

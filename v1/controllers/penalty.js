@@ -8,13 +8,26 @@ async function _getPenaltyFromUser(req, kind) {
     req.validRequest.query
   )
   // todo check if penalty is from user
-  let penalty = kind === 'silence' ?
-    await PenaltyService.getSilence(user, req.params.silenceId) :
-    await PenaltyService.getBan(user, req.params.banId)
+  let penaltyParams = kind === 'silence' ?
+    { penaltyId: req.params.silenceId, kind: 'silence' } :
+    { penaltyId: req.params.banId, kind: 'ban' }
 
+  let penalty = await PenaltyService.getOneFromUser(user, penaltyParams)
   return { penalty, user }
-
 }
+
+async function _createPenalty(req, kind) {
+  let user = await UserService.getByIdOrUsername(
+    req.validRequest.params.id,
+    req.credentials.readFields,
+    req.validRequest.query
+  )
+  const { timePenalty, expirePenalty, reason } = req.validRequest.body
+  let pen = { reason, timePenalty, expirePenalty, user: user.id, author: req.user.id }
+
+  return await PenaltyService.create(pen, kind)
+}
+
 
 module.exports = {
 
@@ -25,7 +38,7 @@ module.exports = {
       req.credentials.readFields,
       req.validRequest.query
     )
-    let bans = await PenaltyService.getBans(user)
+    let bans = await PenaltyService.getAllFromUser(user, { kind: 'ban' })
 
     req.data = bans
 
@@ -33,15 +46,7 @@ module.exports = {
   },
 
   async banUser(req, res, next) {
-    let user = await UserService.getByIdOrUsername(
-      req.validRequest.params.id,
-      req.credentials.readFields,
-      req.validRequest.query
-    )
-    const { timePenalty, expirePenalty, reason } = req.validRequest.body
-    let pen = { reason, timePenalty, expirePenalty, user: user.id, author: req.user.id }
-
-    let ban = await PenaltyService.create(pen, 'ban')
+    let ban = await _createPenalty(req, 'ban')
 
     req.data = ban
 
@@ -55,7 +60,7 @@ module.exports = {
       req.credentials.readFields,
       req.validRequest.query
     )
-    let silences = await PenaltyService.getSilences(user)
+    let silences = await PenaltyService.getAllFromUser(user, { kind: 'silence' })
 
     req.data = silences
 
@@ -63,15 +68,8 @@ module.exports = {
   },
 
   async silenceUser(req, res, next) {
-    let user = await UserService.getByIdOrUsername(
-      req.validRequest.params.id,
-      req.credentials.readFields,
-      req.validRequest.query
-    )
-    const { timePenalty, expirePenalty, reason } = req.validRequest.body
-    let pen = { reason, timePenalty, expirePenalty, user: user.id, author: req.user.id }
 
-    let silence = await PenaltyService.create(pen, 'silence')
+    let silence = await await _createPenalty(req, 'silence')
 
     req.data = silence
     return next()
