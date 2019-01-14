@@ -43,6 +43,13 @@ commentSchema.virtual('likesCounter').get(function () {
 })
 
 commentSchema.virtual('links').get(function () {
+
+  // TODO links should be have only the id..
+  // if the penalty is populated, we take username, else we link the ugly id
+  //threadid = this.thread.id ?
+  //  this.thread.id :
+  //  this.thread
+
   let self = {
     type: 'GET', rel: 'self',
     href: `/api/v1/threads/${this.thread}/`

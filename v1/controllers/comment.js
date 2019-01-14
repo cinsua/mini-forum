@@ -3,11 +3,13 @@ const CommentService = require('../services/comment')
 
 module.exports = {
   async createComment(req, res, next) {
-    const { content } = req.validRequest.body
-    const threadId = req.validRequest.params.threadId
 
-    let thread = await ThreadService.getById(threadId)
-    let comment = await CommentService.create({ content, thread: thread.id, author: req.user.id })
+    let thread = await ThreadService.getById(req.validRequest.params.threadId)
+    let comment = await CommentService.create({
+      content: req.validRequest.body.content,
+      thread: thread.id,
+      author: req.user.id
+    })
 
     req.status = 201
 
@@ -18,14 +20,10 @@ module.exports = {
 
   async getAll(req, res, next) {
 
-    const queryUrl = req.validRequest.query
-    const threadId = req.validRequest.params.threadId
-
-    let thread = await ThreadService.getById(threadId)
-
+    let thread = await ThreadService.getById(req.validRequest.params.threadId)
     await ThreadService.checkAccessToPrivate(thread, req.credentials)
 
-    let { comments, paginationInfo } = await CommentService.getAll(thread, queryUrl)
+    let { comments, paginationInfo } = await CommentService.getAll(thread, req.validRequest.query)
 
     req.data = comments
     req.paginationInfo = paginationInfo
@@ -34,18 +32,8 @@ module.exports = {
   },
 
   async getById(req, res, next) {
-    const threadId = req.validRequest.params.threadId
-    const commentId = req.validRequest.params.commentId
-    const queryUrl = req.validRequest.query
 
-    let thread = await ThreadService.getById(threadId)
-
-    await ThreadService.checkAccessToPrivate(thread, req.credentials)
-
-    let comment = await CommentService.getById(commentId)
-
-    await CommentService.checkCommentBelongsToThread(comment, thread)
-
+    let {comment} = await _getCommentFromThread(req)
     req.data = comment
 
     return next()
@@ -53,22 +41,24 @@ module.exports = {
 
   async delete(req, res, next) {
 
-    const threadId = req.validRequest.params.threadId
-    const commentId = req.validRequest.params.commentId
-    const queryUrl = req.validRequest.query
-
-    let thread = await ThreadService.getById(threadId)
-    await ThreadService.checkAccessToPrivate(thread, req.credentials)
-
-    let comment = await CommentService.getById(commentId)
-
-    await CommentService.checkCommentBelongsToThread(comment, thread)
+    let {comment} = await _getCommentFromThread(req)
 
     comment = await CommentService.delete(comment)
-    req.data= { message: 'Comment deleted' }
+    req.data = { message: 'Comment deleted' }
 
     return next()
   },
 
 
+}
+
+async function _getCommentFromThread(req){
+
+  let thread = await ThreadService.getById(req.validRequest.params.threadId)
+  await ThreadService.checkAccessToPrivate(thread, req.credentials)
+
+  let comment = await CommentService.getById(req.validRequest.params.commentId)
+  await CommentService.checkCommentBelongsToThread(comment, thread)
+
+  return {comment, thread}
 }

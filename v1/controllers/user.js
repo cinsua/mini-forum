@@ -81,24 +81,25 @@ module.exports = {
   },
 
   async getById(req, res, next) {
-    const idOrUsername = req.validRequest.params.id
-    const readFields = req.credentials.readFields
-    const queryUrl = req.validRequest.query
+    let user = await UserService.getByIdOrUsername(
+      req.validRequest.params.id,
+      req.credentials.readFields,
+      req.validRequest.query
+    )
 
-    let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
-
-    user = await cleanUser(user, readFields, queryUrl)
+    user = await cleanUser(user, req.credentials.readFields, req.validRequest.query)
     req.data = user
 
     return next()
   },
 
   async addRole(req, res, next) {
-    const idOrUsername = req.validRequest.params.id
-    const readFields = req.credentials.readFields
-    const queryUrl = req.validRequest.query
+    let user = await UserService.getByIdOrUsername(
+      req.validRequest.params.id,
+      req.credentials.readFields,
+      req.validRequest.query
+    )
 
-    let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
     const role = req.validRequest.body.role
 
     if (user.roles.includes(role))
@@ -116,11 +117,12 @@ module.exports = {
   },
 
   async removeRole(req, res, next) {
-    const idOrUsername = req.validRequest.params.id
-    const readFields = req.credentials.readFields
-    const queryUrl = req.validRequest.query
 
-    let user = await UserService.getByIdOrUsername(idOrUsername, readFields, queryUrl)
+    let user = await UserService.getByIdOrUsername(
+      req.validRequest.params.id,
+      req.credentials.readFields,
+      req.validRequest.query
+    )
     const role = req.validRequest.body.role
 
     if (!user.roles.includes(role))
@@ -138,5 +140,3 @@ module.exports = {
   },
 
 }
-
-
