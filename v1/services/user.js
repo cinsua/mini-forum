@@ -54,7 +54,6 @@ async function getPaginateUsersQuery(user, readFields, queryUrl) {
 
 module.exports = {
   async create({ username, password }) {
-    //const { username, password } = body
     const user = new User({ username, password })
     user.roles.push('user')
     await user.save()
@@ -138,7 +137,6 @@ module.exports = {
 
   async removeRol(user, rol) {
     user.roles = user.roles.filter((r) => (r !== rol))
-    //const filteredItems = items.filter(item => item !== valueToRemove)
 
     user.save()
   },

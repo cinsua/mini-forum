@@ -63,7 +63,7 @@ module.exports = {
     return
   },
 
-  async checkCommentBelongsToThread(comment, thread){
+  async checkCommentBelongsToThread(comment, thread) {
 
     if (!comment.thread._id.equals(thread._id))
       throw newError('REQUEST_COMMENT_HAS_DIFFERENT_THREAD')

@@ -85,7 +85,7 @@ module.exports = {
   loginUserSchema: baseUserSchema
     .concat(noParamsSchema)
     .concat(noQuerySchema),
-  
+
   createUserSchema: baseUserSchema
     .concat(noParamsSchema)
     .concat(noQuerySchema),
@@ -93,7 +93,7 @@ module.exports = {
   getUsersSchema: paginationQuerySchema
     .concat(noParamsSchema)
     .concat(noBodySchema),
-  
+
   getUserSchema: baseGetUserSchema
     .concat(noBodySchema)
     .concat(noQuerySchema),
@@ -114,6 +114,6 @@ module.exports = {
   setRoleSchema: baseRoleSchema
     .concat(baseGetUserSchema)
     .concat(noQuerySchema),
- 
+
   noReqSchema
 }

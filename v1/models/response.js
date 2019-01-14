@@ -19,17 +19,8 @@ const responseSchema = new Schema({
   },
 
 },
-plugins.generalOptions)
+  plugins.generalOptions)
 
 responseSchema.plugin(plugins.generalPlugins)
-/*
-responseSchema.virtual('links').get(function () {
-  let self = {
-    type: 'GET', rel: 'self',
-    href: `/api/v1/threads/${this.thread}/`
-  }
-  return [self]
-})*/
-
 
 module.exports = mongoose.model('Response', responseSchema)

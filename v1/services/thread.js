@@ -1,7 +1,7 @@
 const Thread = require('../models/thread')
 const Comment = require('../models/comment')
 const { newError } = require('../utils/customErrors')
-// TODO delete req dependency
+
 module.exports = {
 
   async create({ title, content, author, private = false }) {
@@ -60,7 +60,7 @@ module.exports = {
     return thread
   },
 
-  async checkAccessToPrivate(thread, credentials){
+  async checkAccessToPrivate(thread, credentials) {
     if (thread.private && credentials.bestRole === 'guest')
       throw newError('REQUEST_THREAD_IS_PRIVATED')
   }
@@ -84,7 +84,6 @@ async function getThreadQuery(threadId) {
 async function getPaginateThreadQuery(thread, queryUrl) {
   // for now, response is fixed
 
-  //threadFields = readFields.user.join(' ')
   // TODO define read fields in roles
   let threadFields = 'title author likes likesCounter private pinned'
 
@@ -95,7 +94,7 @@ async function getPaginateThreadQuery(thread, queryUrl) {
   let pagination = {
     select: threadFields,
     sort: { createdAt: -1 },
-    populate: [{ path: 'author', select: 'username' }],//population,
+    populate: [{ path: 'author', select: 'username' }],
     lean: false,
     page: Number(page),
     limit: Number(limit)

@@ -26,11 +26,6 @@ const threadSchema = new Schema({
   content: {
     type: 'String',
   },
-  /*
-  likes: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  }],*/
 
 },
   plugins.generalOptions)
@@ -51,6 +46,5 @@ threadSchema.virtual('links').get(function () {
   }
   return [self]
 })
-
 
 module.exports = mongoose.model('Thread', threadSchema)

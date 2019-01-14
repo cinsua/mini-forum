@@ -16,7 +16,6 @@ module.exports = {
     if (result.error)
       next(result.error)
 
-
     // req.validRequest is the simplified version validated. we will use only this in the req treatment
     req.validRequest = result.value
     next()

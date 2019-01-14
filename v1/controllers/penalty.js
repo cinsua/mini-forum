@@ -7,14 +7,14 @@ async function _getPenaltyFromUser(req, kind) {
     req.credentials.readFields,
     req.validRequest.query
   )
-  // todo check if penalty is from user
+
   let penaltyParams = kind === 'silence' ?
     { penaltyId: req.params.silenceId, kind: 'silence' } :
     { penaltyId: req.params.banId, kind: 'ban' }
 
   let penalty = await PenaltyService.getOneFromUser(user, penaltyParams)
   await PenaltyService.checkPenaltyBelongsToUser(user, penalty)
-    
+
   return { penalty, user }
 }
 

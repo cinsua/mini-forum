@@ -40,14 +40,15 @@ function getChilds(role, route, originalUrl, routes) {
 function getPaginationLinks(paginationInfo, result, originalUrl) {
   let urlWithoutQuery = originalUrl.split('?')[0]
 
-  let pagination
-  pagination = {
+  let pagination = {
     totalPages: paginationInfo.totalPages,
     page: paginationInfo.page,
     totalDocs: paginationInfo.totalDocs,
     limit: paginationInfo.limit
   }
+
   pagination.links = []
+
   if (!utils.arraysEqual(result, [])) {
     let first = {
       type: 'GET', rel: 'first',
@@ -55,6 +56,7 @@ function getPaginationLinks(paginationInfo, result, originalUrl) {
     }
     pagination.links = [first]
   }
+
   if (paginationInfo.hasPrevPage) {
     let prev = {
       type: 'GET', rel: 'prev',
@@ -62,6 +64,7 @@ function getPaginationLinks(paginationInfo, result, originalUrl) {
     }
     pagination.links.push(prev)
   }
+
   if (paginationInfo.hasNextPage) {
     let next = {
       type: 'GET', rel: 'next',
@@ -86,7 +89,6 @@ module.exports = {
     let { bestRole, route, originalUrl } = credentials
     let role = bestRole
     result = utils.cleanResult(result)
-    //console.log(resulta)
     let data = { result }
     let links = getChilds(role, route, originalUrl, routes)
     if (Array.isArray(links) && links.length) data.links = links

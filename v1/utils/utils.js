@@ -1,10 +1,13 @@
+
 module.exports = {
+
   removeNullsNested(obj) {
     Object.entries(obj).forEach(([key, val]) => {
       if (val && typeof val === 'object') module.exports.removeNullsNested(val)
       else if (val == null) delete obj[key]
     })
   },
+
   cleanDocument(doc) {
     if (doc.toObject)
       doc = doc.toObject()
@@ -32,9 +35,7 @@ module.exports = {
       if (arr1[i] !== arr2[i])
         return false
     }
-
     return true
   }
-
 
 }

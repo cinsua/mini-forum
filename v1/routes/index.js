@@ -13,7 +13,7 @@ module.exports = {
     // register every route
     for (let route of Object.keys(app.routes)) {
       if (route !== 'startMiddlewares' && route !== 'finishMiddlewares') {
-        for (let method of Object.keys(app.routes[route])) 
+        for (let method of Object.keys(app.routes[route]))
           app.route(route)[method.toLowerCase()](app.routes[route][method].middlewares)
       }
     }

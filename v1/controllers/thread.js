@@ -10,7 +10,6 @@ module.exports = {
 
 
     req.status = 201
-    //user = cleanUser(user, req.credentials.readFields, req.validRequest.query)
     req.data = thread
     return next()
   },
@@ -23,7 +22,7 @@ module.exports = {
 
     req.data = threads
     req.paginationInfo = paginationInfo
-  
+
     return next()
   },
 

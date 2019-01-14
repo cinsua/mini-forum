@@ -13,12 +13,15 @@ class _NormalError extends Error {
 }
 
 module.exports = {
+
   newError(code) {
     let err = new _NormalError(code, errors[code].name, errors[code].message)
     return err
   },
+
   newErrorCustom(code, name, msg) {
     let err = new _NormalError(code, name, msg)
     return err
   },
+
 }

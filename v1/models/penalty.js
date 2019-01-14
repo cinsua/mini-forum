@@ -30,7 +30,7 @@ const penaltySchema = new Schema({
   },
 
 },
-plugins.generalOptions)
+  plugins.generalOptions)
 
 penaltySchema.plugin(plugins.generalPlugins)
 

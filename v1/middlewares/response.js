@@ -17,7 +17,7 @@ module.exports = {
     }
 
     let response = {
-      data: hateoas.addLinks(req.data, req.credentials, req.app.routes, {paginationInfo: req.paginationInfo}),
+      data: hateoas.addLinks(req.data, req.credentials, req.app.routes, { paginationInfo: req.paginationInfo }),
       success: true
     }
 
@@ -30,21 +30,20 @@ module.exports = {
 
   async sendError(err, req, res, next) {
 
-    //res.setHeader('Content-Type', 'application/json')
+    res.setHeader('Content-Type', 'application/json')
     let errors = []
 
     // if it is a custom error has getError() defined
     // if it is a request Joi validation has isJoi = true
     // if not any of above, we dont know, and put the stacktrace in response (thinking of ticket system maybe)
-    
+
     // TODO intercept mongo 11000 error
-    if (err.getError)       
+    if (err.getError)
       errors.push(err.getError())
-    else if (err.isJoi) 
+    else if (err.isJoi)
       errors = err.details.map((detail) => ({ code: 'REQUEST_VALIDATION', name: err.name, message: detail.message }))
     else
       errors.push({ name: err.name, message: err.message, code: err.code, stack: err.stack })
-    
 
     let response = {
       success: false,

@@ -35,7 +35,5 @@ module.exports = function () {
   ))
 }
 
-// Custom Strategy for Guests
-
 util.inherits(GuestStrategy, Strategy)
 

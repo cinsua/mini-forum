@@ -5,12 +5,10 @@ const { newError } = require('../utils/customErrors')
 
 module.exports = {
   async user(req) {
-    //let owner = false
 
     if (req.params.id === req.user.id || req.params.id === req.user.username)
       return true
 
-    // users/me -> users/req.user.id (already auth)
     if (req.params.id === 'me') {
       if (!utils.arraysEqual(req.user.roles, ['guest'])) {
         req.params.id = req.user.id
