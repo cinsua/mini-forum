@@ -1,10 +1,5 @@
 const mongoose = require('mongoose')
-const CONFIG = require('../../config/config')
-
-// plugins
-const mongooseDelete = require('mongoose-delete')
-const mongoosePaginate = require('mongoose-paginate')
-const mongooseHidden = require('mongoose-hidden')()
+const plugins = require('./plugins')
 
 const Schema = mongoose.Schema
 
@@ -24,24 +19,17 @@ const responseSchema = new Schema({
   },
 
 },
-  {
-    timestamps: true,
-    toObject: { getters: true, setters: true, virtuals: true },
-    toJSON: { getters: true, setters: true, virtuals: true },
-    runSettersOnQuery: true
-  })
+plugins.generalOptions)
 
-responseSchema.plugin(mongooseHidden)
-responseSchema.plugin(mongoosePaginate)
-responseSchema.plugin(mongooseDelete, { deletedAt: true, deletedBy: true, overrideMethods: 'all' })
-
+penaltySchema.plugin(plugins.generalPlugins)
+/*
 responseSchema.virtual('links').get(function () {
   let self = {
     type: 'GET', rel: 'self',
     href: `/api/v1/threads/${this.thread}/`
   }
   return [self]
-})
+})*/
 
 
 module.exports = mongoose.model('Response', responseSchema)
