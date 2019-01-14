@@ -60,25 +60,6 @@ module.exports = {
     return thread
   },
 
-  async like(thread, user) {
-    if (thread.likes.indexOf(user.id) > -1)
-      throw newError('THREAD_ALREADY_LIKED')
-
-    thread.likes.push(user.id)
-    await thread.save()
-    return thread
-
-  },
-
-  async unlike(thread, user) {
-    if (thread.likes.indexOf(user.id) < 0)
-      throw newError('THREAD_NOT_LIKED')
-
-    thread.likes.remove(user.id)
-    await thread.save()
-    return thread
-  },
-
   async checkAccessToPrivate(thread, credentials){
     if (thread.private && credentials.bestRole === 'guest')
       throw newError('REQUEST_THREAD_IS_PRIVATED')
@@ -89,7 +70,7 @@ module.exports = {
 //TODO query url filter
 async function getThreadQuery(threadId) {
 
-  let threadFields
+  let threadFields// = 'title author private pinned likes likesCounter links'
   let threadQuery = Thread.findById(threadId)
 
   threadQuery.select(threadFields)

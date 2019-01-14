@@ -21,7 +21,7 @@ const responseSchema = new Schema({
 },
 plugins.generalOptions)
 
-penaltySchema.plugin(plugins.generalPlugins)
+responseSchema.plugin(plugins.generalPlugins)
 /*
 responseSchema.virtual('links').get(function () {
   let self = {

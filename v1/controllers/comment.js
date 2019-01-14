@@ -2,13 +2,12 @@ const ThreadService = require('../services/thread')
 const CommentService = require('../services/comment')
 
 async function _getCommentFromThread(req) {
-
+  
   let thread = await ThreadService.getById(req.validRequest.params.threadId)
   await ThreadService.checkAccessToPrivate(thread, req.credentials)
-
+  
   let comment = await CommentService.getById(req.validRequest.params.commentId)
   await CommentService.checkCommentBelongsToThread(comment, thread)
-
   return { comment, thread }
 }
 
@@ -45,6 +44,7 @@ module.exports = {
   async getById(req, res, next) {
 
     let { comment } = await _getCommentFromThread(req)
+    //console.log(comment)
     req.data = comment
 
     return next()

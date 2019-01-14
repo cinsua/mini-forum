@@ -26,14 +26,15 @@ const threadSchema = new Schema({
   content: {
     type: 'String',
   },
+  /*
   likes: [{
     type: Schema.Types.ObjectId,
     ref: 'User',
-  }],
+  }],*/
 
 },
   plugins.generalOptions)
-
+threadSchema.plugin(plugins.likes)
 threadSchema.plugin(plugins.generalPlugins)
 
 threadSchema.virtual('comments', {
@@ -41,12 +42,6 @@ threadSchema.virtual('comments', {
   localField: '_id',  // Find Penalties where `localField`
   foreignField: 'thread', // is equal to `foreignField`
   justOne: false, // gives us an array
-})
-
-threadSchema.virtual('likesCounter').get(function () {
-
-  if (this.likes) return this.likes.lenght
-  return 0
 })
 
 threadSchema.virtual('links').get(function () {

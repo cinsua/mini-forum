@@ -1,4 +1,5 @@
 const ThreadService = require('../services/thread')
+const LikesService = require('../services/likes')
 const utils = require('../utils/utils')
 
 module.exports = {
@@ -90,7 +91,7 @@ module.exports = {
     const threadId = req.validRequest.params.threadId
     let thread = await ThreadService.getById(threadId)
 
-    thread = await ThreadService.like(thread, req.user)
+    thread = await LikesService.like(thread, req.user)
 
     req.data = thread
     return next()
@@ -100,7 +101,7 @@ module.exports = {
     const threadId = req.validRequest.params.threadId
     let thread = await ThreadService.getById(threadId)
 
-    thread = await ThreadService.unlike(thread, req.user)
+    thread = await LikesService.unlike(thread, req.user)
 
     req.data = thread
 

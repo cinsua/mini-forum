@@ -16,14 +16,10 @@ const commentSchema = new Schema({
   content: {
     type: 'String',
   },
-  likes: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  }],
 
 },
   plugins.generalOptions)
-
+commentSchema.plugin(plugins.likes)
 commentSchema.plugin(plugins.generalPlugins)
 
 commentSchema.virtual('responses', {
@@ -31,15 +27,6 @@ commentSchema.virtual('responses', {
   localField: '_id',  // Find Penalties where `localField`
   foreignField: 'thread', // is equal to `foreignField`
   justOne: false, // gives us an array
-})
-
-commentSchema.virtual('likesCounter').get(function () {
-  //if (!this.likes) return undefined
-  //if (this.likes.length === 0) return undefined
-  //return this.likes.lenght
-  if (this.likes) return this.likes.lenght
-
-  return 0
 })
 
 commentSchema.virtual('links').get(function () {
