@@ -1,6 +1,6 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/e6fda6c0d7b7484c974fcb46791a07ca)](https://app.codacy.com/app/cinsua/mini-forum?utm_source=github.com&utm_medium=referral&utm_content=cinsua/mini-forum&utm_campaign=Badge_Grade_Settings)
 [![Build Status](https://travis-ci.org/cinsua/mini-forum.svg?branch=master)](https://travis-ci.org/cinsua/mini-forum)
-[![Coverage Status](https://coveralls.io/repos/github/cinsua/mini-forum/badge.svg?branch=master)](https://coveralls.io/github/cinsua/mini-forum?branch=master)
+[![Coverage Status](https://img.shields.io/coveralls/github/cinsua/mini-forum/master.svg)](https://coveralls.io/github/cinsua/mini-forum?branch=master)
 # mini-forum
 
 mini-forum is an REST(ish)/GraphQL(not yet) Api with passport local strategy
