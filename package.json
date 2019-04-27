@@ -6,14 +6,14 @@
   "scripts": {
     "test": "mocha v1/test/allTest.js --timeout 3000 --exit --no-deprecation",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "test-nyc":"nyc mocha v1/test/allTest.js --timeout 3000 --exit --no-deprecation",
+    "test-nyc": "nyc mocha v1/test/allTest.js --timeout 3000 --exit --no-deprecation",
     "dev": "cross-env NODE_ENV=development nodemon server.js",
     "prod": "NODE_ENV=production node server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^3.0.2",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "eslint": "^5.11.1",
