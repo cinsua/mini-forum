@@ -3,7 +3,7 @@
 [![Coverage Status](https://img.shields.io/coveralls/github/cinsua/mini-forum/master.svg)](https://coveralls.io/github/cinsua/mini-forum?branch=master)
 # mini-forum
 
-mini-forum is an REST(ish)/GraphQL(not yet) Api with passport local strategy
+mini-forum is an REST(ish) Api with passport local strategy
 Consist in one pool of threads. Each one can be private (only logged in can see the content) or public.
 Threads will support comments, notifications, likes, pin and edit/remove
 
